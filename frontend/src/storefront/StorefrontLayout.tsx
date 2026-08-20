@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 const WHATSAPP_NUMBER = "923001234567"; // TODO: replace with your real number
 
@@ -7,11 +8,12 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div id="storefront-root" className="min-h-screen bg-[#f6f1e6] text-[#241f1a]">
-      <header className="sticky top-0 z-30 bg-[#f6f1e6]/95 backdrop-blur border-b border-dashed border-[#d8cdb8]">
+    <div id="storefront-root" className="min-h-screen bg-[#f7f7f5] text-[#101014]">
+      <header className="sticky top-0 z-30 bg-[#f7f7f5]/95 backdrop-blur border-b border-dashed border-[#dde1e8]">
         <div className="flex items-center justify-between px-4 py-3 max-w-6xl mx-auto">
-          <Link to="/" className="font-serif text-xl tracking-tight">
-            Baig Cloth
+          <Link to="/" className="flex items-center gap-2">
+            <img src={logo} alt="Baig Cloth" className="h-9 w-auto" />
+            <span className="font-serif text-xl tracking-tight">Baig Cloth</span>
           </Link>
 
           {/* Desktop nav */}
@@ -30,15 +32,15 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
           >
-            <span className="block h-0.5 bg-[#241f1a] transition-transform" style={menuOpen ? { transform: "translateY(6px) rotate(45deg)" } : {}} />
-            <span className="block h-0.5 bg-[#241f1a] transition-opacity" style={menuOpen ? { opacity: 0 } : {}} />
-            <span className="block h-0.5 bg-[#241f1a] transition-transform" style={menuOpen ? { transform: "translateY(-6px) rotate(-45deg)" } : {}} />
+            <span className="block h-0.5 bg-[#101014] transition-transform" style={menuOpen ? { transform: "translateY(6px) rotate(45deg)" } : {}} />
+            <span className="block h-0.5 bg-[#101014] transition-opacity" style={menuOpen ? { opacity: 0 } : {}} />
+            <span className="block h-0.5 bg-[#101014] transition-transform" style={menuOpen ? { transform: "translateY(-6px) rotate(-45deg)" } : {}} />
           </button>
         </div>
 
         {/* Mobile drawer */}
         {menuOpen && (
-          <nav className="md:hidden flex flex-col border-t border-dashed border-[#d8cdb8] px-4 py-2">
+          <nav className="md:hidden flex flex-col border-t border-dashed border-[#dde1e8] px-4 py-2">
             <NavItem to="/men" onClick={() => setMenuOpen(false)} mobile>
               Men
             </NavItem>
@@ -54,19 +56,19 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
 
       <main>{children}</main>
 
-      <footer className="border-t border-dashed border-[#d8cdb8] mt-16 px-4 py-10">
+      <footer className="border-t border-dashed border-[#dde1e8] mt-16 px-4 py-10">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
           <div className="col-span-2 md:col-span-1">
-            <p className="font-serif text-lg mb-2">Baig Cloth</p>
-            <p className="text-[#a9987e]">Unstitched fabric, made simple.</p>
+            <img src={logo} alt="Baig Cloth" className="h-8 w-auto mb-2" />
+            <p className="text-[#6b7280]">Unstitched fabric, made simple.</p>
           </div>
           <FooterLinks title="Shop" links={[{ to: "/men", label: "Men" }, { to: "/women", label: "Women" }, { to: "/sale", label: "Sale" }]} />
           <FooterLinks title="Info" links={[{ to: "/policies", label: "Policies" }, { to: "/about", label: "About" }]} />
           <div>
-            <p className="text-[#a9987e] mb-2">Order via</p>
+            <p className="text-[#6b7280] mb-2">Order via</p>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
-              className="text-[#7a1930] hover:underline"
+              className="text-[#223c80] hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -81,7 +83,7 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
         href={`https://wa.me/${WHATSAPP_NUMBER}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 z-40 bg-[#7a1930] text-[#f6f1e6] rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#8f1f39] transition-colors"
+        className="fixed bottom-5 right-5 z-40 bg-[#223c80] text-[#f7f7f5] rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#2d4d9e] transition-colors"
         aria-label="Message us on WhatsApp"
       >
         <WhatsAppIcon />
@@ -108,8 +110,8 @@ function NavItem({
       to={to}
       onClick={onClick}
       className={({ isActive }) =>
-        `${mobile ? "py-2.5 border-b border-[#e5dcc8] last:border-0" : ""} ${
-          accent ? "text-[#b5451b] font-medium" : ""
+        `${mobile ? "py-2.5 border-b border-[#e6e9ee] last:border-0" : ""} ${
+          accent ? "text-[#1a2f66] font-medium" : ""
         } ${isActive ? "underline underline-offset-4" : ""} hover:opacity-70 transition-opacity`
       }
     >
@@ -121,7 +123,7 @@ function NavItem({
 function FooterLinks({ title, links }: { title: string; links: { to: string; label: string }[] }) {
   return (
     <div>
-      <p className="text-[#a9987e] mb-2">{title}</p>
+      <p className="text-[#6b7280] mb-2">{title}</p>
       <ul className="space-y-1.5">
         {links.map((l) => (
           <li key={l.to}>

@@ -39,7 +39,7 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
     <StorefrontLayout>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="font-serif text-3xl mb-1 capitalize">{gender}</h1>
-        <p className="text-[#a9987e] text-sm mb-6">
+        <p className="text-[#6b7280] text-sm mb-6">
           {products.length} {products.length === 1 ? "piece" : "pieces"}
         </p>
 
@@ -63,10 +63,10 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
         )}
 
         {loading ? (
-          <p className="text-[#a9987e] text-sm">Loading…</p>
+          <p className="text-[#6b7280] text-sm">Loading…</p>
         ) : products.length === 0 ? (
-          <div className="border border-dashed border-[#d8cdb8] rounded-lg p-12 text-center">
-            <p className="text-[#4a4237]">Nothing here yet — check back soon.</p>
+          <div className="border border-dashed border-[#dde1e8] rounded-lg p-12 text-center">
+            <p className="text-[#1f2937]">Nothing here yet — check back soon.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -86,8 +86,8 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
       onClick={onClick}
       className={`shrink-0 px-3.5 py-1.5 rounded-full text-sm border transition-colors ${
         active
-          ? "bg-[#241f1a] text-[#f6f1e6] border-[#241f1a]"
-          : "border-[#d8cdb8] text-[#4a4237] hover:border-[#a9987e]"
+          ? "bg-[#101014] text-[#f7f7f5] border-[#101014]"
+          : "border-[#dde1e8] text-[#1f2937] hover:border-[#6b7280]"
       }`}
     >
       {label}

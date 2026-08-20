@@ -17,27 +17,27 @@ export default function HomePage() {
   return (
     <StorefrontLayout>
       {/* Hero */}
-      <section className="relative bg-[#ece3d1] border-b border-dashed border-[#d8cdb8]">
+      <section className="relative bg-[#eef0f3] border-b border-dashed border-[#dde1e8]">
         <div className="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
-          <p className="font-mono text-xs tracking-[0.25em] text-[#a9987e] uppercase mb-4">
+          <p className="font-mono text-xs tracking-[0.25em] text-[#6b7280] uppercase mb-4">
             Unstitched Fabric
           </p>
           <h1 className="font-serif text-4xl md:text-6xl leading-tight max-w-2xl mx-auto">
             Cloth worth cutting into something of your own.
           </h1>
-          <p className="text-[#4a4237] mt-4 max-w-md mx-auto">
+          <p className="text-[#1f2937] mt-4 max-w-md mx-auto">
             Hand-picked lawn, cotton, and embroidered fabric for men and women — ordered directly over WhatsApp.
           </p>
           <div className="flex gap-3 justify-center mt-8">
             <Link
               to="/women"
-              className="bg-[#7a1930] text-[#f6f1e6] px-6 py-3 rounded text-sm hover:bg-[#8f1f39] transition-colors"
+              className="bg-[#223c80] text-[#f7f7f5] px-6 py-3 rounded text-sm hover:bg-[#2d4d9e] transition-colors"
             >
               Shop Women
             </Link>
             <Link
               to="/men"
-              className="border border-[#241f1a] px-6 py-3 rounded text-sm hover:bg-[#241f1a] hover:text-[#f6f1e6] transition-colors"
+              className="border border-[#101014] px-6 py-3 rounded text-sm hover:bg-[#101014] hover:text-[#f7f7f5] transition-colors"
             >
               Shop Men
             </Link>
@@ -56,7 +56,7 @@ export default function HomePage() {
         <section className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-serif text-2xl">On Sale</h2>
-            <Link to="/sale" className="text-sm text-[#b5451b] hover:underline">
+            <Link to="/sale" className="text-sm text-[#1a2f66] hover:underline">
               View all
             </Link>
           </div>
@@ -85,7 +85,7 @@ export default function HomePage() {
       )}
 
       {/* Trust / how it works */}
-      <section className="max-w-6xl mx-auto px-4 py-14 border-t border-dashed border-[#d8cdb8] mt-6">
+      <section className="max-w-6xl mx-auto px-4 py-14 border-t border-dashed border-[#dde1e8] mt-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
           <Step title="Browse" body="Explore fabric by category and find what suits you." />
           <Step title="Message us" body="Tap a product and send us a WhatsApp message." />
@@ -100,12 +100,12 @@ function CategoryTile({ to, label, sub }: { to: string; label: string; sub: stri
   return (
     <Link
       to={to}
-      className="group relative aspect-[16/9] md:aspect-[4/3] bg-[#ece3d1] rounded-lg overflow-hidden border border-[#d8cdb8] flex items-end p-6"
+      className="group relative aspect-[16/9] md:aspect-[4/3] bg-[#eef0f3] rounded-lg overflow-hidden border border-[#dde1e8] flex items-end p-6"
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-[#241f1a]/40 to-transparent" />
-      <div className="relative text-[#f6f1e6]">
+      <div className="absolute inset-0 bg-gradient-to-t from-[#101014]/40 to-transparent" />
+      <div className="relative text-[#f7f7f5]">
         <h3 className="font-serif text-3xl">{label}</h3>
-        <p className="text-sm text-[#e5dcc8] mt-1">{sub}</p>
+        <p className="text-sm text-[#e6e9ee] mt-1">{sub}</p>
       </div>
     </Link>
   );
@@ -115,7 +115,7 @@ function Step({ title, body }: { title: string; body: string }) {
   return (
     <div>
       <h3 className="font-serif text-lg mb-1.5">{title}</h3>
-      <p className="text-[#4a4237] text-sm">{body}</p>
+      <p className="text-[#1f2937] text-sm">{body}</p>
     </div>
   );
 }

@@ -24,8 +24,8 @@ export default function ProductPage() {
     return (
       <StorefrontLayout>
         <div className="max-w-6xl mx-auto px-4 py-16 text-center">
-          <p className="text-[#4a4237]">This piece isn't available anymore.</p>
-          <Link to="/" className="text-[#7a1930] text-sm hover:underline mt-2 inline-block">
+          <p className="text-[#1f2937]">This piece isn't available anymore.</p>
+          <Link to="/" className="text-[#223c80] text-sm hover:underline mt-2 inline-block">
             Back to shop
           </Link>
         </div>
@@ -37,7 +37,7 @@ export default function ProductPage() {
     return (
       <StorefrontLayout>
         <div className="max-w-6xl mx-auto px-4 py-16">
-          <p className="text-[#a9987e] text-sm">Loading…</p>
+          <p className="text-[#6b7280] text-sm">Loading…</p>
         </div>
       </StorefrontLayout>
     );
@@ -48,7 +48,7 @@ export default function ProductPage() {
       <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Gallery */}
         <div>
-          <div className="relative aspect-[4/5] bg-[#ece3d1] rounded-lg overflow-hidden border border-[#d8cdb8]">
+          <div className="relative aspect-[4/5] bg-[#eef0f3] rounded-lg overflow-hidden border border-[#dde1e8]">
             {product.image_urls[activeImage] ? (
               <img
                 src={product.image_urls[activeImage]}
@@ -56,12 +56,12 @@ export default function ProductPage() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-[#a9987e] text-sm">
+              <div className="w-full h-full flex items-center justify-center text-[#6b7280] text-sm">
                 No image
               </div>
             )}
             {product.on_sale && (
-              <span className="absolute top-3 left-3 bg-[#b5451b] text-[#f6f1e6] text-xs uppercase tracking-wide px-2.5 py-1 rounded-sm">
+              <span className="absolute top-3 left-3 bg-[#1a2f66] text-[#f7f7f5] text-xs uppercase tracking-wide px-2.5 py-1 rounded-sm">
                 Sale
               </span>
             )}
@@ -74,7 +74,7 @@ export default function ProductPage() {
                   key={url}
                   onClick={() => setActiveImage(i)}
                   className={`w-16 h-20 rounded overflow-hidden border-2 transition-colors ${
-                    i === activeImage ? "border-[#7a1930]" : "border-transparent"
+                    i === activeImage ? "border-[#223c80]" : "border-transparent"
                   }`}
                 >
                   <img src={url} alt="" className="w-full h-full object-cover" />
@@ -91,8 +91,8 @@ export default function ProductPage() {
           <p className="font-mono text-lg mb-4">
             {product.on_sale && product.sale_price ? (
               <>
-                <span className="line-through text-[#a9987e] mr-2">Rs {product.price}</span>
-                <span className="text-[#b5451b]">Rs {product.sale_price}</span>
+                <span className="line-through text-[#6b7280] mr-2">Rs {product.price}</span>
+                <span className="text-[#1a2f66]">Rs {product.sale_price}</span>
               </>
             ) : (
               <span>Rs {product.price}</span>
@@ -100,11 +100,11 @@ export default function ProductPage() {
           </p>
 
           {!product.in_stock && (
-            <p className="text-[#b5451b] text-sm mb-4">Currently out of stock</p>
+            <p className="text-[#1a2f66] text-sm mb-4">Currently out of stock</p>
           )}
 
           {product.description && (
-            <p className="text-[#4a4237] text-sm leading-relaxed mb-6 whitespace-pre-line">
+            <p className="text-[#1f2937] text-sm leading-relaxed mb-6 whitespace-pre-line">
               {product.description}
             </p>
           )}
@@ -115,14 +115,14 @@ export default function ProductPage() {
             rel="noopener noreferrer"
             className={`inline-flex items-center justify-center w-full md:w-auto px-8 py-3 rounded text-sm font-medium transition-colors ${
               product.in_stock
-                ? "bg-[#7a1930] text-[#f6f1e6] hover:bg-[#8f1f39]"
-                : "bg-[#d8cdb8] text-[#a9987e] cursor-not-allowed pointer-events-none"
+                ? "bg-[#223c80] text-[#f7f7f5] hover:bg-[#2d4d9e]"
+                : "bg-[#dde1e8] text-[#6b7280] cursor-not-allowed pointer-events-none"
             }`}
           >
             {product.in_stock ? "Order on WhatsApp" : "Out of stock"}
           </a>
 
-          <p className="text-[#a9987e] text-xs mt-3">
+          <p className="text-[#6b7280] text-xs mt-3">
             We'll confirm availability and delivery details over WhatsApp.
           </p>
         </div>
