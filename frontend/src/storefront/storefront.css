@@ -1,0 +1,15 @@
+/* Font import lives in index.css (must be first in the merged stylesheet). */
+
+#storefront-root {
+  font-family: 'Inter', sans-serif;
+}
+
+#storefront-root h1,
+#storefront-root h2,
+#storefront-root h3 {
+  font-family: 'Fraunces', serif;
+}
+
+#storefront-root .font-mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
