@@ -98,7 +98,7 @@ export default function ProductForm() {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-[#1f1c16] border border-[#322d24] rounded-lg p-6 max-w-2xl border-t-2 border-t-dashed border-t-[#c1652f]"
+        className="bg-[#12182a] border border-[#24304d] rounded-lg p-6 max-w-2xl border-t-2 border-t-dashed border-t-[#3f5fc4]"
       >
         <Field label="Name">
           <input
@@ -177,11 +177,11 @@ export default function ProductForm() {
           <div className="flex flex-wrap gap-3 mb-3">
             {form.image_urls.map((url) => (
               <div key={url} className="relative">
-                <img src={url} alt="" className="w-20 h-24 object-cover rounded border border-[#322d24]" />
+                <img src={url} alt="" className="w-20 h-24 object-cover rounded border border-[#24304d]" />
                 <button
                   type="button"
                   onClick={() => removeImage(url)}
-                  className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-[#b3543f] text-[#ede7db] text-xs leading-5"
+                  className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-[#c0392b] text-[#f2f3f5] text-xs leading-5"
                   aria-label="Remove image"
                 >
                   ×
@@ -189,7 +189,7 @@ export default function ProductForm() {
               </div>
             ))}
           </div>
-          <label className="inline-block cursor-pointer text-sm text-[#c1652f] hover:underline">
+          <label className="inline-block cursor-pointer text-sm text-[#3f5fc4] hover:underline">
             {uploading ? "Uploading…" : "+ Upload image"}
             <input
               type="file"
@@ -199,27 +199,27 @@ export default function ProductForm() {
               disabled={uploading}
             />
           </label>
-          <p className="text-[#948b7a] text-xs mt-1">1000×1250px (4:5 ratio), under 400KB JPG works best.</p>
+          <p className="text-[#7b879e] text-xs mt-1">1000×1250px (4:5 ratio), under 400KB JPG works best.</p>
         </Field>
 
         {error && (
-          <p className="text-[#b3543f] text-sm mt-4" role="alert">
+          <p className="text-[#c0392b] text-sm mt-4" role="alert">
             {error}
           </p>
         )}
 
-        <div className="flex gap-3 mt-6 pt-4 border-t border-dashed border-[#322d24]">
+        <div className="flex gap-3 mt-6 pt-4 border-t border-dashed border-[#24304d]">
           <button
             type="submit"
             disabled={saving}
-            className="bg-[#c1652f] text-[#16140f] font-medium rounded px-5 py-2 text-sm hover:bg-[#d17640] transition-colors disabled:opacity-60"
+            className="bg-[#3f5fc4] text-[#0b0f1a] font-medium rounded px-5 py-2 text-sm hover:bg-[#5470d6] transition-colors disabled:opacity-60"
           >
             {saving ? "Saving…" : isEdit ? "Save changes" : "Add product"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/admin")}
-            className="text-[#948b7a] hover:text-[#ede7db] text-sm px-2"
+            className="text-[#7b879e] hover:text-[#f2f3f5] text-sm px-2"
           >
             Cancel
           </button>
@@ -232,7 +232,7 @@ export default function ProductForm() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <label className="block text-xs text-[#948b7a] mb-1.5">{label}</label>
+      <label className="block text-xs text-[#7b879e] mb-1.5">{label}</label>
       {children}
     </div>
   );
@@ -253,7 +253,7 @@ function Checkbox({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="w-4 h-4 accent-[#c1652f]"
+        className="w-4 h-4 accent-[#3f5fc4]"
       />
       {label}
     </label>

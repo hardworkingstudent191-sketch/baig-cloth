@@ -63,7 +63,7 @@ export default function AdminDashboard() {
         <h2 className="font-serif text-2xl">Products</h2>
         <Link
           to="/admin/products/new"
-          className="bg-[#c1652f] text-[#16140f] font-medium rounded px-4 py-2 text-sm hover:bg-[#d17640] transition-colors"
+          className="bg-[#3f5fc4] text-[#0b0f1a] font-medium rounded px-4 py-2 text-sm hover:bg-[#5470d6] transition-colors"
         >
           + Add product
         </Link>
@@ -71,31 +71,31 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-3 gap-3 mb-6">
         <StatCard label="Total products" value={stats.total} />
-        <StatCard label="In stock" value={stats.inStock} accent="#7a9b6e" />
-        <StatCard label="On sale" value={stats.onSale} accent="#c1652f" />
+        <StatCard label="In stock" value={stats.inStock} accent="#3f8f63" />
+        <StatCard label="On sale" value={stats.onSale} accent="#3f5fc4" />
       </div>
 
       {error && (
-        <div className="bg-[#1f1c16] border border-[#b3543f] rounded-lg p-4 mb-4 text-[#b3543f] text-sm">
+        <div className="bg-[#12182a] border border-[#c0392b] rounded-lg p-4 mb-4 text-[#c0392b] text-sm">
           {error}
         </div>
       )}
 
       {loading ? (
-        <p className="text-[#948b7a] text-sm">Loading products…</p>
+        <p className="text-[#7b879e] text-sm">Loading products…</p>
       ) : products.length === 0 ? (
-        <div className="bg-[#1f1c16] border border-dashed border-[#322d24] rounded-lg p-10 text-center">
-          <p className="text-[#ede7db] mb-1">No products yet</p>
-          <p className="text-[#948b7a] text-sm mb-4">Add your first piece to get the storefront started.</p>
-          <Link to="/admin/products/new" className="text-[#c1652f] text-sm hover:underline">
+        <div className="bg-[#12182a] border border-dashed border-[#24304d] rounded-lg p-10 text-center">
+          <p className="text-[#f2f3f5] mb-1">No products yet</p>
+          <p className="text-[#7b879e] text-sm mb-4">Add your first piece to get the storefront started.</p>
+          <Link to="/admin/products/new" className="text-[#3f5fc4] text-sm hover:underline">
             + Add product
           </Link>
         </div>
       ) : (
-        <div className="bg-[#1f1c16] border border-[#322d24] rounded-lg overflow-hidden">
+        <div className="bg-[#12182a] border border-[#24304d] rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-dashed border-[#322d24] text-left text-[#948b7a]">
+              <tr className="border-b border-dashed border-[#24304d] text-left text-[#7b879e]">
                 <th className="px-4 py-3 font-normal">Product</th>
                 <th className="px-4 py-3 font-normal">Category</th>
                 <th className="px-4 py-3 font-normal">Price</th>
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
             </thead>
             <tbody>
               {products.map((product) => (
-                <tr key={product.id} className="border-b border-[#322d24] last:border-0">
+                <tr key={product.id} className="border-b border-[#24304d] last:border-0">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {product.image_urls[0] ? (
@@ -116,17 +116,17 @@ export default function AdminDashboard() {
                           className="w-10 h-12 object-cover rounded"
                         />
                       ) : (
-                        <div className="w-10 h-12 bg-[#16140f] rounded border border-[#322d24]" />
+                        <div className="w-10 h-12 bg-[#0b0f1a] rounded border border-[#24304d]" />
                       )}
                       <span>{product.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-[#948b7a]">{categoryName(product.category_id)}</td>
+                  <td className="px-4 py-3 text-[#7b879e]">{categoryName(product.category_id)}</td>
                   <td className="px-4 py-3 font-mono text-xs">
                     {product.on_sale && product.sale_price ? (
                       <>
-                        <span className="line-through text-[#948b7a] mr-1.5">Rs {product.price}</span>
-                        <span className="text-[#c1652f]">Rs {product.sale_price}</span>
+                        <span className="line-through text-[#7b879e] mr-1.5">Rs {product.price}</span>
+                        <span className="text-[#3f5fc4]">Rs {product.sale_price}</span>
                       </>
                     ) : (
                       <span>Rs {product.price}</span>
@@ -139,19 +139,19 @@ export default function AdminDashboard() {
                     <ToggleChip
                       active={product.on_sale}
                       onClick={() => toggleOnSale(product)}
-                      activeColor="#c1652f"
+                      activeColor="#3f5fc4"
                     />
                   </td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">
                     <Link
                       to={`/admin/products/${product.id}/edit`}
-                      className="text-[#948b7a] hover:text-[#ede7db] text-xs mr-3"
+                      className="text-[#7b879e] hover:text-[#f2f3f5] text-xs mr-3"
                     >
                       Edit
                     </Link>
                     <button
                       onClick={() => handleDelete(product)}
-                      className="text-[#948b7a] hover:text-[#b3543f] text-xs"
+                      className="text-[#7b879e] hover:text-[#c0392b] text-xs"
                     >
                       Delete
                     </button>
@@ -169,15 +169,15 @@ export default function AdminDashboard() {
 function StatCard({
   label,
   value,
-  accent = "#ede7db",
+  accent = "#f2f3f5",
 }: {
   label: string;
   value: number;
   accent?: string;
 }) {
   return (
-    <div className="bg-[#1f1c16] border border-[#322d24] rounded-lg px-4 py-3">
-      <p className="text-[#948b7a] text-xs mb-1">{label}</p>
+    <div className="bg-[#12182a] border border-[#24304d] rounded-lg px-4 py-3">
+      <p className="text-[#7b879e] text-xs mb-1">{label}</p>
       <p className="font-serif text-2xl" style={{ color: accent }}>
         {value}
       </p>
@@ -188,7 +188,7 @@ function StatCard({
 function ToggleChip({
   active,
   onClick,
-  activeColor = "#7a9b6e",
+  activeColor = "#3f8f63",
 }: {
   active: boolean;
   onClick: () => void;
@@ -198,11 +198,11 @@ function ToggleChip({
     <button
       onClick={onClick}
       className="w-9 h-5 rounded-full relative transition-colors"
-      style={{ backgroundColor: active ? activeColor : "#322d24" }}
+      style={{ backgroundColor: active ? activeColor : "#24304d" }}
       aria-pressed={active}
     >
       <span
-        className="absolute top-0.5 w-4 h-4 rounded-full bg-[#ede7db] transition-all"
+        className="absolute top-0.5 w-4 h-4 rounded-full bg-[#f2f3f5] transition-all"
         style={{ left: active ? "18px" : "2px" }}
       />
     </button>

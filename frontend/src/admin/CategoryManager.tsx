@@ -57,10 +57,10 @@ export default function CategoryManager() {
       .sort((a, b) => a.sort_order - b.sort_order);
 
     return (
-      <div className="bg-[#1f1c16] border border-[#322d24] rounded-lg p-5">
+      <div className="bg-[#12182a] border border-[#24304d] rounded-lg p-5">
         <h3 className="font-serif text-lg mb-3">{label}</h3>
         {items.length === 0 ? (
-          <p className="text-[#948b7a] text-sm">No categories yet.</p>
+          <p className="text-[#7b879e] text-sm">No categories yet.</p>
         ) : (
           <ul className="space-y-2">
             {items.map((c) => (
@@ -68,11 +68,11 @@ export default function CategoryManager() {
                 <input
                   defaultValue={c.name}
                   onBlur={(e) => handleRename(c, e.target.value)}
-                  className="flex-1 bg-[#16140f] border border-[#322d24] rounded px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#c1652f]"
+                  className="flex-1 bg-[#0b0f1a] border border-[#24304d] rounded px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#3f5fc4]"
                 />
                 <button
                   onClick={() => handleDelete(c)}
-                  className="text-[#948b7a] hover:text-[#b3543f] text-xs px-1"
+                  className="text-[#7b879e] hover:text-[#c0392b] text-xs px-1"
                 >
                   Delete
                 </button>
@@ -90,10 +90,10 @@ export default function CategoryManager() {
 
       <form
         onSubmit={handleAdd}
-        className="flex gap-2 mb-6 items-end bg-[#1f1c16] border border-[#322d24] rounded-lg p-4 border-t-2 border-t-dashed border-t-[#c1652f]"
+        className="flex gap-2 mb-6 items-end bg-[#12182a] border border-[#24304d] rounded-lg p-4 border-t-2 border-t-dashed border-t-[#3f5fc4]"
       >
         <div className="flex-1">
-          <label className="block text-xs text-[#948b7a] mb-1.5">New category</label>
+          <label className="block text-xs text-[#7b879e] mb-1.5">New category</label>
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
@@ -102,7 +102,7 @@ export default function CategoryManager() {
           />
         </div>
         <div>
-          <label className="block text-xs text-[#948b7a] mb-1.5">For</label>
+          <label className="block text-xs text-[#7b879e] mb-1.5">For</label>
           <select
             value={newGender}
             onChange={(e) => setNewGender(e.target.value as Gender)}
@@ -114,20 +114,20 @@ export default function CategoryManager() {
         </div>
         <button
           type="submit"
-          className="bg-[#c1652f] text-[#16140f] font-medium rounded px-4 py-2 text-sm hover:bg-[#d17640] transition-colors"
+          className="bg-[#3f5fc4] text-[#0b0f1a] font-medium rounded px-4 py-2 text-sm hover:bg-[#5470d6] transition-colors"
         >
           Add
         </button>
       </form>
 
-      {error && <p className="text-[#b3543f] text-sm mb-4">{error}</p>}
+      {error && <p className="text-[#c0392b] text-sm mb-4">{error}</p>}
 
       <div className="grid grid-cols-2 gap-4">
         {renderGroup("men", "Men")}
         {renderGroup("women", "Women")}
       </div>
 
-      <p className="text-[#948b7a] text-xs mt-4">
+      <p className="text-[#7b879e] text-xs mt-4">
         Rename a category by editing its name and clicking away. New categories can be added anytime —
         no code changes needed as your fabric range grows.
       </p>
