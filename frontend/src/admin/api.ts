@@ -15,6 +15,33 @@ export function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+// RequireAuth previously only checked whether a token existed, not whether
+// it had expired — so after 24h an admin would briefly see the dashboard
+// shell render before an API call 401'd and bounced them. Decoding the
+// JWT's exp claim client-side (base64, no library needed) lets us catch
+// this immediately instead.
+export function isTokenValid(): boolean {
+  const token = getToken();
+  if (!token) return false;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (typeof payload.exp !== "number") return true;
+    return payload.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+}
+
+// Carries the HTTP status so callers can distinguish "not found" from other
+// failures, instead of matching on error message text.
+export class ApiError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
@@ -28,17 +55,22 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  } catch {
+    throw new ApiError(0, "Network error — check your connection and try again.");
+  }
 
   if (res.status === 401) {
     clearToken();
     window.location.href = "/admin/login";
-    throw new Error("Session expired");
+    throw new ApiError(401, "Session expired");
   }
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(body.detail ?? "Request failed");
+    throw new ApiError(res.status, body.detail ?? "Request failed");
   }
 
   if (res.status === 204) return undefined as T;
@@ -53,6 +85,8 @@ export const api = {
     }),
 
   listProducts: () => request<Product[]>("/products"),
+
+  getProduct: (id: number) => request<Product>(`/products/${id}`),
 
   createProduct: (payload: ProductInput) =>
     request<Product>("/products", { method: "POST", body: JSON.stringify(payload) }),

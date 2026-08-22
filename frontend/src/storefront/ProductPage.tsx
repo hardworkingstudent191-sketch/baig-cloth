@@ -1,23 +1,31 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { storefrontApi, whatsappLink } from "./api";
+import { storefrontApi, whatsappLink, ApiError } from "./api";
 import type { Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
-
-const WHATSAPP_NUMBER = "923001234567"; // TODO: replace with your real number
+import { WHATSAPP_NUMBER } from "./config";
 
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [notFound, setNotFound] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     if (!id) return;
+    setNotFound(false);
+    setLoadError(false);
     storefrontApi
       .getProduct(Number(id))
       .then(setProduct)
-      .catch(() => setNotFound(true));
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 404) {
+          setNotFound(true);
+        } else {
+          setLoadError(true);
+        }
+      });
   }, [id]);
 
   if (notFound) {
@@ -25,6 +33,19 @@ export default function ProductPage() {
       <StorefrontLayout>
         <div className="max-w-6xl mx-auto px-4 py-16 text-center">
           <p className="text-[#1f2937]">This piece isn't available anymore.</p>
+          <Link to="/" className="text-[#223c80] text-sm hover:underline mt-2 inline-block">
+            Back to shop
+          </Link>
+        </div>
+      </StorefrontLayout>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <StorefrontLayout>
+        <div className="max-w-6xl mx-auto px-4 py-16 text-center">
+          <p className="text-[#1f2937]">Couldn't load this product. Check your connection and try again.</p>
           <Link to="/" className="text-[#223c80] text-sm hover:underline mt-2 inline-block">
             Back to shop
           </Link>
@@ -100,7 +121,16 @@ export default function ProductPage() {
           </p>
 
           {!product.in_stock && (
-            <p className="text-[#1a2f66] text-sm mb-4">Currently out of stock</p>
+            <p className="text-[#6b7280] text-sm mb-4 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#6b7280]" />
+              Currently out of stock
+            </p>
+          )}
+
+          {product.on_sale && product.sale_ends_at && (
+            <p className="text-[#6b7280] text-xs mb-4">
+              Sale ends {new Date(product.sale_ends_at).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
+            </p>
           )}
 
           {product.description && (
@@ -109,18 +139,29 @@ export default function ProductPage() {
             </p>
           )}
 
-          <a
-            href={whatsappLink(product, WHATSAPP_NUMBER)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`inline-flex items-center justify-center w-full md:w-auto px-8 py-3 rounded text-sm font-medium transition-colors ${
-              product.in_stock
-                ? "bg-[#223c80] text-[#f7f7f5] hover:bg-[#2d4d9e]"
-                : "bg-[#dde1e8] text-[#6b7280] cursor-not-allowed pointer-events-none"
-            }`}
-          >
-            {product.in_stock ? "Order on WhatsApp" : "Out of stock"}
-          </a>
+          {product.in_stock ? (
+            <a
+              href={whatsappLink(product, WHATSAPP_NUMBER)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center w-full md:w-auto px-8 py-3 rounded text-sm font-medium transition-colors bg-[#223c80] text-[#f7f7f5] hover:bg-[#2d4d9e]"
+            >
+              Order on WhatsApp
+            </a>
+          ) : (
+            // A real disabled <button>, not a styled-to-look-disabled <a href>.
+            // The old version kept a live WhatsApp link underneath the disabled
+            // styling, which pointer-events:none doesn't block for keyboard/
+            // screen-reader activation — so an "out of stock" item could still
+            // be ordered. This can't be activated at all.
+            <button
+              type="button"
+              disabled
+              className="inline-flex items-center justify-center w-full md:w-auto px-8 py-3 rounded text-sm font-medium bg-[#dde1e8] text-[#6b7280] cursor-not-allowed"
+            >
+              Out of stock
+            </button>
+          )}
 
           <p className="text-[#6b7280] text-xs mt-3">
             We'll confirm availability and delivery details over WhatsApp.

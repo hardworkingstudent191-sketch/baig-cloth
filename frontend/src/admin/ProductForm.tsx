@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { api } from "./api";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { api, ApiError } from "./api";
 import type { Category, ProductInput } from "./types";
 import AdminLayout from "./AdminLayout";
 
@@ -17,6 +17,27 @@ const emptyProduct: ProductInput = {
   featured: false,
 };
 
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8MB — mirrors the backend's limit
+
+// <input type="datetime-local"> works in the browser's local time and has no
+// concept of timezone, while the API stores/returns UTC ISO strings. These
+// convert between the two so "6pm" in the form is actually 6pm for the
+// admin, not 6pm UTC.
+function toDatetimeLocalValue(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function fromDatetimeLocalValue(value: string): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return null;
+  return d.toISOString();
+}
+
 export default function ProductForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
@@ -27,18 +48,48 @@ export default function ProductForm() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    api.listCategories().then(setCategories);
-    if (isEdit && id) {
-      api.listProducts().then((products) => {
-        const existing = products.find((p) => p.id === Number(id));
-        if (existing) {
+    let cancelled = false;
+
+    async function load() {
+      setInitialLoading(true);
+      setLoadError(null);
+      setNotFound(false);
+      try {
+        const cats = await api.listCategories();
+        if (cancelled) return;
+        setCategories(cats);
+
+        if (isEdit && id) {
+          // Previously this fetched the ENTIRE product catalog just to find
+          // one by id — wasteful, and only worked at all because the admin
+          // api client happened to expose listProducts(). Using the actual
+          // GET /products/{id} endpoint fixes both.
+          const existing = await api.getProduct(Number(id));
+          if (cancelled) return;
           const { id: _pid, created_at: _ca, ...rest } = existing;
           setForm(rest);
         }
-      });
+      } catch (err) {
+        if (cancelled) return;
+        if (err instanceof ApiError && err.status === 404) {
+          setNotFound(true);
+        } else {
+          setLoadError("Couldn't load this form. Check your connection and try again.");
+        }
+      } finally {
+        if (!cancelled) setInitialLoading(false);
+      }
     }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
   }, [id, isEdit]);
 
   function update<K extends keyof ProductInput>(key: K, value: ProductInput[K]) {
@@ -48,6 +99,11 @@ export default function ProductForm() {
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setError("That image is too large — please keep uploads under 8MB.");
+      e.target.value = "";
+      return;
+    }
     setUploading(true);
     setError(null);
     try {
@@ -68,15 +124,46 @@ export default function ProductForm() {
     );
   }
 
+  // The first image is documented as the "primary" one (shown on cards and
+  // as the default gallery image), but there was previously no way to
+  // reorder images after uploading — only delete-and-reupload in the right
+  // order. This lets an admin move any image into the primary slot.
+  function moveImage(index: number, direction: -1 | 1) {
+    const next = [...form.image_urls];
+    const target = index + direction;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target], next[index]];
+    update("image_urls", next);
+  }
+
+  function validate(): string | null {
+    if (!form.name.trim()) return "Name can't be empty.";
+    if (!form.category_id) return "Pick a category before saving.";
+
+    const price = Number(form.price);
+    if (!form.price || isNaN(price) || price <= 0) {
+      return "Price must be a number greater than 0.";
+    }
+
+    if (form.on_sale) {
+      if (!form.sale_price) return "Sale price is required when \u201cOn sale\u201d is checked.";
+      const salePrice = Number(form.sale_price);
+      if (isNaN(salePrice) || salePrice <= 0) return "Sale price must be a number greater than 0.";
+      if (salePrice >= price) return "Sale price must be less than the regular price.";
+    }
+
+    return null;
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError(null);
-
-    if (!form.category_id) {
-      setError("Pick a category before saving.");
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
+    setError(null);
     setSaving(true);
     try {
       if (isEdit && id) {
@@ -85,11 +172,43 @@ export default function ProductForm() {
         await api.createProduct(form);
       }
       navigate("/admin");
-    } catch {
-      setError("Couldn't save the product. Check the fields and try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't save the product. Check the fields and try again.");
     } finally {
       setSaving(false);
     }
+  }
+
+  if (notFound) {
+    return (
+      <AdminLayout>
+        <div className="bg-[#12182a] border border-dashed border-[#24304d] rounded-lg p-10 text-center max-w-2xl">
+          <p className="text-[#f2f3f5] mb-1">This product doesn't exist anymore.</p>
+          <p className="text-[#7b879e] text-sm mb-4">It may have already been deleted.</p>
+          <Link to="/admin" className="text-[#3f5fc4] text-sm hover:underline">
+            Back to products
+          </Link>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <AdminLayout>
+        <div className="bg-[#12182a] border border-[#c0392b] rounded-lg p-6 max-w-2xl text-[#c0392b] text-sm">
+          {loadError}
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (initialLoading) {
+    return (
+      <AdminLayout>
+        <p className="text-[#7b879e] text-sm">Loading…</p>
+      </AdminLayout>
+    );
   }
 
   return (
@@ -119,12 +238,26 @@ export default function ProductForm() {
             <option value="" disabled>
               Select a category
             </option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.gender === "men" ? "Men" : "Women"} — {c.name}
+            {categories.length === 0 ? (
+              <option value="" disabled>
+                No categories yet — add one first
               </option>
-            ))}
+            ) : (
+              categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.gender === "men" ? "Men" : "Women"} — {c.name}
+                </option>
+              ))
+            )}
           </select>
+          {categories.length === 0 && (
+            <p className="text-[#7b879e] text-xs mt-1.5">
+              <Link to="/admin/categories" className="text-[#3f5fc4] hover:underline">
+                Add a category
+              </Link>{" "}
+              before adding products.
+            </p>
+          )}
         </Field>
 
         <Field label="Description (include size info here)">
@@ -155,7 +288,7 @@ export default function ProductForm() {
           </Field>
         </div>
 
-        <div className="flex gap-6 my-4">
+        <div className="flex gap-6 my-4 flex-wrap">
           <Checkbox
             label="In stock"
             checked={form.in_stock}
@@ -173,11 +306,32 @@ export default function ProductForm() {
           />
         </div>
 
+        {form.on_sale && (
+          <Field label="Sale ends (optional)">
+            <input
+              type="datetime-local"
+              value={toDatetimeLocalValue(form.sale_ends_at)}
+              onChange={(e) => update("sale_ends_at", fromDatetimeLocalValue(e.target.value))}
+              className="admin-input"
+            />
+            <p className="text-[#7b879e] text-xs mt-1.5">
+              Once this passes, the sale badge disappears from the storefront automatically —
+              you don't need to come back and turn "On sale" off yourself. Leave blank for an
+              open-ended sale.
+            </p>
+          </Field>
+        )}
+
         <Field label="Images">
           <div className="flex flex-wrap gap-3 mb-3">
-            {form.image_urls.map((url) => (
-              <div key={url} className="relative">
+            {form.image_urls.map((url, i) => (
+              <div key={url} className="relative group/img">
                 <img src={url} alt="" className="w-20 h-24 object-cover rounded border border-[#24304d]" />
+                {i === 0 && (
+                  <span className="absolute bottom-1 left-1 bg-[#0b0f1a]/80 text-[#7b879e] text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded">
+                    Primary
+                  </span>
+                )}
                 <button
                   type="button"
                   onClick={() => removeImage(url)}
@@ -186,6 +340,26 @@ export default function ProductForm() {
                 >
                   ×
                 </button>
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex gap-0.5 opacity-0 group-hover/img:opacity-100 transition-opacity">
+                  <button
+                    type="button"
+                    onClick={() => moveImage(i, -1)}
+                    disabled={i === 0}
+                    aria-label="Move image earlier"
+                    className="w-5 h-5 rounded-full bg-[#24304d] text-[#f2f3f5] text-[10px] leading-5 disabled:opacity-30"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveImage(i, 1)}
+                    disabled={i === form.image_urls.length - 1}
+                    aria-label="Move image later"
+                    className="w-5 h-5 rounded-full bg-[#24304d] text-[#f2f3f5] text-[10px] leading-5 disabled:opacity-30"
+                  >
+                    ›
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -199,7 +373,10 @@ export default function ProductForm() {
               disabled={uploading}
             />
           </label>
-          <p className="text-[#7b879e] text-xs mt-1">1000×1250px (4:5 ratio), under 400KB JPG works best.</p>
+          <p className="text-[#7b879e] text-xs mt-1">
+            1000×1250px (4:5 ratio), under 400KB JPG works best, 8MB max. The first image is used
+            as the primary photo — hover any image to reorder.
+          </p>
         </Field>
 
         {error && (

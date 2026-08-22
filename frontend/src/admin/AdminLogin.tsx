@@ -26,7 +26,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0b0f1a] flex items-center justify-center px-4">
+    <div id="admin-root" className="min-h-screen bg-[#0b0f1a] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <img src={logoLight} alt="Baig Cloth" className="h-14 w-auto mx-auto mb-3" />

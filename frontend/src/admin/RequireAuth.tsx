@@ -1,10 +1,10 @@
 import { type ReactNode } from "react";
 import { Navigate } from "react-router-dom";
-import { getToken } from "./api";
+import { isTokenValid, clearToken } from "./api";
 
 export default function RequireAuth({ children }: { children: ReactNode }) {
-  const token = getToken();
-  if (!token) {
+  if (!isTokenValid()) {
+    clearToken(); // covers the expired case, where a stale token is still sitting in storage
     return <Navigate to="/admin/login" replace />;
   }
   return <>{children}</>;

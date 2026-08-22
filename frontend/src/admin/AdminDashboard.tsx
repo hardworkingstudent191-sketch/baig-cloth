@@ -9,6 +9,8 @@ export default function AdminDashboard() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     loadData();
@@ -32,19 +34,34 @@ export default function AdminDashboard() {
   }
 
   async function toggleInStock(product: Product) {
-    const updated = await api.updateProduct(product.id, { in_stock: !product.in_stock });
-    setProducts((prev) => prev.map((p) => (p.id === product.id ? updated : p)));
+    setActionError(null);
+    try {
+      const updated = await api.updateProduct(product.id, { in_stock: !product.in_stock });
+      setProducts((prev) => prev.map((p) => (p.id === product.id ? updated : p)));
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Couldn't update that product.");
+    }
   }
 
   async function toggleOnSale(product: Product) {
-    const updated = await api.updateProduct(product.id, { on_sale: !product.on_sale });
-    setProducts((prev) => prev.map((p) => (p.id === product.id ? updated : p)));
+    setActionError(null);
+    try {
+      const updated = await api.updateProduct(product.id, { on_sale: !product.on_sale });
+      setProducts((prev) => prev.map((p) => (p.id === product.id ? updated : p)));
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Couldn't update that product.");
+    }
   }
 
   async function handleDelete(product: Product) {
     if (!confirm(`Remove "${product.name}" for good? This can't be undone.`)) return;
-    await api.deleteProduct(product.id);
-    setProducts((prev) => prev.filter((p) => p.id !== product.id));
+    setActionError(null);
+    try {
+      await api.deleteProduct(product.id);
+      setProducts((prev) => prev.filter((p) => p.id !== product.id));
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Couldn't delete that product.");
+    }
   }
 
   function categoryName(id: number) {
@@ -56,6 +73,10 @@ export default function AdminDashboard() {
     inStock: products.filter((p) => p.in_stock).length,
     onSale: products.filter((p) => p.on_sale).length,
   };
+
+  const visibleProducts = search.trim()
+    ? products.filter((p) => p.name.toLowerCase().includes(search.trim().toLowerCase()))
+    : products;
 
   return (
     <AdminLayout>
@@ -81,6 +102,24 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {actionError && (
+        <div className="bg-[#12182a] border border-[#c0392b] rounded-lg p-4 mb-4 text-[#c0392b] text-sm flex items-center justify-between gap-4">
+          <span>{actionError}</span>
+          <button onClick={() => setActionError(null)} className="text-[#7b879e] hover:text-[#f2f3f5] shrink-0">
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {!loading && products.length > 0 && (
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products by name…"
+          className="admin-input mb-4 max-w-sm"
+        />
+      )}
+
       {loading ? (
         <p className="text-[#7b879e] text-sm">Loading products…</p>
       ) : products.length === 0 ? (
@@ -91,8 +130,12 @@ export default function AdminDashboard() {
             + Add product
           </Link>
         </div>
+      ) : visibleProducts.length === 0 ? (
+        <div className="bg-[#12182a] border border-dashed border-[#24304d] rounded-lg p-10 text-center">
+          <p className="text-[#7b879e] text-sm">No products match "{search}".</p>
+        </div>
       ) : (
-        <div className="bg-[#12182a] border border-[#24304d] rounded-lg overflow-hidden">
+        <div className="bg-[#12182a] border border-[#24304d] rounded-lg overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-dashed border-[#24304d] text-left text-[#7b879e]">
@@ -105,7 +148,7 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {visibleProducts.map((product) => (
                 <tr key={product.id} className="border-b border-[#24304d] last:border-0">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">

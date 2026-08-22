@@ -7,11 +7,13 @@ import ProductCard from "./ProductCard";
 export default function SalePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     storefrontApi
       .listProducts({ on_sale: true })
       .then(setProducts)
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -25,6 +27,10 @@ export default function SalePage() {
 
         {loading ? (
           <p className="text-[#6b7280] text-sm">Loading…</p>
+        ) : error ? (
+          <div className="border border-dashed border-[#dde1e8] rounded-lg p-12 text-center">
+            <p className="text-[#1f2937]">Couldn't load products. Check your connection and try again.</p>
+          </div>
         ) : products.length === 0 ? (
           <div className="border border-dashed border-[#dde1e8] rounded-lg p-12 text-center">
             <p className="text-[#1f2937]">No active sales right now — check back soon.</p>

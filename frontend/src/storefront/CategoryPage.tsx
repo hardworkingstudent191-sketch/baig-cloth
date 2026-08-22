@@ -1,26 +1,30 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { storefrontApi } from "./api";
+import { useParams, useNavigate } from "react-router-dom";
+import { storefrontApi, ApiError } from "./api";
 import type { Category, Gender, Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 
+function slugify(name: string) {
+  return name.toLowerCase().replace(/\s+/g, "-");
+}
+
 export default function CategoryPage({ gender }: { gender: Gender }) {
   const { category: categorySlug } = useParams();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [activeCategoryId, setActiveCategoryId] = useState<number | undefined>();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    storefrontApi.listCategories(gender).then(setCategories);
+    storefrontApi.listCategories(gender).then(setCategories).catch(() => setError(true));
   }, [gender]);
 
   useEffect(() => {
     if (categorySlug && categories.length > 0) {
-      const match = categories.find(
-        (c) => c.name.toLowerCase().replace(/\s+/g, "-") === categorySlug
-      );
+      const match = categories.find((c) => slugify(c.name) === categorySlug);
       setActiveCategoryId(match?.id);
     } else {
       setActiveCategoryId(undefined);
@@ -29,11 +33,26 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
 
   useEffect(() => {
     setLoading(true);
+    setError(false);
     storefrontApi
       .listProducts({ gender, category_id: activeCategoryId })
       .then(setProducts)
+      .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [gender, activeCategoryId]);
+
+  // Selecting a chip now navigates to /men/lawn (or back to /men for "All"),
+  // instead of only updating local state. Previously the URL never changed
+  // when you clicked a chip, so the category filter couldn't be bookmarked
+  // or shared, and the browser back button didn't restore your previous
+  // selection.
+  function selectCategory(category: Category | undefined) {
+    if (!category) {
+      navigate(`/${gender}`);
+    } else {
+      navigate(`/${gender}/${slugify(category.name)}`);
+    }
+  }
 
   return (
     <StorefrontLayout>
@@ -49,14 +68,14 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
             <FilterChip
               label="All"
               active={activeCategoryId === undefined}
-              onClick={() => setActiveCategoryId(undefined)}
+              onClick={() => selectCategory(undefined)}
             />
             {categories.map((c) => (
               <FilterChip
                 key={c.id}
                 label={c.name}
                 active={activeCategoryId === c.id}
-                onClick={() => setActiveCategoryId(c.id)}
+                onClick={() => selectCategory(c)}
               />
             ))}
           </div>
@@ -64,6 +83,10 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
 
         {loading ? (
           <p className="text-[#6b7280] text-sm">Loading…</p>
+        ) : error ? (
+          <div className="border border-dashed border-[#dde1e8] rounded-lg p-12 text-center">
+            <p className="text-[#1f2937]">Couldn't load products. Check your connection and try again.</p>
+          </div>
         ) : products.length === 0 ? (
           <div className="border border-dashed border-[#dde1e8] rounded-lg p-12 text-center">
             <p className="text-[#1f2937]">Nothing here yet — check back soon.</p>

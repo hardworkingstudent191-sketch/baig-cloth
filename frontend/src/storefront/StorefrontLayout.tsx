@@ -1,8 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, NavLink } from "react-router-dom";
 import logo from "../assets/logo.png";
-
-const WHATSAPP_NUMBER = "923001234567"; // TODO: replace with your real number
+import { WHATSAPP_NUMBER } from "./config";
 
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);

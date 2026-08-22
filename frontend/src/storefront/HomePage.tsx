@@ -8,10 +8,27 @@ import ProductCard from "./ProductCard";
 export default function HomePage() {
   const [saleProducts, setSaleProducts] = useState<Product[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [womenImage, setWomenImage] = useState<string | null>(null);
+  const [menImage, setMenImage] = useState<string | null>(null);
 
   useEffect(() => {
-    storefrontApi.listProducts({ on_sale: true }).then(setSaleProducts).catch(() => {});
-    storefrontApi.listProducts({ featured: true }).then(setFeaturedProducts).catch(() => {});
+    storefrontApi.listProducts({ on_sale: true }).then(setSaleProducts).catch((err) => {
+      console.error("Failed to load sale products", err);
+    });
+    storefrontApi.listProducts({ featured: true }).then(setFeaturedProducts).catch((err) => {
+      console.error("Failed to load featured products", err);
+    });
+    // Category tiles were designed to be image-backed (per the site map),
+    // but had no image at all — just a flat color block. Use each gender's
+    // most recent product photo as a representative tile background.
+    storefrontApi.listProducts({ gender: "women" }).then((products) => {
+      const withImage = products.find((p) => p.image_urls[0]);
+      if (withImage) setWomenImage(withImage.image_urls[0]);
+    }).catch(() => {});
+    storefrontApi.listProducts({ gender: "men" }).then((products) => {
+      const withImage = products.find((p) => p.image_urls[0]);
+      if (withImage) setMenImage(withImage.image_urls[0]);
+    }).catch(() => {});
   }, []);
 
   return (
@@ -47,8 +64,8 @@ export default function HomePage() {
 
       {/* Category tiles */}
       <section className="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <CategoryTile to="/women" label="Women" sub="Lawn, chiffon, embroidered & more" />
-        <CategoryTile to="/men" label="Men" sub="Cotton, wash-and-wear, khaddar" />
+        <CategoryTile to="/women" label="Women" sub="Lawn, chiffon, embroidered & more" image={womenImage} />
+        <CategoryTile to="/men" label="Men" sub="Cotton, wash-and-wear, khaddar" image={menImage} />
       </section>
 
       {/* Sale strip — only renders if there are active sale products */}
@@ -96,13 +113,30 @@ export default function HomePage() {
   );
 }
 
-function CategoryTile({ to, label, sub }: { to: string; label: string; sub: string }) {
+function CategoryTile({
+  to,
+  label,
+  sub,
+  image,
+}: {
+  to: string;
+  label: string;
+  sub: string;
+  image: string | null;
+}) {
   return (
     <Link
       to={to}
       className="group relative aspect-[16/9] md:aspect-[4/3] bg-[#eef0f3] rounded-lg overflow-hidden border border-[#dde1e8] flex items-end p-6"
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-[#101014]/40 to-transparent" />
+      {image && (
+        <img
+          src={image}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#101014]/60 via-[#101014]/10 to-transparent" />
       <div className="relative text-[#f7f7f5]">
         <h3 className="font-serif text-3xl">{label}</h3>
         <p className="text-sm text-[#e6e9ee] mt-1">{sub}</p>

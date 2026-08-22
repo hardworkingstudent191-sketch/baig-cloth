@@ -13,7 +13,7 @@
 .admin-input:focus {
   outline: none;
   border-color: #3f5fc4;
-  box-shadow: 0 0 0 2px rgba(193, 101, 47, 0.25);
+  box-shadow: 0 0 0 2px rgba(63, 95, 196, 0.25);
 }
 
 /* Scope admin panel to these fonts without affecting the storefront */

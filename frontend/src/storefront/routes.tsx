@@ -1,14 +1,11 @@
-// Merge into your router alongside adminRoutes from src/admin/routes.tsx.
-//
-//   import { storefrontRoutes } from "./storefront/routes";
-//   import { adminRoutes } from "./admin/routes";
-//   const router = createBrowserRouter([...storefrontRoutes, ...adminRoutes]);
-
 import type { RouteObject } from "react-router-dom";
 import HomePage from "./HomePage";
 import CategoryPage from "./CategoryPage";
 import ProductPage from "./ProductPage";
 import SalePage from "./SalePage";
+import PoliciesPage from "./PoliciesPage";
+import AboutPage from "./AboutPage";
+import NotFoundPage from "./NotFoundPage";
 
 export const storefrontRoutes: RouteObject[] = [
   { path: "/", element: <HomePage /> },
@@ -18,5 +15,10 @@ export const storefrontRoutes: RouteObject[] = [
   { path: "/women/:category", element: <CategoryPage gender="women" /> },
   { path: "/product/:id", element: <ProductPage /> },
   { path: "/sale", element: <SalePage /> },
-  // /policies and /about are content pages — build once copy is ready (see to-do list Phase 4)
+  { path: "/policies", element: <PoliciesPage /> },
+  { path: "/about", element: <AboutPage /> },
+  // Catch-all: without this, an unmatched URL (including any bad/old link)
+  // rendered React Router's raw default error screen instead of a normal
+  // 404 page. Keep this last — route order matters.
+  { path: "*", element: <NotFoundPage /> },
 ];

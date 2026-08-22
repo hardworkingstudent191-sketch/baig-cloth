@@ -8,13 +8,21 @@ export default function CategoryManager() {
   const [newName, setNewName] = useState("");
   const [newGender, setNewGender] = useState<Gender>("men");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     load();
   }, []);
 
   async function load() {
-    setCategories(await api.listCategories());
+    setLoading(true);
+    try {
+      setCategories(await api.listCategories());
+    } catch {
+      setError("Couldn't load categories. Check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleAdd(e: FormEvent) {
@@ -23,6 +31,10 @@ export default function CategoryManager() {
     setError(null);
     try {
       const sameGender = categories.filter((c) => c.gender === newGender);
+      if (sameGender.some((c) => c.name.toLowerCase() === newName.trim().toLowerCase())) {
+        setError(`"${newName.trim()}" already exists for ${newGender === "men" ? "Men" : "Women"}.`);
+        return;
+      }
       await api.createCategory({
         name: newName.trim(),
         gender: newGender,
@@ -37,17 +49,48 @@ export default function CategoryManager() {
 
   async function handleRename(category: Category, name: string) {
     if (!name.trim() || name === category.name) return;
-    await api.updateCategory(category.id, { name: name.trim() });
-    load();
+    setError(null);
+    try {
+      await api.updateCategory(category.id, { name: name.trim() });
+      load();
+    } catch {
+      setError(`Couldn't rename "${category.name}". Try again.`);
+      load(); // resets the input back to the saved name
+    }
   }
 
   async function handleDelete(category: Category) {
     if (!confirm(`Delete "${category.name}"? Products must be reassigned first.`)) return;
+    setError(null);
     try {
       await api.deleteCategory(category.id);
       load();
     } catch {
       setError(`"${category.name}" still has products in it — move or delete those first.`);
+    }
+  }
+
+  // Categories are shown ordered by sort_order, but there was previously no
+  // way to actually change that order from the UI — "reorder" was promised
+  // in the project plan but never built. Swapping sort_order with the
+  // neighbor above/below is simpler and more reliable here than drag-and-drop.
+  async function handleMove(category: Category, direction: -1 | 1) {
+    const siblings = categories
+      .filter((c) => c.gender === category.gender)
+      .sort((a, b) => a.sort_order - b.sort_order);
+    const index = siblings.findIndex((c) => c.id === category.id);
+    const swapWith = siblings[index + direction];
+    if (!swapWith) return;
+
+    setError(null);
+    try {
+      await Promise.all([
+        api.updateCategory(category.id, { sort_order: swapWith.sort_order }),
+        api.updateCategory(swapWith.id, { sort_order: category.sort_order }),
+      ]);
+      load();
+    } catch {
+      setError("Couldn't reorder categories. Try again.");
     }
   }
 
@@ -63,8 +106,26 @@ export default function CategoryManager() {
           <p className="text-[#7b879e] text-sm">No categories yet.</p>
         ) : (
           <ul className="space-y-2">
-            {items.map((c) => (
+            {items.map((c, i) => (
               <li key={c.id} className="flex items-center gap-2">
+                <div className="flex flex-col shrink-0">
+                  <button
+                    onClick={() => handleMove(c, -1)}
+                    disabled={i === 0}
+                    aria-label={`Move ${c.name} up`}
+                    className="text-[#7b879e] hover:text-[#f2f3f5] disabled:opacity-20 disabled:hover:text-[#7b879e] leading-none text-xs h-3.5"
+                  >
+                    ▲
+                  </button>
+                  <button
+                    onClick={() => handleMove(c, 1)}
+                    disabled={i === items.length - 1}
+                    aria-label={`Move ${c.name} down`}
+                    className="text-[#7b879e] hover:text-[#f2f3f5] disabled:opacity-20 disabled:hover:text-[#7b879e] leading-none text-xs h-3.5"
+                  >
+                    ▼
+                  </button>
+                </div>
                 <input
                   defaultValue={c.name}
                   onBlur={(e) => handleRename(c, e.target.value)}
@@ -90,9 +151,9 @@ export default function CategoryManager() {
 
       <form
         onSubmit={handleAdd}
-        className="flex gap-2 mb-6 items-end bg-[#12182a] border border-[#24304d] rounded-lg p-4 border-t-2 border-t-dashed border-t-[#3f5fc4]"
+        className="flex flex-wrap gap-2 mb-6 items-end bg-[#12182a] border border-[#24304d] rounded-lg p-4 border-t-2 border-t-dashed border-t-[#3f5fc4]"
       >
-        <div className="flex-1">
+        <div className="flex-1 min-w-[140px]">
           <label className="block text-xs text-[#7b879e] mb-1.5">New category</label>
           <input
             value={newName}
@@ -122,14 +183,19 @@ export default function CategoryManager() {
 
       {error && <p className="text-[#c0392b] text-sm mb-4">{error}</p>}
 
-      <div className="grid grid-cols-2 gap-4">
-        {renderGroup("men", "Men")}
-        {renderGroup("women", "Women")}
-      </div>
+      {loading ? (
+        <p className="text-[#7b879e] text-sm">Loading…</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {renderGroup("men", "Men")}
+          {renderGroup("women", "Women")}
+        </div>
+      )}
 
       <p className="text-[#7b879e] text-xs mt-4">
-        Rename a category by editing its name and clicking away. New categories can be added anytime —
-        no code changes needed as your fabric range grows.
+        Rename a category by editing its name and clicking away. Use the arrows to reorder —
+        this controls the order categories appear on the storefront. New categories can be added
+        anytime — no code changes needed as your fabric range grows.
       </p>
     </AdminLayout>
   );
