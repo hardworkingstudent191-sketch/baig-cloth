@@ -8,6 +8,8 @@ from app.schemas import AdminLogin, Token, ImageUploadOut
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
+MAX_UPLOAD_BYTES = 8 * 1024 * 1024  # 8MB
+
 
 @router.post("/login", response_model=Token)
 def login(payload: AdminLogin, db: Session = Depends(get_db)):
@@ -25,5 +27,8 @@ async def upload_product_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Only JPG, PNG, or WEBP images are allowed")
 
     contents = await file.read()
+    if len(contents) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=400, detail="Image is too large — please keep uploads under 8MB")
+
     url = upload_image(contents)
     return ImageUploadOut(url=url)

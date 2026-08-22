@@ -1,5 +1,6 @@
 import cloudinary
 import cloudinary.uploader
+from fastapi import HTTPException
 
 from app.config import settings
 
@@ -13,5 +14,11 @@ cloudinary.config(
 
 def upload_image(file_bytes: bytes, folder: str = "baig-cloth/products") -> str:
     """Uploads image bytes to Cloudinary and returns the secure URL."""
-    result = cloudinary.uploader.upload(file_bytes, folder=folder)
+    try:
+        result = cloudinary.uploader.upload(file_bytes, folder=folder)
+    except Exception as exc:  # cloudinary raises its own Error type, plus network errors
+        raise HTTPException(
+            status_code=502,
+            detail="Image upload failed — check the Cloudinary credentials in .env, or try again.",
+        ) from exc
     return result["secure_url"]

@@ -1,6 +1,7 @@
+from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_admin
@@ -11,6 +12,18 @@ from app.schemas import ProductOut, ProductCreate, ProductUpdate
 router = APIRouter(prefix="/products", tags=["products"])
 
 
+def apply_sale_expiry(product: Product) -> Product:
+    """A sale that has passed its sale_ends_at is no longer "on sale" from the
+    public API's point of view, even if the admin hasn't manually toggled the
+    on_sale flag off yet. This adjusts the in-memory object only — it never
+    writes the correction back to the database, so the admin's original
+    on_sale/sale_price stay intact if they later push the end date back."""
+    if product.on_sale and product.sale_ends_at is not None:
+        if product.sale_ends_at < datetime.now(timezone.utc):
+            product.on_sale = False
+    return product
+
+
 # ---- Public ----
 
 @router.get("", response_model=list[ProductOut])
@@ -19,6 +32,9 @@ def list_products(
     category_id: Optional[int] = None,
     on_sale: Optional[bool] = None,
     featured: Optional[bool] = None,
+    search: Optional[str] = None,
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
 ):
     query = db.query(Product).join(Category)
@@ -27,12 +43,19 @@ def list_products(
         query = query.filter(Category.gender == gender)
     if category_id is not None:
         query = query.filter(Product.category_id == category_id)
-    if on_sale is not None:
-        query = query.filter(Product.on_sale == on_sale)
-    if featured is not None:
-        query = query.filter(Product.featured == featured)
+    if search:
+        query = query.filter(Product.name.ilike(f"%{search}%"))
 
-    return query.order_by(Product.created_at.desc()).all()
+    products = [apply_sale_expiry(p) for p in query.order_by(Product.created_at.desc()).all()]
+
+    # on_sale/featured are filtered after expiry is applied, since expiry can
+    # flip a product's effective on_sale status.
+    if on_sale is not None:
+        products = [p for p in products if p.on_sale == on_sale]
+    if featured is not None:
+        products = [p for p in products if p.featured == featured]
+
+    return products[offset : offset + limit]
 
 
 @router.get("/{product_id}", response_model=ProductOut)
@@ -40,7 +63,7 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    return product
+    return apply_sale_expiry(product)
 
 
 # ---- Admin (protected) ----
@@ -64,7 +87,28 @@ def update_product(product_id: int, payload: ProductUpdate, db: Session = Depend
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
-    for field, value in payload.model_dump(exclude_unset=True).items():
+    changes = payload.model_dump(exclude_unset=True)
+
+    new_category_id = changes.get("category_id", product.category_id)
+    if new_category_id != product.category_id:
+        category = db.query(Category).filter(Category.id == new_category_id).first()
+        if not category:
+            raise HTTPException(status_code=400, detail="category_id does not exist")
+
+    # Validate the sale price relationship against the FINAL merged state,
+    # not just whichever fields happen to be in this particular partial
+    # update — otherwise e.g. toggling on_sale=true without also resending
+    # sale_price would silently save an invalid combination.
+    effective_on_sale = changes.get("on_sale", product.on_sale)
+    effective_price = changes.get("price", product.price)
+    effective_sale_price = changes.get("sale_price", product.sale_price)
+    if effective_on_sale:
+        if effective_sale_price is None:
+            raise HTTPException(status_code=400, detail="sale_price is required when on_sale is true")
+        if effective_sale_price >= effective_price:
+            raise HTTPException(status_code=400, detail="sale_price must be less than price")
+
+    for field, value in changes.items():
         setattr(product, field, value)
 
     db.commit()
