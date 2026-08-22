@@ -29,6 +29,20 @@ app.include_router(categories.router)
 app.include_router(admin.router)
 
 
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    """A few cheap, standard response headers. This is a JSON API rather
+    than a page-rendering server, so most of the classic header-based
+    protections (clickjacking, etc.) matter less than they would for HTML
+    responses — but nosniff and a conservative referrer policy cost nothing
+    and are worth having by default."""
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
+
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
     """Catches anything that isn't already an HTTPException (e.g. a bad

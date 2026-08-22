@@ -13,6 +13,10 @@ from app.models import AdminUser
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/admin/login")
 
+# A valid-looking bcrypt hash with no matching password, used purely so
+# verify_password always has real work to do — see authenticate_admin below.
+_DUMMY_HASH = pwd_context.hash("not-a-real-password-just-a-timing-decoy")
+
 
 def verify_password(plain_password: str, password_hash: str) -> bool:
     return pwd_context.verify(plain_password, password_hash)
@@ -30,7 +34,17 @@ def create_access_token(subject: str) -> str:
 
 def authenticate_admin(db: Session, username: str, password: str) -> AdminUser | None:
     admin = db.query(AdminUser).filter(AdminUser.username == username).first()
-    if not admin or not verify_password(password, admin.password_hash):
+    # Bcrypt verification is deliberately slow, and Python's `or` short-
+    # circuits — so "not admin or not verify_password(...)" used to skip
+    # verify_password entirely when the username didn't exist. That made a
+    # login attempt for a real username measurably slower than one for a
+    # made-up username, even though both return the same error message:
+    # enough to let an attacker enumerate valid admin usernames purely by
+    # timing responses. Always doing a verify (against a decoy hash when
+    # there's no real one) keeps the timing the same either way.
+    password_hash = admin.password_hash if admin else _DUMMY_HASH
+    password_ok = verify_password(password, password_hash)
+    if not admin or not password_ok:
         return None
     return admin
 
