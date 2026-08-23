@@ -1,10 +1,19 @@
-import { useState, type ReactNode } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { WHATSAPP_NUMBER } from "./config";
 
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const navigate = useNavigate();
+
+  function handleSearch(e: FormEvent) {
+    e.preventDefault();
+    if (!searchValue.trim()) return;
+    navigate(`/search?q=${encodeURIComponent(searchValue.trim())}`);
+    setMenuOpen(false);
+  }
 
   return (
     <div id="storefront-root" className="min-h-screen bg-[#f7f7f5] text-[#101014]">
@@ -22,6 +31,16 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
             <NavItem to="/sale" accent>
               Sale
             </NavItem>
+            <form onSubmit={handleSearch} role="search">
+              <input
+                type="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder="Search…"
+                aria-label="Search products"
+                className="w-36 focus:w-48 transition-all bg-[#eef0f3] border border-[#dde1e8] rounded-full px-3.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#223c80]"
+              />
+            </form>
           </nav>
 
           {/* Mobile menu toggle */}
@@ -40,6 +59,16 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
         {/* Mobile drawer */}
         {menuOpen && (
           <nav className="md:hidden flex flex-col border-t border-dashed border-[#dde1e8] px-4 py-2">
+            <form onSubmit={handleSearch} role="search" className="py-2.5 border-b border-[#e6e9ee]">
+              <input
+                type="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder="Search…"
+                aria-label="Search products"
+                className="w-full bg-[#eef0f3] border border-[#dde1e8] rounded-full px-3.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#223c80]"
+              />
+            </form>
             <NavItem to="/men" onClick={() => setMenuOpen(false)} mobile>
               Men
             </NavItem>

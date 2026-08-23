@@ -94,6 +94,8 @@ export default function ProductPage() {
                 <button
                   key={url}
                   onClick={() => setActiveImage(i)}
+                  aria-label={`View image ${i + 1} of ${product.image_urls.length}`}
+                  aria-pressed={i === activeImage}
                   className={`w-16 h-20 rounded overflow-hidden border-2 transition-colors ${
                     i === activeImage ? "border-[#223c80]" : "border-transparent"
                   }`}
