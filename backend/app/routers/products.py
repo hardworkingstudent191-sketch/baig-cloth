@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_admin
@@ -22,6 +23,21 @@ def apply_sale_expiry(product: Product) -> Product:
         if product.sale_ends_at < datetime.now(timezone.utc):
             product.on_sale = False
     return product
+
+
+def _effective_on_sale_filter(want_on_sale: bool):
+    """Same "is it really still on sale" logic as apply_sale_expiry, but as a
+    SQL condition instead of a Python check — so filtering by on_sale can
+    happen in the database instead of pulling every matching row into memory
+    first. Kept in sync with apply_sale_expiry deliberately; if that logic
+    ever changes, this needs to change with it."""
+    now = datetime.now(timezone.utc)
+    still_active = or_(Product.sale_ends_at.is_(None), Product.sale_ends_at > now)
+    expired = and_(Product.sale_ends_at.isnot(None), Product.sale_ends_at <= now)
+
+    if want_on_sale:
+        return and_(Product.on_sale.is_(True), still_active)
+    return or_(Product.on_sale.is_(False), and_(Product.on_sale.is_(True), expired))
 
 
 # ---- Public ----
@@ -45,17 +61,13 @@ def list_products(
         query = query.filter(Product.category_id == category_id)
     if search:
         query = query.filter(Product.name.ilike(f"%{search}%"))
-
-    products = [apply_sale_expiry(p) for p in query.order_by(Product.created_at.desc()).all()]
-
-    # on_sale/featured are filtered after expiry is applied, since expiry can
-    # flip a product's effective on_sale status.
-    if on_sale is not None:
-        products = [p for p in products if p.on_sale == on_sale]
     if featured is not None:
-        products = [p for p in products if p.featured == featured]
+        query = query.filter(Product.featured == featured)
+    if on_sale is not None:
+        query = query.filter(_effective_on_sale_filter(on_sale))
 
-    return products[offset : offset + limit]
+    query = query.order_by(Product.created_at.desc()).offset(offset).limit(limit)
+    return [apply_sale_expiry(p) for p in query.all()]
 
 
 @router.get("/{product_id}", response_model=ProductOut)

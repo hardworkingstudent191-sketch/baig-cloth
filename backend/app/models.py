@@ -28,7 +28,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    gender = Column(Enum(Gender), nullable=False)
+    gender = Column(Enum(Gender), nullable=False, index=True)
     sort_order = Column(Integer, default=0, nullable=False)
 
     products = relationship("Product", back_populates="category")
@@ -39,17 +39,17 @@ class Product(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False, index=True)
     description = Column(Text, default="")
 
     price = Column(Numeric(10, 2), nullable=False)
     sale_price = Column(Numeric(10, 2), nullable=True)
-    on_sale = Column(Boolean, default=False, nullable=False)
+    on_sale = Column(Boolean, default=False, nullable=False, index=True)
     sale_ends_at = Column(DateTime(timezone=True), nullable=True)
 
     in_stock = Column(Boolean, default=True, nullable=False)
     image_urls = Column(ARRAY(String), default=list)
-    featured = Column(Boolean, default=False, nullable=False)
+    featured = Column(Boolean, default=False, nullable=False, index=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
