@@ -48,13 +48,13 @@ export default function HomePage() {
           <div className="flex gap-3 justify-center mt-8">
             <Link
               to="/women"
-              className="bg-[#223c80] text-[#f7f7f5] px-6 py-3 rounded text-sm hover:bg-[#2d4d9e] transition-colors"
+              className="bg-[#223c80] text-[#f7f7f5] px-6 py-3 rounded text-sm hover:bg-[#2d4d9e] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#223c80]/20 transition-all duration-200"
             >
               Shop Women
             </Link>
             <Link
               to="/men"
-              className="border border-[#101014] px-6 py-3 rounded text-sm hover:bg-[#101014] hover:text-[#f7f7f5] transition-colors"
+              className="border border-[#101014] px-6 py-3 rounded text-sm hover:bg-[#101014] hover:text-[#f7f7f5] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#101014]/10 transition-all duration-200"
             >
               Shop Men
             </Link>

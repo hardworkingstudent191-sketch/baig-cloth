@@ -7,7 +7,7 @@ export default function ProductCard({ product }: { product: Product }) {
       to={`/product/${product.id}`}
       className="group block relative"
     >
-      <div className="relative aspect-[4/5] bg-[#eef0f3] rounded overflow-hidden border border-[#dde1e8]">
+      <div className="relative aspect-[4/5] bg-[#eef0f3] rounded overflow-hidden border border-[#dde1e8] transition-all duration-300 group-hover:border-[#223c80]/30 group-hover:shadow-lg group-hover:shadow-[#101014]/5">
         {product.image_urls[0] ? (
           <img
             src={product.image_urls[0]}
@@ -36,7 +36,7 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="mt-2.5">
-        <p className="text-sm">{product.name}</p>
+        <p className="text-sm transition-colors group-hover:text-[#223c80]">{product.name}</p>
         <p className="font-mono text-xs mt-0.5">
           {product.on_sale && product.sale_price ? (
             <>

@@ -3,6 +3,7 @@ import { storefrontApi } from "./api";
 import type { Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
+import ProductGridSkeleton from "./ProductGridSkeleton";
 
 export default function SalePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -26,7 +27,7 @@ export default function SalePage() {
         </p>
 
         {loading ? (
-          <p className="text-[#6b7280] text-sm">Loading…</p>
+          <ProductGridSkeleton />
         ) : error ? (
           <div className="border border-dashed border-[#dde1e8] rounded-lg p-12 text-center">
             <p className="text-[#1f2937]">Couldn't load products. Check your connection and try again.</p>
