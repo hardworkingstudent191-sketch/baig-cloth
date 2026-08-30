@@ -1,9 +1,10 @@
 name: CI
 
-# There's no test suite in this repo yet, so this is deliberately narrow: it
-# proves the frontend still type-checks and builds, and that the backend's
-# migrations still apply cleanly and match the models. That catches the
-# overwhelming majority of "it broke on deploy" cases for a project this size.
+# Frontend has no test suite, just tsc + vite build. Backend has a real
+# pytest suite (backend/tests/) covering the security-critical paths, run
+# here against a throwaway Postgres service container — plus migration
+# checks that catch the overwhelming majority of "it broke on deploy" cases
+# for a project this size (schema drift, an import-time crash).
 
 on:
   push:
