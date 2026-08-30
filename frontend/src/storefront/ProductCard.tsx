@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Product } from "./types";
+import WishlistHeart from "./WishlistHeart";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
@@ -12,6 +13,8 @@ export default function ProductCard({ product }: { product: Product }) {
           <img
             src={product.image_urls[0]}
             alt={product.name}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
@@ -30,6 +33,12 @@ export default function ProductCard({ product }: { product: Product }) {
             Out of stock
           </span>
         )}
+
+        <WishlistHeart
+          productId={product.id}
+          productName={product.name}
+          className="absolute top-2 right-2"
+        />
 
         {/* Selvage notch — signature detail */}
         <div className="absolute bottom-0 left-0 right-0 h-2 border-t border-dashed border-[#dde1e8]/70" />

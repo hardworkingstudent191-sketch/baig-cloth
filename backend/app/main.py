@@ -40,6 +40,13 @@ async def security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    # Blanket-deny sensor/device APIs. This is a JSON API with no legitimate
+    # use for any of them, on any page (including /docs, which embeds
+    # Swagger's own JS) — cheap defense-in-depth against a future page on
+    # this origin trying to invoke one.
+    response.headers["Permissions-Policy"] = (
+        "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    )
     return response
 
 

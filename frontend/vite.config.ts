@@ -14,6 +14,40 @@ const SITE_DESCRIPTION =
   "Hand-picked lawn, cotton, wash-and-wear and embroidered unstitched fabric. Order directly over WhatsApp.";
 
 /**
+ * Content-Security-Policy, delivered as a <meta> tag since this is a static
+ * host with no server-side control over response headers (see
+ * public/.htaccess for the headers that CAN be set that way).
+ *
+ * `apiOrigin` has to be a real parameter rather than hardcoded: VITE_API_URL
+ * is `http://localhost:8000` in dev and a different host entirely in
+ * production, and every `fetch()` in storefront/api.ts and admin/api.ts
+ * targets it — connect-src would silently block every API call otherwise.
+ *
+ * style-src needs 'unsafe-inline': several components (HomePage's staggered
+ * hero-rise delays, the --hero-delay custom property) set inline `style=`
+ * attributes for per-element animation timing, which can't be expressed as
+ * a static hash/nonce. script-src stays strict with no such escape hatch.
+ *
+ * Note: frame-ancestors is NOT included here — per spec, browsers ignore it
+ * when set via <meta> (it only takes effect as a real HTTP header). Clickjacking
+ * protection for the frontend instead comes from X-Frame-Options in .htaccess.
+ */
+function buildCsp(apiOrigin: string): string {
+  return [
+    `default-src 'self'`,
+    `script-src 'self'`,
+    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
+    `font-src 'self' https://fonts.gstatic.com`,
+    `img-src 'self' data: https://res.cloudinary.com`,
+    `media-src 'self'`,
+    `connect-src 'self' ${apiOrigin}`,
+    `object-src 'none'`,
+    `base-uri 'self'`,
+    `form-action 'self'`,
+  ].join("; ");
+}
+
+/**
  * One source of truth for the public origin.
  *
  * `VITE_SITE_URL` feeds three things that all have to agree — the absolute
@@ -26,12 +60,25 @@ const SITE_DESCRIPTION =
  * index.html: Vite runs decodeURI over href/content attributes while parsing
  * the HTML, so a %PLACEHOLDER% there fails the build outright.
  */
-function siteMeta(siteUrl: string): Plugin {
+function siteMeta(siteUrl: string, apiOrigin: string, isProd: boolean): Plugin {
   return {
     name: "baig-cloth-site-meta",
 
     transformIndexHtml() {
       return [
+        // CSP only in the production build: Vite dev mode injects its own
+        // inline React-Refresh preamble script before loading main.tsx, which
+        // a strict script-src 'self' blocks outright (breaks the page
+        // entirely — "can't detect preamble"). Dev's HMR websocket and inline
+        // tooling script are Vite's own trusted local-only surface, not the
+        // thing this policy is meant to guard against; the real, shipped
+        // bundle has no inline scripts at all, so the built site gets the
+        // full policy with nothing to work around.
+        ...(isProd
+          ? [{ tag: "meta", attrs: { "http-equiv": "Content-Security-Policy", content: buildCsp(apiOrigin) }, injectTo: "head-prepend" as const }]
+          : []),
+        { tag: "link", attrs: { rel: "manifest", href: "/manifest.webmanifest" }, injectTo: "head" as const },
+        { tag: "link", attrs: { rel: "apple-touch-icon", href: "/icon-192.png" }, injectTo: "head" as const },
         { tag: "link", attrs: { rel: "canonical", href: `${siteUrl}/` }, injectTo: "head" as const },
 
         ...(
@@ -111,6 +158,7 @@ function siteMeta(siteUrl: string): Plugin {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
   const siteUrl = (env.VITE_SITE_URL ?? "").replace(/\/$/, "");
+  const apiOrigin = (env.VITE_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
 
   if (!siteUrl && mode === "production") {
     // Not fatal — a preview build with placeholder URLs is still useful — but
@@ -124,6 +172,6 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [react(), tailwindcss(), siteMeta(siteUrl || "https://example.com")],
+    plugins: [react(), tailwindcss(), siteMeta(siteUrl || "https://example.com", apiOrigin, mode === "production")],
   };
 });

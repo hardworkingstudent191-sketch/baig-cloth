@@ -6,6 +6,12 @@ import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import ProductGridSkeleton from "./ProductGridSkeleton";
 import { usePageMeta } from "../usePageMeta";
+import { useJsonLd } from "../useJsonLd";
+import Breadcrumbs from "./Breadcrumbs";
+import Reveal from "../Reveal";
+import SortSelect from "./SortSelect";
+import { sortProducts, type SortOption } from "./sortProducts";
+import CategoryVideoBanner from "./CategoryVideoBanner";
 
 function slugify(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
@@ -17,6 +23,7 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [activeCategoryId, setActiveCategoryId] = useState<number | undefined>();
+  const [sort, setSort] = useState<SortOption>("newest");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -45,6 +52,7 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
 
   const genderLabel = gender === "men" ? "Men's" : "Women's";
   const activeCategory = categories.find((c) => c.id === activeCategoryId);
+  const sortedProducts = sortProducts(products, sort);
 
   usePageMeta({
     title: activeCategory ? `${genderLabel} ${activeCategory.name}` : `${genderLabel} Unstitched Fabric`,
@@ -52,6 +60,20 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
       ? `${genderLabel} ${activeCategory.name} unstitched fabric at Baig Cloth. Browse the range and order over WhatsApp.`
       : `Browse ${genderLabel.toLowerCase()} unstitched fabric at Baig Cloth — lawn, cotton, wash-and-wear and embroidered pieces, ordered over WhatsApp.`,
   });
+
+  useJsonLd(
+    !loading && products.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          itemListElement: products.map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            url: `${window.location.origin}/product/${p.id}`,
+          })),
+        }
+      : null,
+  );
 
   // Selecting a chip now navigates to /men/lawn (or back to /men for "All"),
   // instead of only updating local state. Previously the URL never changed
@@ -69,6 +91,15 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
   return (
     <StorefrontLayout>
       <div className="max-w-6xl mx-auto px-4 py-8">
+        <Breadcrumbs
+          items={[
+            { label: "Home", to: "/" },
+            ...(activeCategory
+              ? [{ label: gender === "men" ? "Men" : "Women", to: `/${gender}` }, { label: activeCategory.name }]
+              : [{ label: gender === "men" ? "Men" : "Women" }])
+          ]}
+        />
+        {activeCategoryId === undefined && <CategoryVideoBanner gender={gender} />}
         <h1 className="font-serif text-3xl mb-1 capitalize">{gender}</h1>
         <p className="text-[#6b7280] text-sm mb-6">
           {products.length} {products.length === 1 ? "piece" : "pieces"}
@@ -76,7 +107,7 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
 
         {/* Subcategory filter chips */}
         {categories.length > 0 && (
-          <div className="flex gap-2 overflow-x-auto pb-1 mb-6 -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-2 overflow-x-auto pb-1 mb-4 -mx-4 px-4 md:mx-0 md:px-0">
             <FilterChip
               label="All"
               active={activeCategoryId === undefined}
@@ -93,6 +124,12 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
           </div>
         )}
 
+        {products.length > 0 && (
+          <div className="flex justify-end mb-4">
+            <SortSelect value={sort} onChange={setSort} />
+          </div>
+        )}
+
         {loading ? (
           <ProductGridSkeleton />
         ) : error ? (
@@ -105,8 +142,10 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {sortedProducts.map((p, i) => (
+              <Reveal key={p.id} delayMs={(i % 4) * 60}>
+                <ProductCard product={p} />
+              </Reveal>
             ))}
           </div>
         )}

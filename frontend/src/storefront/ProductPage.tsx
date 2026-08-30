@@ -1,15 +1,28 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { storefrontApi, whatsappLink, ApiError } from "./api";
-import type { Product } from "./types";
+import type { Category, Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import { WHATSAPP_NUMBER } from "./config";
 import { usePageMeta } from "../usePageMeta";
+import { useJsonLd } from "../useJsonLd";
+import WishlistHeart from "./WishlistHeart";
+import Breadcrumbs from "./Breadcrumbs";
+import RecentlyViewedStrip from "./RecentlyViewedStrip";
+import { recordView } from "./recentlyViewed";
+import Lightbox from "./Lightbox";
+import ShareButton from "./ShareButton";
+
+function slugify(name: string) {
+  return name.toLowerCase().replace(/\s+/g, "-");
+}
 
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
@@ -24,13 +37,38 @@ export default function ProductPage() {
     noindex: notFound,
   });
 
+  useJsonLd(
+    product
+      ? {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name,
+          description: product.description || undefined,
+          image: product.image_urls,
+          offers: {
+            "@type": "Offer",
+            url: window.location.href,
+            priceCurrency: "PKR",
+            price: product.on_sale && product.sale_price ? product.sale_price : product.price,
+            availability: product.in_stock
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+          },
+        }
+      : null,
+  );
+
   useEffect(() => {
     if (!id) return;
     setNotFound(false);
     setLoadError(false);
+    setActiveImage(0);
     storefrontApi
       .getProduct(Number(id))
-      .then(setProduct)
+      .then((p) => {
+        setProduct(p);
+        recordView(p.id);
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 404) {
           setNotFound(true);
@@ -39,6 +77,17 @@ export default function ProductPage() {
         }
       });
   }, [id]);
+
+  useEffect(() => {
+    if (!product) return;
+    // Categories don't carry their gender in the Product payload itself, so
+    // the breadcrumb (Home > Men/Women > Category) needs one extra lookup.
+    // Fetching all categories (both genders) rather than filtering server-side
+    // keeps this to a single request regardless of which gender it turns out to be.
+    storefrontApi.listCategories().then((cats) => {
+      setCategory(cats.find((c) => c.id === product.category_id) ?? null);
+    }).catch(() => {});
+  }, [product]);
 
   if (notFound) {
     return (
@@ -69,8 +118,14 @@ export default function ProductPage() {
   if (!product) {
     return (
       <StorefrontLayout>
-        <div className="max-w-6xl mx-auto px-4 py-16">
-          <p className="text-[#6b7280] text-sm">Loading…</p>
+        <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="aspect-[4/5] bg-[#eef0f3] rounded-lg animate-pulse" />
+          <div className="space-y-3">
+            <div className="h-8 w-2/3 bg-[#eef0f3] rounded animate-pulse" />
+            <div className="h-5 w-1/4 bg-[#eef0f3] rounded animate-pulse" />
+            <div className="h-24 w-full bg-[#eef0f3] rounded animate-pulse mt-4" />
+            <div className="h-11 w-40 bg-[#eef0f3] rounded animate-pulse mt-6" />
+          </div>
         </div>
       </StorefrontLayout>
     );
@@ -78,16 +133,38 @@ export default function ProductPage() {
 
   return (
     <StorefrontLayout>
-      <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="max-w-6xl mx-auto px-4 pt-6">
+        <Breadcrumbs
+          items={[
+            { label: "Home", to: "/" },
+            ...(category
+              ? ([
+                  { label: category.gender === "men" ? "Men" : "Women", to: `/${category.gender}` },
+                  { label: category.name, to: `/${category.gender}/${slugify(category.name)}` },
+                ] as const)
+              : []),
+            { label: product.name },
+          ]}
+        />
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Gallery */}
         <div>
           <div className="relative aspect-[4/5] bg-[#eef0f3] rounded-lg overflow-hidden border border-[#dde1e8]">
             {product.image_urls[activeImage] ? (
-              <img
-                src={product.image_urls[activeImage]}
-                alt={product.name}
-                className="w-full h-full object-cover"
-              />
+              <button
+                type="button"
+                onClick={() => setLightboxOpen(true)}
+                className="w-full h-full block cursor-zoom-in"
+                aria-label="View larger image"
+              >
+                <img
+                  src={product.image_urls[activeImage]}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </button>
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[#6b7280] text-sm">
                 No image
@@ -98,6 +175,7 @@ export default function ProductPage() {
                 Sale
               </span>
             )}
+            <WishlistHeart productId={product.id} productName={product.name} className="absolute top-3 right-3" />
           </div>
 
           {product.image_urls.length > 1 && (
@@ -112,7 +190,7 @@ export default function ProductPage() {
                     i === activeImage ? "border-[#223c80]" : "border-transparent"
                   }`}
                 >
-                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  <img src={url} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -121,7 +199,10 @@ export default function ProductPage() {
 
         {/* Details */}
         <div>
-          <h1 className="font-serif text-3xl mb-2">{product.name}</h1>
+          <div className="flex items-start justify-between gap-3">
+            <h1 className="font-serif text-3xl mb-2">{product.name}</h1>
+            <ShareButton title={product.name} />
+          </div>
 
           <p className="font-mono text-lg mb-4">
             {product.on_sale && product.sale_price ? (
@@ -158,7 +239,7 @@ export default function ProductPage() {
               href={whatsappLink(product, WHATSAPP_NUMBER)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center w-full md:w-auto px-8 py-3 rounded text-sm font-medium transition-colors bg-[#223c80] text-[#f7f7f5] hover:bg-[#2d4d9e]"
+              className="inline-flex items-center justify-center w-full md:w-auto px-8 py-3 rounded text-sm font-medium transition-colors bg-[#223c80] text-[#f7f7f5] hover:bg-[#2d4d9e] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#223c80]/20 duration-200"
             >
               Order on WhatsApp
             </a>
@@ -182,6 +263,18 @@ export default function ProductPage() {
           </p>
         </div>
       </div>
+
+      <RecentlyViewedStrip excludeId={product.id} />
+
+      {lightboxOpen && (
+        <Lightbox
+          images={product.image_urls}
+          index={activeImage}
+          onIndexChange={setActiveImage}
+          onClose={() => setLightboxOpen(false)}
+          alt={product.name}
+        />
+      )}
     </StorefrontLayout>
   );
 }

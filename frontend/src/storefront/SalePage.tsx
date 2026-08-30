@@ -5,11 +5,15 @@ import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import ProductGridSkeleton from "./ProductGridSkeleton";
 import { usePageMeta } from "../usePageMeta";
+import Reveal from "../Reveal";
+import SortSelect from "./SortSelect";
+import { sortProducts, type SortOption } from "./sortProducts";
 
 export default function SalePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [sort, setSort] = useState<SortOption>("newest");
 
   usePageMeta({
     title: "Sale",
@@ -25,6 +29,8 @@ export default function SalePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const sortedProducts = sortProducts(products, sort);
+
   return (
     <StorefrontLayout>
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -32,6 +38,12 @@ export default function SalePage() {
         <p className="text-[#6b7280] text-sm mb-6">
           {products.length} {products.length === 1 ? "piece" : "pieces"} on sale right now
         </p>
+
+        {products.length > 0 && (
+          <div className="flex justify-end mb-4">
+            <SortSelect value={sort} onChange={setSort} />
+          </div>
+        )}
 
         {loading ? (
           <ProductGridSkeleton />
@@ -45,8 +57,10 @@ export default function SalePage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {sortedProducts.map((p, i) => (
+              <Reveal key={p.id} delayMs={(i % 4) * 60}>
+                <ProductCard product={p} />
+              </Reveal>
             ))}
           </div>
         )}

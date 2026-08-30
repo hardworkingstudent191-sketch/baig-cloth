@@ -6,6 +6,7 @@ import SalePage from "./SalePage";
 import PoliciesPage from "./PoliciesPage";
 import AboutPage from "./AboutPage";
 import SearchPage from "./SearchPage";
+import WishlistPage from "./WishlistPage";
 import NotFoundPage from "./NotFoundPage";
 
 export const storefrontRoutes: RouteObject[] = [
@@ -17,6 +18,7 @@ export const storefrontRoutes: RouteObject[] = [
   { path: "/product/:id", element: <ProductPage /> },
   { path: "/sale", element: <SalePage /> },
   { path: "/search", element: <SearchPage /> },
+  { path: "/wishlist", element: <WishlistPage /> },
   { path: "/policies", element: <PoliciesPage /> },
   { path: "/about", element: <AboutPage /> },
   // Catch-all: without this, an unmatched URL (including any bad/old link)

@@ -5,6 +5,8 @@ import type { Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import { usePageMeta } from "../usePageMeta";
+import { useJsonLd } from "../useJsonLd";
+import Reveal from "../Reveal";
 
 export default function HomePage() {
   const [saleProducts, setSaleProducts] = useState<Product[]>([]);
@@ -18,6 +20,14 @@ export default function HomePage() {
     title: "Unstitched Fabric for Men & Women",
     description:
       "Hand-picked lawn, cotton, wash-and-wear and embroidered unstitched fabric for men and women. Browse the catalog and order directly over WhatsApp.",
+  });
+
+  useJsonLd({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Baig Cloth",
+    url: window.location.origin,
+    logo: `${window.location.origin}/favicon.png`,
   });
 
   useEffect(() => {
@@ -106,8 +116,8 @@ export default function HomePage() {
 
       {/* Category tiles */}
       <section className="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <CategoryTile to="/women" label="Women" sub="Lawn, chiffon, embroidered & more" image={womenImage} />
-        <CategoryTile to="/men" label="Men" sub="Cotton, wash-and-wear, khaddar" image={menImage} />
+        <Reveal><CategoryTile to="/women" label="Women" sub="Lawn, chiffon, embroidered & more" image={womenImage} /></Reveal>
+        <Reveal delayMs={80}><CategoryTile to="/men" label="Men" sub="Cotton, wash-and-wear, khaddar" image={menImage} /></Reveal>
       </section>
 
       {/* Sale strip — only renders if there are active sale products.
@@ -115,17 +125,19 @@ export default function HomePage() {
       {saleProducts.length > 0 && (
         <section className="band py-10">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-serif text-2xl">On Sale</h2>
-              <Link to="/sale" className="text-sm text-[#1a2f66] hover:underline">
-                View all
-              </Link>
-            </div>
+            <Reveal>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-serif text-2xl">On Sale</h2>
+                <Link to="/sale" className="text-sm text-[#1a2f66] hover:underline">
+                  View all
+                </Link>
+              </div>
+            </Reveal>
             <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-4">
-              {saleProducts.slice(0, 8).map((p) => (
-                <div key={p.id} className="w-40 shrink-0 md:w-auto">
+              {saleProducts.slice(0, 8).map((p, i) => (
+                <Reveal key={p.id} delayMs={(i % 4) * 60} className="w-40 shrink-0 md:w-auto">
                   <ProductCard product={p} />
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
@@ -135,12 +147,12 @@ export default function HomePage() {
       {/* Featured / new arrivals */}
       {featuredProducts.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 py-8">
-          <h2 className="font-serif text-2xl mb-4">Featured</h2>
+          <Reveal><h2 className="font-serif text-2xl mb-4">Featured</h2></Reveal>
           <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:grid md:grid-cols-4">
-            {featuredProducts.slice(0, 8).map((p) => (
-              <div key={p.id} className="w-40 shrink-0 md:w-auto">
+            {featuredProducts.slice(0, 8).map((p, i) => (
+              <Reveal key={p.id} delayMs={(i % 4) * 60} className="w-40 shrink-0 md:w-auto">
                 <ProductCard product={p} />
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -151,9 +163,9 @@ export default function HomePage() {
       <section className="panel-dark tape-edge mt-12 py-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <Step title="Browse" body="Explore fabric by category and find what suits you." />
-            <Step title="Message us" body="Tap a product and send us a WhatsApp message." />
-            <Step title="We confirm" body="We confirm availability and arrange delivery." />
+            <Reveal><Step title="Browse" body="Explore fabric by category and find what suits you." /></Reveal>
+            <Reveal delayMs={100}><Step title="Message us" body="Tap a product and send us a WhatsApp message." /></Reveal>
+            <Reveal delayMs={200}><Step title="We confirm" body="We confirm availability and arrange delivery." /></Reveal>
           </div>
         </div>
       </section>

@@ -6,6 +6,9 @@ import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import ProductGridSkeleton from "./ProductGridSkeleton";
 import { usePageMeta } from "../usePageMeta";
+import Reveal from "../Reveal";
+import SortSelect from "./SortSelect";
+import { sortProducts, type SortOption } from "./sortProducts";
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -13,6 +16,7 @@ export default function SearchPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [sort, setSort] = useState<SortOption>("newest");
 
   // noindex: search result pages are duplicate views of the catalog, and an
   // unbounded ?q= space is exactly the kind of thing that bloats an index.
@@ -37,6 +41,8 @@ export default function SearchPage() {
       .finally(() => setLoading(false));
   }, [query]);
 
+  const sortedProducts = sortProducts(products, sort);
+
   return (
     <StorefrontLayout>
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -51,6 +57,12 @@ export default function SearchPage() {
           )}
         </p>
 
+        {products.length > 0 && (
+          <div className="flex justify-end mb-4">
+            <SortSelect value={sort} onChange={setSort} />
+          </div>
+        )}
+
         {loading ? (
           <ProductGridSkeleton />
         ) : error ? (
@@ -63,8 +75,10 @@ export default function SearchPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {sortedProducts.map((p, i) => (
+              <Reveal key={p.id} delayMs={(i % 4) * 60}>
+                <ProductCard product={p} />
+              </Reveal>
             ))}
           </div>
         )}

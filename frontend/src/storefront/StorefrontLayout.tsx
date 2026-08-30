@@ -3,11 +3,14 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import logoLight from "../assets/logo-light.png";
 import { WHATSAPP_NUMBER } from "./config";
+import { useWishlistIds } from "./wishlist";
+import BackToTop from "./BackToTop";
 
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
+  const wishlistCount = useWishlistIds().length;
 
   function handleSearch(e: FormEvent) {
     e.preventDefault();
@@ -32,6 +35,14 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
             <NavItem to="/sale" accent>
               Sale
             </NavItem>
+            <Link to="/wishlist" aria-label="Wishlist" className="relative hover:opacity-70 transition-opacity">
+              <WishlistIcon />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[#b4462f] text-[#f7f7f5] text-[10px] leading-4 text-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
             <form onSubmit={handleSearch} role="search">
               <input
                 type="search"
@@ -79,6 +90,9 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
             <NavItem to="/sale" accent onClick={() => setMenuOpen(false)} mobile>
               Sale
             </NavItem>
+            <NavItem to="/wishlist" onClick={() => setMenuOpen(false)} mobile>
+              Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
+            </NavItem>
           </nav>
         )}
       </header>
@@ -117,6 +131,8 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
       >
         <WhatsAppIcon />
       </a>
+
+      <BackToTop />
     </div>
   );
 }
@@ -163,6 +179,14 @@ function FooterLinks({ title, links }: { title: string; links: { to: string; lab
         ))}
       </ul>
     </div>
+  );
+}
+
+function WishlistIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 21s-7.5-4.6-10.2-9.3C.3 8.7 1.6 5 5.1 4.1c2-.5 4 .3 5.2 2 .3.4.8.4 1.1 0 1.2-1.7 3.2-2.5 5.2-2 3.5.9 4.8 4.6 3.3 7.6C19.5 16.4 12 21 12 21z" />
+    </svg>
   );
 }
 

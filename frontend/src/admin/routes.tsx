@@ -18,20 +18,50 @@
 //     <Route path="/admin/categories" element={<RequireAuth><CategoryManager /></RequireAuth>} />
 //   </Routes>
 
+import { lazy, Suspense, type ReactNode } from "react";
 import type { RouteObject } from "react-router-dom";
-import AdminLogin from "./AdminLogin";
-import AdminDashboard from "./AdminDashboard";
-import ProductForm from "./ProductForm";
-import CategoryManager from "./CategoryManager";
 import RequireAuth from "./RequireAuth";
 
+// Every admin screen — CRUD forms, the dashboard, the category manager —
+// is lazy-loaded into its own chunk. The overwhelming majority of visitors
+// are storefront customers who never touch /admin; before this, all of that
+// code (and the CRUD form logic, validation, etc.) shipped in the same JS
+// bundle they had to download just to see the homepage.
+const AdminLogin = lazy(() => import("./AdminLogin"));
+const AdminDashboard = lazy(() => import("./AdminDashboard"));
+const ProductForm = lazy(() => import("./ProductForm"));
+const CategoryManager = lazy(() => import("./CategoryManager"));
+
+function AdminSuspense({ children }: { children: ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-sm text-[#6b7280]">
+          Loading…
+        </div>
+      }
+    >
+      {children}
+    </Suspense>
+  );
+}
+
 export const adminRoutes: RouteObject[] = [
-  { path: "/admin/login", element: <AdminLogin /> },
+  {
+    path: "/admin/login",
+    element: (
+      <AdminSuspense>
+        <AdminLogin />
+      </AdminSuspense>
+    ),
+  },
   {
     path: "/admin",
     element: (
       <RequireAuth>
-        <AdminDashboard />
+        <AdminSuspense>
+          <AdminDashboard />
+        </AdminSuspense>
       </RequireAuth>
     ),
   },
@@ -39,7 +69,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/products/new",
     element: (
       <RequireAuth>
-        <ProductForm />
+        <AdminSuspense>
+          <ProductForm />
+        </AdminSuspense>
       </RequireAuth>
     ),
   },
@@ -47,7 +79,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/products/:id/edit",
     element: (
       <RequireAuth>
-        <ProductForm />
+        <AdminSuspense>
+          <ProductForm />
+        </AdminSuspense>
       </RequireAuth>
     ),
   },
@@ -55,7 +89,9 @@ export const adminRoutes: RouteObject[] = [
     path: "/admin/categories",
     element: (
       <RequireAuth>
-        <CategoryManager />
+        <AdminSuspense>
+          <CategoryManager />
+        </AdminSuspense>
       </RequireAuth>
     ),
   },
