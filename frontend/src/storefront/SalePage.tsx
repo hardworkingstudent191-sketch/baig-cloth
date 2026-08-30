@@ -4,11 +4,18 @@ import type { Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import ProductGridSkeleton from "./ProductGridSkeleton";
+import { usePageMeta } from "../usePageMeta";
 
 export default function SalePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  usePageMeta({
+    title: "Sale",
+    description:
+      "Unstitched fabric currently on sale at Baig Cloth — reduced lawn, cotton, wash-and-wear and embroidered pieces for men and women.",
+  });
 
   useEffect(() => {
     storefrontApi

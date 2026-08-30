@@ -4,6 +4,7 @@ import { storefrontApi, whatsappLink, ApiError } from "./api";
 import type { Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import { WHATSAPP_NUMBER } from "./config";
+import { usePageMeta } from "../usePageMeta";
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -11,6 +12,17 @@ export default function ProductPage() {
   const [activeImage, setActiveImage] = useState(0);
   const [notFound, setNotFound] = useState(false);
   const [loadError, setLoadError] = useState(false);
+
+  // null while the fetch is in flight, so the tab keeps whatever title it had
+  // instead of flashing a placeholder on the way to the real product name.
+  usePageMeta({
+    title: product ? product.name : notFound ? "Not Available" : null,
+    description: product
+      ? (product.description?.trim().slice(0, 155) ||
+        `${product.name} — unstitched fabric at Baig Cloth. Rs ${product.on_sale && product.sale_price ? product.sale_price : product.price}. Order over WhatsApp.`)
+      : undefined,
+    noindex: notFound,
+  });
 
   useEffect(() => {
     if (!id) return;

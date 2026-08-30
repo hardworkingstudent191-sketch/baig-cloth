@@ -5,6 +5,7 @@ import type { Category, Gender, Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import ProductGridSkeleton from "./ProductGridSkeleton";
+import { usePageMeta } from "../usePageMeta";
 
 function slugify(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
@@ -41,6 +42,16 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [gender, activeCategoryId]);
+
+  const genderLabel = gender === "men" ? "Men's" : "Women's";
+  const activeCategory = categories.find((c) => c.id === activeCategoryId);
+
+  usePageMeta({
+    title: activeCategory ? `${genderLabel} ${activeCategory.name}` : `${genderLabel} Unstitched Fabric`,
+    description: activeCategory
+      ? `${genderLabel} ${activeCategory.name} unstitched fabric at Baig Cloth. Browse the range and order over WhatsApp.`
+      : `Browse ${genderLabel.toLowerCase()} unstitched fabric at Baig Cloth — lawn, cotton, wash-and-wear and embroidered pieces, ordered over WhatsApp.`,
+  });
 
   // Selecting a chip now navigates to /men/lawn (or back to /men for "All"),
   // instead of only updating local state. Previously the URL never changed

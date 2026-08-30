@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { api } from "./api";
 import type { Category, Product } from "./types";
 import AdminLayout from "./AdminLayout";
+import { usePageMeta } from "../usePageMeta";
 
 export default function AdminDashboard() {
+  usePageMeta({ title: "Admin Dashboard", noindex: true });
+
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);

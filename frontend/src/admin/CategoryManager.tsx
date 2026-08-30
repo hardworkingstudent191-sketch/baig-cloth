@@ -2,8 +2,11 @@ import { useEffect, useState, type FormEvent } from "react";
 import { api } from "./api";
 import type { Category, Gender } from "./types";
 import AdminLayout from "./AdminLayout";
+import { usePageMeta } from "../usePageMeta";
 
 export default function CategoryManager() {
+  usePageMeta({ title: "Categories · Admin", noindex: true });
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [newName, setNewName] = useState("");
   const [newGender, setNewGender] = useState<Gender>("men");

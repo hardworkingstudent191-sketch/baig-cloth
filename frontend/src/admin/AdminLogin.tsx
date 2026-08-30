@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, setToken } from "./api";
 import logoLight from "../assets/logo-light.png";
+import { usePageMeta } from "../usePageMeta";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -9,6 +10,8 @@ export default function AdminLogin() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  usePageMeta({ title: "Admin Login", noindex: true });
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

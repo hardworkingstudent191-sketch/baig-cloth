@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import StorefrontLayout from "./StorefrontLayout";
+import { usePageMeta } from "../usePageMeta";
 
 export default function NotFoundPage() {
+  usePageMeta({ title: "Page Not Found", noindex: true });
+
   return (
     <StorefrontLayout>
       <div className="max-w-6xl mx-auto px-4 py-24 text-center">

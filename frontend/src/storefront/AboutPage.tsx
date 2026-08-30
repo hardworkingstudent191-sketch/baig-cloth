@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import StorefrontLayout from "./StorefrontLayout";
+import { usePageMeta } from "../usePageMeta";
 
 export default function AboutPage() {
+  usePageMeta({
+    title: "About",
+    description:
+      "Baig Cloth hand-picks lawn, cotton and embroidered unstitched fabric for men and women, and keeps ordering as simple as sending a WhatsApp message.",
+  });
+
   return (
     <StorefrontLayout>
       <div className="max-w-2xl mx-auto px-4 py-12">

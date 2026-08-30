@@ -4,7 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <title>Baig Cloth</title>
+    <meta name="theme-color" content="#171f33" />
+
+    <title>Baig Cloth — Unstitched Fabric for Men &amp; Women</title>
+    <meta
+      name="description"
+      content="Hand-picked lawn, cotton, wash-and-wear and embroidered unstitched fabric for men and women. Browse the catalog and order directly over WhatsApp."
+    />
+
+    <!--
+      The canonical link and the Open Graph / Twitter tags need the absolute
+      public origin, so they're injected at build time by the site-meta plugin
+      in vite.config.ts rather than written here — a %PLACEHOLDER% inside an
+      href or content attribute trips Vite's HTML asset parser.
+
+      Those tags are what WhatsApp and Facebook read when someone shares a
+      link, and crawlers don't execute JavaScript, so they see these
+      site-wide values for EVERY url. The per-page titles set at runtime in
+      usePageMeta.ts are for the browser tab and for Google, which does render
+      JS. Genuinely per-product previews would need prerendering — noted in
+      docs/todo.md.
+    -->
   </head>
   <body>
     <div id="root"></div>

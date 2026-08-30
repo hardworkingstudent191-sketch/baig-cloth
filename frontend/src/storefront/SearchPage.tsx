@@ -5,6 +5,7 @@ import type { Product } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import ProductGridSkeleton from "./ProductGridSkeleton";
+import { usePageMeta } from "../usePageMeta";
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -12,6 +13,14 @@ export default function SearchPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  // noindex: search result pages are duplicate views of the catalog, and an
+  // unbounded ?q= space is exactly the kind of thing that bloats an index.
+  usePageMeta({
+    title: query.trim() ? `Search: ${query.trim()}` : "Search",
+    description: "Search the Baig Cloth catalog of unstitched fabric for men and women.",
+    noindex: true,
+  });
 
   useEffect(() => {
     if (!query.trim()) {

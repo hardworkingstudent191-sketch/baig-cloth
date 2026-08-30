@@ -1,0 +1,81 @@
+# Baig Cloth storefront — Apache/LiteSpeed config for the static build.
+#
+# Lives in public/ so Vite copies it into dist/ verbatim on every build;
+# upload the contents of dist/ to the web root and this comes with it.
+
+# ---------------------------------------------------------------------------
+# SPA routing
+# ---------------------------------------------------------------------------
+# The app is a single-page React Router build: only index.html physically
+# exists. Without the rule below the server tries to find a real /men/lawn
+# directory, fails, and serves its own 404 — so refreshing any inner page or
+# opening a shared /product/12 link from WhatsApp breaks, even though
+# navigating there by clicking works fine. Requests for real files still
+# win, so assets, images and the hero video are unaffected.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Anything that exists on disk is served as-is.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Everything else is a client-side route — hand it index.html and let
+  # React Router resolve it (including rendering the 404 page).
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Caching
+# ---------------------------------------------------------------------------
+# Vite fingerprints every built asset (index-BwzTwlFi.js), so those filenames
+# change whenever their contents do and can be cached hard. index.html must
+# NOT be cached — it's the file that points at the current fingerprints, and a
+# stale copy would keep serving a deleted bundle after a deploy.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                          "access plus 1 month"
+  ExpiresByType text/html                 "access plus 0 seconds"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType video/mp4                 "access plus 1 year"
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  # Hashed bundles under /assets/ are immutable by construction.
+  <FilesMatch "^index-.*\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Compression
+# ---------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Security headers
+# ---------------------------------------------------------------------------
+# The API sets its own equivalents; these cover the HTML/asset host.
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# Don't serve dotfiles (including this one).
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>

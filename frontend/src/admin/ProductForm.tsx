@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { api, ApiError } from "./api";
 import type { Category, ProductInput } from "./types";
 import AdminLayout from "./AdminLayout";
+import { usePageMeta } from "../usePageMeta";
 
 const emptyProduct: ProductInput = {
   name: "",
@@ -41,6 +42,8 @@ function fromDatetimeLocalValue(value: string): string | null {
 export default function ProductForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
+
+  usePageMeta({ title: `${isEdit ? "Edit" : "New"} Product · Admin`, noindex: true });
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState<Category[]>([]);

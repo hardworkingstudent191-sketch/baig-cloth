@@ -1,6 +1,13 @@
 import StorefrontLayout from "./StorefrontLayout";
+import { usePageMeta } from "../usePageMeta";
 
 export default function PoliciesPage() {
+  usePageMeta({
+    title: "Policies",
+    description:
+      "How ordering, payment, delivery, exchanges and returns work at Baig Cloth — the basics before you order over WhatsApp.",
+  });
+
   return (
     <StorefrontLayout>
       <div className="max-w-2xl mx-auto px-4 py-12">

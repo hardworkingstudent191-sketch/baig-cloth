@@ -1,0 +1,148 @@
+<!doctype html>
+<!--
+  Source for public/og-image.jpg — the link preview WhatsApp and Facebook show
+  when someone shares the shop. Rendered to a 1200x630 JPEG by
+  scripts/make-og-image.mjs (`npm run og`); the placeholder tokens SWATCH_A,
+  SWATCH_B and LOGO_LIGHT are swapped for base64 data URIs by that script.
+
+  Colors and motifs deliberately mirror the storefront hero (navy-to-terracotta
+  duotone, tailor's-tape ticks, the hang-tag eyebrow) so a shared link and the
+  page it opens look like the same shop.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+        background-color: #171f33;
+        background-image: linear-gradient(
+          135deg,
+          rgba(26, 37, 71, 0.97) 0%,
+          rgba(34, 60, 128, 0.9) 45%,
+          rgba(94, 51, 30, 0.92) 100%
+        );
+        position: relative;
+        display: flex;
+      }
+
+      .grain {
+        position: absolute; inset: 0; z-index: 6; pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+
+      /* Tailor's tape ticks along the top edge — same motif as the storefront. */
+      .tape {
+        position: absolute; top: 0; left: 0; right: 0; height: 16px; z-index: 7;
+        background-image:
+          repeating-linear-gradient(90deg, rgba(247,247,245,.45) 0 1.5px, transparent 1.5px 56px),
+          repeating-linear-gradient(90deg, rgba(247,247,245,.22) 0 1.5px, transparent 1.5px 11px);
+        background-position: bottom left, bottom left;
+        background-repeat: no-repeat;
+        background-size: 100% 16px, 100% 8px;
+      }
+
+      .left {
+        position: relative; z-index: 5;
+        width: 640px;
+        padding: 0 24px 0 68px;
+        display: flex; flex-direction: column; justify-content: center;
+      }
+
+      .tag {
+        display: inline-flex; align-items: center; gap: 9px;
+        align-self: flex-start;
+        padding: 8px 18px 8px 13px;
+        background: #f7f7f5;
+        border: 1px solid rgba(16,16,20,.15);
+        border-radius: 3px;
+        transform: rotate(-3deg);
+        box-shadow: 0 6px 20px rgba(10,14,26,.4);
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: #1f2937;
+      }
+      .tag::before {
+        content: ""; width: 9px; height: 9px; border-radius: 50%;
+        border: 2px solid rgba(16,16,20,.4); flex-shrink: 0;
+      }
+
+      h1 {
+        font-family: 'Fraunces', serif;
+        font-weight: 500;
+        font-size: 58px;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        color: #f7f7f5;
+        margin-top: 28px;
+        max-width: 540px;
+        text-shadow: 0 2px 24px rgba(10,14,26,.45);
+      }
+
+      .sub {
+        margin-top: 22px;
+        font-size: 20px;
+        color: #d7dbe4;
+        max-width: 480px;
+        line-height: 1.45;
+      }
+
+      .footer { margin-top: 38px; display: flex; align-items: center; gap: 18px; }
+      .footer img { height: 42px; width: auto; }
+      .rule { width: 1px; height: 32px; background: rgba(247,247,245,.28); }
+      .wa {
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 15px; letter-spacing: .12em; text-transform: uppercase;
+        color: #cfd6e6;
+      }
+
+      /* Two fabric swatches laid on the mat at slight angles. */
+      .right { position: relative; flex: 1; z-index: 2; }
+      .swatch {
+        position: absolute;
+        width: 300px; height: 420px;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 26px 60px rgba(6,9,18,.62);
+        border: 1px solid rgba(247,247,245,.2);
+      }
+      .swatch img { width: 100%; height: 100%; object-fit: cover; }
+      .s1 { left: 14px;  top: 66px;  transform: rotate(-6deg); z-index: 2; }
+      .s2 { left: 236px; top: 128px; transform: rotate(5deg);  z-index: 3; }
+
+      /* Soft scrim under the copy so the headline never sits on a light patch. */
+      .scrim {
+        position: absolute; inset: 0; z-index: 4;
+        background: linear-gradient(90deg, rgba(10,14,26,.5) 0%, rgba(10,14,26,.18) 48%, rgba(10,14,26,0) 62%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="left">
+      <span class="tag">Unstitched Fabric</span>
+      <h1>Cloth worth cutting into something of your own.</h1>
+      <p class="sub">Hand-picked lawn, cotton, wash-and-wear and embroidered fabric for men and women.</p>
+      <div class="footer">
+        <img src="LOGO_LIGHT" alt="" />
+        <div class="rule"></div>
+        <span class="wa">Order on WhatsApp</span>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="swatch s1"><img src="SWATCH_A" /></div>
+      <div class="swatch s2"><img src="SWATCH_B" /></div>
+    </div>
+
+    <div class="scrim"></div>
+    <div class="grain"></div>
+    <div class="tape"></div>
+  </body>
+</html>

@@ -1,0 +1,95 @@
+name: CI
+
+# There's no test suite in this repo yet, so this is deliberately narrow: it
+# proves the frontend still type-checks and builds, and that the backend's
+# migrations still apply cleanly and match the models. That catches the
+# overwhelming majority of "it broke on deploy" cases for a project this size.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  frontend:
+    name: Frontend — type-check & build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      # `npm run build` is `tsc -b && vite build` — the only automated check
+      # the frontend currently has.
+      - run: npm run build
+        env:
+          VITE_SITE_URL: https://baigcloth.com
+
+  backend:
+    name: Backend — migrations & import
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    # A real Postgres, not SQLite: Product.image_urls is a Postgres ARRAY
+    # column, so create_all and the migrations only work on the real dialect.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: baig_cloth_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/baig_cloth_ci
+      # config.py fails fast on a placeholder or under-32-char secret by
+      # design. CI-only value, unrelated to any real deployment.
+      JWT_SECRET_KEY: ci-only-secret-not-used-anywhere-real-0123456789
+      CLOUDINARY_CLOUD_NAME: ci
+      CLOUDINARY_API_KEY: ci
+      CLOUDINARY_API_SECRET: ci
+      CORS_ORIGINS: http://localhost:5173
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - run: pip install -r requirements.txt
+
+      - name: Byte-compile every module
+        run: python -m compileall -q app scripts
+
+      - name: Apply migrations
+        run: alembic upgrade head
+
+      # Catches the failure mode CLAUDE.md warns about: editing app/models.py
+      # and forgetting to generate the matching migration, so the deployed
+      # schema silently drifts from the code.
+      - name: Models match migrations
+        run: alembic check
+
+      - name: Import the app
+        run: python -c "from app.main import app; print(f'{len(app.routes)} routes registered')"

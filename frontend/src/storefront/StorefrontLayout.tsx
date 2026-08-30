@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import logoLight from "../assets/logo-light.png";
 import { WHATSAPP_NUMBER } from "./config";
 
 export default function StorefrontLayout({ children }: { children: ReactNode }) {
@@ -84,19 +85,19 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
 
       <main>{children}</main>
 
-      <footer className="border-t border-dashed border-[#dde1e8] mt-16 px-4 py-10">
+      <footer className="panel-dark px-4 py-12">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
           <div className="col-span-2 md:col-span-1">
-            <img src={logo} alt="Baig Cloth" className="h-8 w-auto mb-2" />
-            <p className="text-[#6b7280]">Unstitched fabric, made simple.</p>
+            <img src={logoLight} alt="Baig Cloth" className="h-8 w-auto mb-2" />
+            <p className="text-[#9aa3b5]">Unstitched fabric, made simple.</p>
           </div>
           <FooterLinks title="Shop" links={[{ to: "/men", label: "Men" }, { to: "/women", label: "Women" }, { to: "/sale", label: "Sale" }]} />
           <FooterLinks title="Info" links={[{ to: "/policies", label: "Policies" }, { to: "/about", label: "About" }]} />
           <div>
-            <p className="text-[#6b7280] mb-2">Order via</p>
+            <p className="text-[#9aa3b5] mb-2">Order via</p>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
-              className="text-[#223c80] hover:underline"
+              className="text-[#8fa6e8] hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -151,7 +152,7 @@ function NavItem({
 function FooterLinks({ title, links }: { title: string; links: { to: string; label: string }[] }) {
   return (
     <div>
-      <p className="text-[#6b7280] mb-2">{title}</p>
+      <p className="text-[#9aa3b5] mb-2">{title}</p>
       <ul className="space-y-1.5">
         {links.map((l) => (
           <li key={l.to}>

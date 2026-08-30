@@ -2,6 +2,38 @@
 
 #storefront-root {
   font-family: 'Inter', sans-serif;
+  /* A real warm parchment, not a near-white tint. Earlier passes sat at 97%
+     lightness, which reads as "white" next to the product cards — this is
+     dark enough that the cards read as objects sitting ON a surface. The
+     grain is a fine procedural noise (linen/paper, not ruled lines) tiled
+     small so it never "runs out" on a long page, and the two color washes
+     — navy and a muted terracotta pulled from real catalog fabrics (Rust
+     Brown, Terracotta, Camel) — are pinned to the viewport so they read as
+     ambient light rather than a splash that fades once you scroll. */
+  background-color: #f1ebe0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.05  0 0 0 0 0.04  0 0 0 0 0.03  0 0 0 0.1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 70% 60% at 10% 0%, rgba(34, 60, 128, 0.14), transparent 65%),
+    radial-gradient(ellipse 60% 55% at 100% 100%, rgba(180, 106, 62, 0.16), transparent 65%);
+  background-repeat: repeat, no-repeat, no-repeat;
+  background-attachment: scroll, fixed, fixed;
+}
+
+/* Full-bleed tinted band — one step deeper than the page, edged with the
+   same dashed cut-lines used on the cards. Gives the page visible rhythm
+   instead of one uninterrupted field of color. */
+#storefront-root .band {
+  background-color: #e7dfd0;
+  border-top: 1px dashed rgba(16, 16, 20, 0.18);
+  border-bottom: 1px dashed rgba(16, 16, 20, 0.18);
+}
+
+/* Dark panel — same navy as the hero's base, so the page opens and closes
+   dark with the catalog held in the light between them. */
+#storefront-root .panel-dark {
+  background-color: #171f33;
+  background-image: linear-gradient(135deg, rgba(26, 37, 71, 0.96) 0%, rgba(34, 60, 128, 0.55) 55%, rgba(94, 51, 30, 0.5) 100%);
+  color: #f7f7f5;
 }
 
 #storefront-root h1,
@@ -12,4 +44,133 @@
 
 #storefront-root .font-mono {
   font-family: 'IBM Plex Mono', monospace;
+}
+
+/* The hero is now a dark panel rather than a light card. This is the
+   static base: it alone is the entire background when video can't play
+   (reduced motion, slow connection, load failure), so it has to look
+   complete on its own, with the fabric video layered on top of it when
+   allowed. Navy-to-terracotta duotone, same brand colors as the rest of
+   the page, just inverted to dark. */
+#storefront-root .hero-weave {
+  position: relative;
+  overflow: hidden;
+  background-color: #171f33;
+  background-image:
+    linear-gradient(135deg, rgba(26, 37, 71, 0.97) 0%, rgba(34, 60, 128, 0.9) 45%, rgba(94, 51, 30, 0.92) 100%);
+}
+
+/* Self-hosted fabric video, full-bleed behind the content. Fades in once
+   it can actually play so there's never a flash of an empty black box —
+   before that (and for anyone who prefers reduced motion, in which case
+   it's not rendered at all) the duotone mat above is the whole picture. */
+#storefront-root .hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+#storefront-root .hero-video.is-ready {
+  opacity: 1;
+}
+
+/* Scrim so headline/body text stays readable over moving footage. */
+#storefront-root .hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(180deg, rgba(10, 14, 26, 0.55) 0%, rgba(10, 14, 26, 0.32) 45%, rgba(10, 14, 26, 0.6) 100%);
+}
+
+#storefront-root .hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #storefront-root .hero-rise {
+    animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--hero-delay, 0s);
+  }
+  #storefront-root .fabric-tag {
+    animation: tag-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes tag-drop {
+  0%   { opacity: 0; transform: translateY(-14px) rotate(-3deg) scale(0.9); }
+  60%  { opacity: 1; transform: translateY(2px) rotate(-3deg) scale(1.03); }
+  100% { opacity: 1; transform: translateY(0) rotate(-3deg) scale(1); }
+}
+
+/* Tape-measure edge: ruler ticks (a long mark every 40px, a short mark
+   every 8px) running along the top of a panel, echoing a tailor's tape. */
+#storefront-root .tape-edge {
+  position: relative;
+}
+#storefront-root .tape-edge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 13px;
+  z-index: 1;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(247, 247, 245, 0.4) 0px, rgba(247, 247, 245, 0.4) 1px, transparent 1px, transparent 40px),
+    repeating-linear-gradient(90deg, rgba(247, 247, 245, 0.2) 0px, rgba(247, 247, 245, 0.2) 1px, transparent 1px, transparent 8px);
+  background-position: bottom left, bottom left;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 12px, 100% 6px;
+}
+
+/* Fabric tag: stands in for a plain eyebrow label, styled like the hang
+   tags sewn into a bundle of unstitched fabric — a punched hole (::before)
+   on a slightly askew card, as if laid on top of the page by hand. */
+#storefront-root .fabric-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px 6px 10px;
+  background: #f7f7f5;
+  border: 1px solid rgba(16, 16, 20, 0.15);
+  border-radius: 3px;
+  transform: rotate(-3deg);
+  box-shadow: 0 4px 14px rgba(10, 14, 26, 0.35);
+}
+#storefront-root .fabric-tag::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(16, 16, 20, 0.4);
+  flex-shrink: 0;
+}
+
+/* Paper corner-peel on category tiles: a folded-back corner that lifts
+   further on hover, like turning up a fabric swatch to see more. */
+#storefront-root .tile-peel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 26px 26px 0;
+  border-color: transparent #f7f7f5 transparent transparent;
+  filter: drop-shadow(-1px 1px 2px rgba(16, 16, 20, 0.18));
+  transition: border-width 0.25s ease;
+  z-index: 1;
+}
+#storefront-root .group:hover .tile-peel {
+  border-width: 0 38px 38px 0;
 }
