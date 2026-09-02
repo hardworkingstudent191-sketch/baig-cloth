@@ -101,6 +101,19 @@
   z-index: 1;
 }
 
+/* Bottom-pinned caption for the smaller video cards (FabricVideoCard,
+   CategoryVideoBanner) — NOT .hero-content: that class hardcodes
+   position:relative for the full homepage hero, which silently wins over
+   Tailwind's `absolute` utility on the same element by specificity (an
+   ID-prefixed selector beats a bare utility class) and was pulling these
+   captions out of their bottom-pinned position into normal document flow,
+   landing them clipped at the top of the card instead. This class only sets
+   the stacking order and leaves positioning entirely to Tailwind classes.
+*/
+#storefront-root .hero-caption {
+  z-index: 1;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   #storefront-root .hero-rise {
     animation: hero-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;

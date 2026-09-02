@@ -26,7 +26,7 @@ export default function FabricVideoCard({ className = "" }: { className?: string
         />
       )}
       <div className="hero-scrim" />
-      <p className="hero-content absolute bottom-3 left-4 right-4 text-[#e2e5ec] text-xs font-mono tracking-wide uppercase">
+      <p className="hero-caption absolute bottom-3 left-4 right-4 text-[#e2e5ec] text-xs font-mono tracking-wide uppercase">
         Real fabric, hand-picked before it ever reaches the catalog
       </p>
     </div>

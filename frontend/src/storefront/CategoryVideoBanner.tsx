@@ -44,7 +44,7 @@ export default function CategoryVideoBanner({ gender }: { gender: Gender }) {
         />
       )}
       <div className="hero-scrim" />
-      <p className="hero-content absolute bottom-3 left-4 right-4 md:text-sm text-xs text-[#e2e5ec] font-mono tracking-wide uppercase">
+      <p className="hero-caption absolute bottom-3 left-4 right-4 md:text-sm text-xs text-[#e2e5ec] font-mono tracking-wide uppercase">
         {caption}
       </p>
     </div>
