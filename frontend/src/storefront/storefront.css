@@ -96,6 +96,22 @@
     linear-gradient(180deg, rgba(10, 14, 26, 0.55) 0%, rgba(10, 14, 26, 0.32) 45%, rgba(10, 14, 26, 0.6) 100%);
 }
 
+/* Lighter, bottom-only version for FabricVideoCard and CategoryVideoBanner
+   — cards whose only overlaid text is a one-line caption pinned to the
+   bottom edge, not a headline spanning the whole frame like the homepage
+   hero. The full .hero-scrim above darkens the entire clip by 32-60%
+   everywhere, which was flattening these smaller, already-modest videos
+   into a muddy, underexposed-looking mass instead of just quietly
+   supporting the caption text. This stays fully transparent over the top
+   ~60% of the frame — the video reads at its real color and contrast there
+   — and only darkens near the bottom, where the caption actually sits. */
+#storefront-root .hero-scrim-bottom {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(180deg, transparent 0%, transparent 60%, rgba(10, 14, 26, 0.72) 100%);
+}
+
 #storefront-root .hero-content {
   position: relative;
   z-index: 1;

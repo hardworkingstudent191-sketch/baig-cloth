@@ -5,7 +5,7 @@ import { usePrefersReducedMotion } from "../usePrefersReducedMotion";
 const CONTENT: Record<Gender, { src: string; caption: string }> = {
   men: {
     src: "/hero/fabric-men.mp4",
-    caption: "Cut and finished the same way it would be for a made-to-order piece",
+    caption: "The weave and texture of real cotton and khaddar",
   },
   women: {
     src: "/hero/fabric-women.mp4",
@@ -20,18 +20,31 @@ const CONTENT: Record<Gender, { src: string; caption: string }> = {
  * (CategoryPage passes it conditionally): repeating it on every subcategory
  * chip click would make it wallpaper instead of a one-time first impression.
  *
- * The original pairing here was wrong on two counts, caught after launch:
- * the men's clip (pexels 8527273, "hands cutting fabric") visibly showed a
- * woman's hands (manicured nails, a ring) — mismatched for a men's category
- * page regardless of how the caption read. And the women's clip (pexels
- * 4870515, plain folded chiffon) never showed any embroidery at all despite
- * its caption promising "embroidered pieces" — caption and footage
- * disagreeing is worse than picking a plainer true caption. 8527273 moved to
- * women (a closer thematic fit, and the caption below no longer overclaims
- * what it shows); men now gets a real tailor at a cutting table instead.
+ * Went through two corrections after launch, both caught by real feedback:
+ *
+ * 1. The original men's clip (pexels 8527273, "hands cutting fabric")
+ *    visibly showed a woman's hands (manicured nails, a ring) — mismatched
+ *    regardless of caption. Moved to women, a genuine thematic fit.
+ * 2. Its replacement — a Western tailoring studio (waistcoat, mannequins,
+ *    an elderly tailor at a cutting table) — didn't represent this shop's
+ *    actual context (unstitched cotton/wash-and-wear/khaddar for South
+ *    Asian dress, not Western bespoke suiting), and reaching for footage
+ *    that specifically depicted "traditional Pakistani menswear" risked
+ *    picking something else subtly wrong rather than getting it right.
+ *    Landed on a plain woven fabric texture instead — no people, no
+ *    culturally-specific styling to get wrong, and the olive-khaki color
+ *    actually matches the shop's own wash-and-wear palette (rust, sage,
+ *    olive) already in the catalog.
+ *
+ * Both video cards also switched from `.hero-scrim` (a full-frame 32-60%
+ * darkening gradient, right for the homepage hero's large centered
+ * headline) to `.hero-scrim-bottom` (fully transparent over most of the
+ * frame, darkened only behind the caption) — the heavier scrim was making
+ * these smaller cards look muddy/underexposed for no reason, since neither
+ * has text anywhere but a one-line caption at the bottom edge.
  *
  * Credits (Pexels, free for commercial use, no attribution required):
- * - men: pexels.com/video/a-tailor-cutting-a-fabric-6766337
+ * - men: pexels.com/video/close-up-video-of-a-cloth-7793207
  * - women: pexels.com/video/a-close-up-of-a-person-s-hands-cutting-fabric-8527273
  */
 export default function CategoryVideoBanner({ gender }: { gender: Gender }) {
@@ -53,7 +66,7 @@ export default function CategoryVideoBanner({ gender }: { gender: Gender }) {
           onCanPlay={() => setReady(true)}
         />
       )}
-      <div className="hero-scrim" />
+      <div className="hero-scrim-bottom" />
       <p className="hero-caption absolute bottom-3 left-4 right-4 md:text-sm text-xs text-[#e2e5ec] font-mono tracking-wide uppercase">
         {caption}
       </p>
