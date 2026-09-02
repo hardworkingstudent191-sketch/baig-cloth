@@ -5,12 +5,19 @@ import type { Category, Product } from "./types";
 import AdminLayout from "./AdminLayout";
 import { usePageMeta } from "../usePageMeta";
 
+// Matches the backend's own default page size (app/routers/products.py) —
+// keeping them equal is what makes "did this page come back full" a
+// reliable signal for whether there might be more to load.
+const PAGE_SIZE = 100;
+
 export default function AdminDashboard() {
   usePageMeta({ title: "Admin Dashboard", noindex: true });
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -24,15 +31,30 @@ export default function AdminDashboard() {
     setError(null);
     try {
       const [productsData, categoriesData] = await Promise.all([
-        api.listProducts(),
+        api.listProducts({ limit: PAGE_SIZE, offset: 0 }),
         api.listCategories(),
       ]);
       setProducts(productsData);
       setCategories(categoriesData);
+      setHasMore(productsData.length === PAGE_SIZE);
     } catch {
       setError("Couldn't load products. Check the API connection and try again.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function loadMore() {
+    setLoadingMore(true);
+    setError(null);
+    try {
+      const nextPage = await api.listProducts({ limit: PAGE_SIZE, offset: products.length });
+      setProducts((prev) => [...prev, ...nextPage]);
+      setHasMore(nextPage.length === PAGE_SIZE);
+    } catch {
+      setError("Couldn't load more products. Check the API connection and try again.");
+    } finally {
+      setLoadingMore(false);
     }
   }
 
@@ -206,6 +228,18 @@ export default function AdminDashboard() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {hasMore && (
+        <div className="mt-4 text-center">
+          <button
+            onClick={loadMore}
+            disabled={loadingMore}
+            className="text-sm text-[#3f5fc4] hover:underline disabled:opacity-60"
+          >
+            {loadingMore ? "Loading…" : `Load more (showing ${products.length})`}
+          </button>
         </div>
       )}
     </AdminLayout>

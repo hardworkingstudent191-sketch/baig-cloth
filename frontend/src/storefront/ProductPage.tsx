@@ -12,6 +12,7 @@ import RecentlyViewedStrip from "./RecentlyViewedStrip";
 import { recordView } from "./recentlyViewed";
 import Lightbox from "./Lightbox";
 import ShareButton from "./ShareButton";
+import { cloudinaryUrl, cloudinarySrcSet } from "../cloudinary";
 
 function slugify(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
@@ -161,6 +162,8 @@ export default function ProductPage() {
               >
                 <img
                   src={product.image_urls[activeImage]}
+                  srcSet={cloudinarySrcSet(product.image_urls[activeImage], [500, 800, 1200])}
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   alt={product.name}
                   className="w-full h-full object-cover"
                 />
@@ -190,7 +193,13 @@ export default function ProductPage() {
                     i === activeImage ? "border-[#223c80]" : "border-transparent"
                   }`}
                 >
-                  <img src={url} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                  <img
+                    src={cloudinaryUrl(url, 160)}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>

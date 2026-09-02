@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { cloudinarySrcSet } from "../cloudinary";
 
 /**
  * Full-screen zoomed view of the product gallery. Arrow keys and Escape
@@ -71,6 +72,8 @@ export default function Lightbox({
 
       <img
         src={images[index]}
+        srcSet={cloudinarySrcSet(images[index], [600, 900, 1400])}
+        sizes="90vw"
         alt={alt}
         className="lightbox-image"
         onClick={(e) => e.stopPropagation()}

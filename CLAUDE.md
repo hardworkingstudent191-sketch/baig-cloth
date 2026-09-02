@@ -99,9 +99,22 @@ models directly. There's no repository/service abstraction to look for.
 timing is deliberately constant — `authenticate_admin` always runs
 `verify_password` against a dummy hash when the username doesn't exist, to
 avoid leaking valid usernames via response timing. Login attempts are
-IP-rate-limited in-memory (`app/rate_limit.py`, 5 per 15 min) — this is a
-single-process app, so no Redis/shared store is used; that's intentional,
-not a gap to "fix".
+IP-rate-limited in-memory (`app/rate_limit.py`, `enforce_login_rate_limit`,
+5 per 15 min) — this is a single-process app, so no Redis/shared store is
+used; that's intentional, not a gap to "fix". Public GET endpoints
+(`/products`, `/categories`) get the same file's looser
+`enforce_general_rate_limit` (120/min per IP) — high enough no real visitor
+should ever notice, low enough to blunt sustained scraping.
+
+**Admin account recovery**: `scripts/create_admin.py` deliberately *skips*
+an already-existing username rather than resetting its password (so a
+misfired re-run in production can't silently overwrite a real admin's
+password) — which means `PUT /admin/password` (rate-limited the same as
+login, since it accepts a password guess) is the only way to change or
+recover a lost admin password short of direct database access. There is no
+multi-admin management UI (create/list/delete other admins) — out of scope
+for a single-shop-owner account; `AdminUser` support multiple rows already
+if that's ever needed.
 
 **Config** (`app/config.py`, pydantic-settings from `.env`): refuses to
 start if `JWT_SECRET_KEY` is a known placeholder or under 32 chars — this
@@ -123,7 +136,29 @@ pages are data-driven off `GET /categories`.
 **Image uploads**: admin uploads go through `POST /admin/upload-image`,
 which verifies the real decoded image format via Pillow (not just the
 client-supplied `Content-Type`) before forwarding to Cloudinary, capped at
-8MB, JPEG/PNG/WEBP only.
+8MB, JPEG/PNG/WEBP only. `cloudinary_utils.upload_image` bakes
+`f_auto,q_auto` into the returned delivery URL — every image uploaded
+through the admin panel is automatically served as WebP/AVIF at a
+content-aware quality to any browser that supports it, for free, forever,
+with zero frontend involvement. `frontend/src/cloudinary.ts` adds
+resolution on top of that: `cloudinarySrcSet()` generates a `srcSet` for
+Cloudinary-hosted images (product cards, the product gallery, the lightbox,
+category tiles) so a phone doesn't download the same pixels a desktop does.
+Both no-op for the 46 products already in the repo, which point at local
+static files under `frontend/public/products/` rather than Cloudinary —
+this only activates for images actually uploaded through the admin panel.
+
+**Pagination**: `GET /products` takes `limit`/`offset` (default 100, capped
+at 200 server-side). The storefront (`storefront/usePaginatedProducts.ts`,
+shared by `CategoryPage`/`SalePage`/`SearchPage` via a `LoadMoreButton`) and
+the admin dashboard (`AdminDashboard.tsx`) both page through it with a
+"Load more" button rather than assuming a filtered view always fits in one
+request — before this, anything past the first page was invisible with no
+indication it existed; in the admin dashboard specifically that meant the
+*oldest* products (the API orders newest-first) would become un-editable,
+un-deletable, with nothing telling you they were there. `hasMore` is a
+heuristic (`results.length === limit`), not a real total count — there's no
+count endpoint.
 
 **Migrations**: Alembic is the source of truth for schema (`backend/alembic/versions/`).
 `Base.metadata.create_all` still runs on app startup in `main.py` as a

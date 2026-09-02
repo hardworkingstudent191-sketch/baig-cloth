@@ -42,7 +42,16 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function request<T>(
+  path: string,
+  options: RequestInit = {},
+  // PUT /admin/password also returns 401 for a plain wrong-current-password
+  // — a normal validation error the caller needs to show inline, not a sign
+  // that the session itself has expired. Without this escape hatch, typing
+  // the wrong current password would force-logout and redirect to /login
+  // instead of showing "current password is incorrect".
+  { treatAuthErrorAsSessionExpiry = true }: { treatAuthErrorAsSessionExpiry?: boolean } = {},
+): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string>),
@@ -62,7 +71,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     throw new ApiError(0, "Network error — check your connection and try again.");
   }
 
-  if (res.status === 401) {
+  if (res.status === 401 && treatAuthErrorAsSessionExpiry) {
     clearToken();
     window.location.href = "/admin/login";
     throw new ApiError(401, "Session expired");
@@ -84,7 +93,19 @@ export const api = {
       body: JSON.stringify({ username, password }),
     }),
 
-  listProducts: () => request<Product[]>("/products"),
+  // Backend caps a single page at 200 (and defaults to 100) — the admin
+  // dashboard pages through with `limit`/`offset` (see PAGE_SIZE in
+  // AdminDashboard.tsx) rather than assuming the whole catalog fits in one
+  // request, which used to mean products past the first 100 (the OLDEST
+  // ones, since the API orders newest-first) were invisible in the admin
+  // panel — un-editable, un-deletable — with nothing telling you they existed.
+  listProducts: (params: { limit?: number; offset?: number } = {}) => {
+    const query = new URLSearchParams();
+    if (params.limit !== undefined) query.set("limit", String(params.limit));
+    if (params.offset !== undefined) query.set("offset", String(params.offset));
+    const qs = query.toString();
+    return request<Product[]>(`/products${qs ? `?${qs}` : ""}`);
+  },
 
   getProduct: (id: number) => request<Product>(`/products/${id}`),
 
@@ -107,6 +128,16 @@ export const api = {
 
   deleteCategory: (id: number) =>
     request<void>(`/categories/${id}`, { method: "DELETE" }),
+
+  changePassword: (currentPassword: string, newPassword: string) =>
+    request<void>(
+      "/admin/password",
+      {
+        method: "PUT",
+        body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+      },
+      { treatAuthErrorAsSessionExpiry: false },
+    ),
 
   uploadImage: (file: File) => {
     const form = new FormData();

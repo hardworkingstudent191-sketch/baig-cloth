@@ -32,7 +32,15 @@ function toQuery(params: Record<string, string | boolean | number | undefined>) 
 
 export const storefrontApi = {
   listProducts: (
-    filters: { gender?: Gender; category_id?: number; on_sale?: boolean; featured?: boolean; search?: string } = {}
+    filters: {
+      gender?: Gender;
+      category_id?: number;
+      on_sale?: boolean;
+      featured?: boolean;
+      search?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
   ) => request<Product[]>(`/products${toQuery(filters)}`),
 
   getProduct: (id: number) => request<Product>(`/products/${id}`),

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Product } from "./types";
 import WishlistHeart from "./WishlistHeart";
+import { cloudinarySrcSet } from "../cloudinary";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
@@ -12,6 +13,8 @@ export default function ProductCard({ product }: { product: Product }) {
         {product.image_urls[0] ? (
           <img
             src={product.image_urls[0]}
+            srcSet={cloudinarySrcSet(product.image_urls[0], [300, 500, 800])}
+            sizes="(min-width: 768px) 25vw, 50vw"
             alt={product.name}
             loading="lazy"
             decoding="async"

@@ -4,11 +4,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
 from PIL import Image, UnidentifiedImageError
 from sqlalchemy.orm import Session
 
-from app.auth import authenticate_admin, create_access_token, get_current_admin
+from app.auth import authenticate_admin, create_access_token, get_current_admin, hash_password, verify_password
 from app.cloudinary_utils import upload_image
 from app.database import get_db
+from app.models import AdminUser
 from app.rate_limit import enforce_login_rate_limit
-from app.schemas import AdminLogin, Token, ImageUploadOut
+from app.schemas import AdminLogin, AdminPasswordChange, Token, ImageUploadOut
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -25,6 +26,25 @@ def login(payload: AdminLogin, request: Request, db: Session = Depends(get_db)):
 
     token = create_access_token(subject=admin.username)
     return Token(access_token=token)
+
+
+@router.put("/password", status_code=204)
+def change_password(
+    payload: AdminPasswordChange,
+    request: Request,
+    admin: AdminUser = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    # Same limiter as login: this endpoint accepts a password guess (the
+    # current one) from anyone holding a valid — possibly stolen — JWT, so it
+    # needs the same brute-force throttling, not just the auth-required gate.
+    enforce_login_rate_limit(request)
+
+    if not verify_password(payload.current_password, admin.password_hash):
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+
+    admin.password_hash = hash_password(payload.new_password)
+    db.commit()
 
 
 @router.post("/upload-image", response_model=ImageUploadOut, dependencies=[Depends(get_current_admin)])

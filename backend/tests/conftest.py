@@ -23,6 +23,7 @@ from app.database import Base, engine, get_db
 from app.auth import hash_password
 from app.models import AdminUser, Category, Gender
 from app.rate_limit import _attempts as _rate_limit_attempts
+from app.rate_limit import _general_requests as _rate_limit_general
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -41,8 +42,10 @@ def _reset_rate_limiter():
     # credentials were correct. Resetting it here keeps tests independent
     # of run order, the same way the DB transaction rollback does for data.
     _rate_limit_attempts.clear()
+    _rate_limit_general.clear()
     yield
     _rate_limit_attempts.clear()
+    _rate_limit_general.clear()
 
 
 @pytest.fixture()

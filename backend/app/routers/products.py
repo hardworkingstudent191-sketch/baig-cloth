@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.auth import get_current_admin
 from app.database import get_db
 from app.models import Product, Category, Gender, AdminUser
+from app.rate_limit import enforce_general_rate_limit
 from app.schemas import ProductOut, ProductCreate, ProductUpdate
 
 router = APIRouter(prefix="/products", tags=["products"])
@@ -42,7 +43,7 @@ def _effective_on_sale_filter(want_on_sale: bool):
 
 # ---- Public ----
 
-@router.get("", response_model=list[ProductOut])
+@router.get("", response_model=list[ProductOut], dependencies=[Depends(enforce_general_rate_limit)])
 def list_products(
     gender: Optional[Gender] = None,
     category_id: Optional[int] = None,
@@ -70,7 +71,7 @@ def list_products(
     return [apply_sale_expiry(p) for p in query.all()]
 
 
-@router.get("/{product_id}", response_model=ProductOut)
+@router.get("/{product_id}", response_model=ProductOut, dependencies=[Depends(enforce_general_rate_limit)])
 def get_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:

@@ -14,7 +14,17 @@ from fastapi import HTTPException, Request
 WINDOW_SECONDS = 15 * 60
 MAX_ATTEMPTS = 5
 
+# Public GET endpoints (product/category listing) had nothing slowing down a
+# script hitting them as fast as the network allows — fine for a real
+# visitor's browser, which fires only a handful of requests per page, but
+# open to scraping the whole catalog or running up hosting costs. This is a
+# much looser window than login: high enough that no real visitor should
+# ever notice it, low enough to blunt sustained automated scraping.
+GENERAL_WINDOW_SECONDS = 60
+GENERAL_MAX_REQUESTS = 120
+
 _attempts: dict[str, list[float]] = defaultdict(list)
+_general_requests: dict[str, list[float]] = defaultdict(list)
 
 
 def _client_ip(request: Request) -> str:
@@ -42,3 +52,20 @@ def enforce_login_rate_limit(request: Request) -> None:
 
     attempts.append(now)
     _attempts[ip] = attempts
+
+
+def enforce_general_rate_limit(request: Request) -> None:
+    ip = _client_ip(request)
+    now = time.time()
+
+    requests_ = [t for t in _general_requests[ip] if now - t < GENERAL_WINDOW_SECONDS]
+    if len(requests_) >= GENERAL_MAX_REQUESTS:
+        retry_after = int(GENERAL_WINDOW_SECONDS - (now - requests_[0]))
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests. Please slow down and try again shortly.",
+            headers={"Retry-After": str(max(retry_after, 1))},
+        )
+
+    requests_.append(now)
+    _general_requests[ip] = requests_

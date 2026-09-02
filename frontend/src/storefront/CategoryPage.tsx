@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { storefrontApi, ApiError } from "./api";
-import type { Category, Gender, Product } from "./types";
+import { storefrontApi } from "./api";
+import type { Category, Gender } from "./types";
 import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import ProductGridSkeleton from "./ProductGridSkeleton";
@@ -12,6 +12,8 @@ import Reveal from "../Reveal";
 import SortSelect from "./SortSelect";
 import { sortProducts, type SortOption } from "./sortProducts";
 import CategoryVideoBanner from "./CategoryVideoBanner";
+import { usePaginatedProducts } from "./usePaginatedProducts";
+import LoadMoreButton from "./LoadMoreButton";
 
 function slugify(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
@@ -21,14 +23,14 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
   const { category: categorySlug } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
   const [activeCategoryId, setActiveCategoryId] = useState<number | undefined>();
   const [sort, setSort] = useState<SortOption>("newest");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
   useEffect(() => {
-    storefrontApi.listCategories(gender).then(setCategories).catch(() => setError(true));
+    // Silent catch: a failed categories fetch just means no filter chips
+    // render (handled below by `categories.length > 0`) — the product grid
+    // itself comes from a separate, independently-erroring fetch.
+    storefrontApi.listCategories(gender).then(setCategories).catch(() => {});
   }, [gender]);
 
   useEffect(() => {
@@ -40,15 +42,10 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
     }
   }, [categorySlug, categories]);
 
-  useEffect(() => {
-    setLoading(true);
-    setError(false);
-    storefrontApi
-      .listProducts({ gender, category_id: activeCategoryId })
-      .then(setProducts)
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [gender, activeCategoryId]);
+  const { products, loading, loadingMore, error, hasMore, loadMore } = usePaginatedProducts({
+    gender,
+    category_id: activeCategoryId,
+  });
 
   const genderLabel = gender === "men" ? "Men's" : "Women's";
   const activeCategory = categories.find((c) => c.id === activeCategoryId);
@@ -102,7 +99,8 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
         {activeCategoryId === undefined && <CategoryVideoBanner gender={gender} />}
         <h1 className="font-serif text-3xl mb-1 capitalize">{gender}</h1>
         <p className="text-[#6b7280] text-sm mb-6">
-          {products.length} {products.length === 1 ? "piece" : "pieces"}
+          {products.length}
+          {hasMore ? "+" : ""} {products.length === 1 && !hasMore ? "piece" : "pieces"}
         </p>
 
         {/* Subcategory filter chips */}
@@ -141,13 +139,18 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
             <p className="text-[#1f2937]">Nothing here yet — check back soon.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {sortedProducts.map((p, i) => (
-              <Reveal key={p.id} delayMs={(i % 4) * 60}>
-                <ProductCard product={p} />
-              </Reveal>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {sortedProducts.map((p, i) => (
+                <Reveal key={p.id} delayMs={(i % 4) * 60}>
+                  <ProductCard product={p} />
+                </Reveal>
+              ))}
+            </div>
+            {hasMore && (
+              <LoadMoreButton onClick={loadMore} loading={loadingMore} shownCount={products.length} />
+            )}
+          </>
         )}
       </div>
     </StorefrontLayout>

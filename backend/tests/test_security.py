@@ -10,6 +10,8 @@ notice by hand — nothing here changes behavior, it just pins it down.
 
 from datetime import datetime, timedelta, timezone
 
+import app.rate_limit as rate_limit
+
 
 def _product_payload(category_id: int, **overrides):
     payload = {
@@ -148,6 +150,22 @@ def test_login_rate_limit_also_blocks_correct_password(client, admin_user):
         json={"username": admin_user.username, "password": "correct-horse-battery-staple"},
     )
     assert res.status_code == 429
+
+
+# ---- General rate limiting (public GET endpoints, anti-scraping) ----
+
+def test_public_endpoints_are_rate_limited(client, monkeypatch):
+    # The real threshold (120/min) would make this test either slow or
+    # meaningless — monkeypatching it down exercises the same code path
+    # enforce_general_rate_limit() at a size that's fast to actually hit.
+    monkeypatch.setattr(rate_limit, "GENERAL_MAX_REQUESTS", 3)
+
+    for _ in range(3):
+        assert client.get("/products").status_code == 200
+
+    res = client.get("/products")
+    assert res.status_code == 429
+    assert "Retry-After" in res.headers
 
 
 # ---- Response headers ----

@@ -6,6 +6,7 @@ import logoLight from "../assets/logo-light.png";
 const navItems = [
   { to: "/admin", label: "Products", end: true },
   { to: "/admin/categories", label: "Categories" },
+  { to: "/admin/account", label: "Account" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

@@ -31,6 +31,7 @@ const AdminLogin = lazy(() => import("./AdminLogin"));
 const AdminDashboard = lazy(() => import("./AdminDashboard"));
 const ProductForm = lazy(() => import("./ProductForm"));
 const CategoryManager = lazy(() => import("./CategoryManager"));
+const AccountPage = lazy(() => import("./AccountPage"));
 
 function AdminSuspense({ children }: { children: ReactNode }) {
   return (
@@ -91,6 +92,16 @@ export const adminRoutes: RouteObject[] = [
       <RequireAuth>
         <AdminSuspense>
           <CategoryManager />
+        </AdminSuspense>
+      </RequireAuth>
+    ),
+  },
+  {
+    path: "/admin/account",
+    element: (
+      <RequireAuth>
+        <AdminSuspense>
+          <AccountPage />
         </AdminSuspense>
       </RequireAuth>
     ),

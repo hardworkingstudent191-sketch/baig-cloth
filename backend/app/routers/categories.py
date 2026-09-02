@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.auth import get_current_admin
 from app.database import get_db
 from app.models import Category, Gender
+from app.rate_limit import enforce_general_rate_limit
 from app.schemas import CategoryOut, CategoryCreate, CategoryUpdate
 
 router = APIRouter(prefix="/categories", tags=["categories"])
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/categories", tags=["categories"])
 
 # ---- Public ----
 
-@router.get("", response_model=list[CategoryOut])
+@router.get("", response_model=list[CategoryOut], dependencies=[Depends(enforce_general_rate_limit)])
 def list_categories(gender: Optional[Gender] = None, db: Session = Depends(get_db)):
     query = db.query(Category)
     if gender is not None:

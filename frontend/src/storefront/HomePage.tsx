@@ -7,6 +7,7 @@ import ProductCard from "./ProductCard";
 import { usePageMeta } from "../usePageMeta";
 import { useJsonLd } from "../useJsonLd";
 import Reveal from "../Reveal";
+import { cloudinarySrcSet } from "../cloudinary";
 
 export default function HomePage() {
   const [saleProducts, setSaleProducts] = useState<Product[]>([]);
@@ -192,6 +193,8 @@ function CategoryTile({
       {image && (
         <img
           src={image}
+          srcSet={cloudinarySrcSet(image, [500, 800, 1200])}
+          sizes="(min-width: 768px) 50vw, 100vw"
           alt=""
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

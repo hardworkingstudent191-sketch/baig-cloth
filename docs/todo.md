@@ -27,9 +27,23 @@ and real devices.
 - [x] Build admin CRUD: `POST/PUT/DELETE /products`
 - [x] Build admin CRUD: `POST/PUT/DELETE /categories` (including reorder)
 - [x] Build `POST /admin/upload-image` → Cloudinary (real format verified via Pillow, 8MB cap)
-- [x] Security hardening: `Permissions-Policy` header; `backend/tests/` covers
-      auth-required-on-every-write-route, forged-JWT rejection, login rate
-      limiting, price/sale validation, and sale-expiry — 19 tests, wired into CI
+- [x] Security hardening: `Permissions-Policy` header; general rate limiting
+      (120/min per IP) on public GET endpoints, on top of the existing login
+      limiter; `backend/tests/` covers auth-required-on-every-write-route,
+      forged-JWT rejection, both rate limiters, price/sale validation, and
+      sale-expiry — 26 tests, wired into CI
+- [x] `PUT /admin/password` — self-service password change, the only account
+      recovery path this single-admin app has (`create_admin.py` skips an
+      existing username rather than resetting it)
+- [x] Pagination: `GET /products` `limit`/`offset` now actually used by both
+      the admin dashboard and the storefront ("Load more") — previously
+      anything past the first 100 results was invisible with no indication
+      it existed; in the admin panel that meant the *oldest* products
+      becoming un-editable as the catalog grew past 100
+- [x] Cloudinary uploads now get `f_auto,q_auto` baked into the delivery URL
+      (automatic WebP/AVIF + quality) plus a frontend `srcSet` for
+      resolution — applies to future admin uploads; the 46 products already
+      in the repo use local static files, unaffected
 - [ ] Test all endpoints against the *deployed* API once hosting is settled (local testing done)
 
 ## Phase 2 — Admin Panel (Frontend)
@@ -42,6 +56,11 @@ and real devices.
 - [x] Confirm image upload flow works end-to-end (admin → Cloudinary → URL saved to product)
 - [x] Admin bundle code-split (`React.lazy`) out of the storefront bundle —
       storefront visitors no longer download admin CRUD code at all
+- [x] `/admin/account` — change-password page (only self-service account
+      recovery path; no multi-admin management UI, out of scope for a
+      single-shop-owner account)
+- [x] Admin dashboard: paginated ("Load more") product list instead of a
+      silent 100-item cap
 
 ## Phase 3 — Public Storefront
 - [~] Homepage hero — built as a **video hero**, not a carousel: dark duotone
@@ -81,6 +100,10 @@ and real devices.
       deliberately skipped, see Phase 8)
 - [x] Content-Security-Policy (production builds only — see CLAUDE.md for
       why it's gated off in dev)
+- [x] `/men`, `/sale`, `/search`: "Load more" pagination instead of a silent
+      100-result cap (currently invisible at today's catalog size, but real)
+- [x] `favicon.ico` (some browsers/tools probe for it directly regardless of
+      the declared `<link rel="icon">`)
 
 ## Phase 4 — Content & Assets
 - [~] Product photography — 46 real products are live (27 wash-n-wear colors,
