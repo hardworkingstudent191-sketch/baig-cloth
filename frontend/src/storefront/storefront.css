@@ -232,7 +232,10 @@
 #storefront-root .back-to-top {
   position: fixed;
   left: 20px;
-  bottom: 20px;
+  /* Higher on mobile: ProductPage's MobileOrderBar is a fixed full-width bar
+     that can be showing at the same time, and at 20px this button would sit
+     underneath it. */
+  bottom: 96px;
   z-index: 40;
   width: 44px;
   height: 44px;
@@ -247,6 +250,11 @@
   transform: translateY(12px);
   pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.2s ease;
+}
+@media (min-width: 768px) {
+  #storefront-root .back-to-top {
+    bottom: 20px;
+  }
 }
 #storefront-root .back-to-top.is-visible {
   opacity: 1;

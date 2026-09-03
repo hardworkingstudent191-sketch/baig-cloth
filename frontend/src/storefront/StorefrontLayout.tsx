@@ -126,7 +126,10 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
         href={`https://wa.me/${WHATSAPP_NUMBER}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-5 right-5 z-40 bg-[#223c80] text-[#f7f7f5] rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#2d4d9e] transition-colors"
+        // Sits higher on mobile than desktop — ProductPage's MobileOrderBar
+        // (a fixed full-width bar) can be showing at the same time, and at
+        // bottom-5 this button would land right in the middle of it.
+        className="fixed bottom-24 md:bottom-5 right-5 z-40 bg-[#223c80] text-[#f7f7f5] rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-[#2d4d9e] transition-colors"
         aria-label="Message us on WhatsApp"
       >
         <WhatsAppIcon />
