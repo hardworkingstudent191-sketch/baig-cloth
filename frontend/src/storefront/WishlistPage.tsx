@@ -5,6 +5,7 @@ import ProductGridSkeleton from "./ProductGridSkeleton";
 import { useWishlistIds } from "./wishlist";
 import { useProductsByIds } from "./useProductsByIds";
 import { usePageMeta } from "../usePageMeta";
+import Reveal from "../Reveal";
 
 export default function WishlistPage() {
   const ids = useWishlistIds();
@@ -35,8 +36,10 @@ export default function WishlistPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} />
+            {products.map((p, i) => (
+              <Reveal key={p.id} delayMs={(i % 4) * 60}>
+                <ProductCard product={p} />
+              </Reveal>
             ))}
           </div>
         )}

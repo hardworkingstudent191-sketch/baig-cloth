@@ -2,3 +2,17 @@
 @import "tailwindcss";
 @import "./admin/admin.css";
 @import "./storefront/storefront.css";
+
+/* Page-enter fade, replayed on every route change by App.tsx's RootLayout.
+   Lives outside both #storefront-root and #admin-root scoping since it
+   wraps both route trees — the one place a single rule covers navigation
+   across the whole site, storefront and admin alike. */
+@media (prefers-reduced-motion: no-preference) {
+  .page-enter {
+    animation: page-enter-fade 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+@keyframes page-enter-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

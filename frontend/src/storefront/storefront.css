@@ -313,6 +313,15 @@
   object-fit: contain;
   border-radius: 4px;
 }
+@media (prefers-reduced-motion: no-preference) {
+  #storefront-root .lightbox-image-enter {
+    animation: lightbox-image-fade 0.25s ease both;
+  }
+}
+@keyframes lightbox-image-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 #storefront-root .lightbox-close,
 #storefront-root .lightbox-nav {
   color: #f7f7f5;
@@ -326,6 +335,23 @@
 #storefront-root .lightbox-close:hover,
 #storefront-root .lightbox-nav:hover {
   background: rgba(247, 247, 245, 0.24);
+}
+
+/* Mobile nav drawer (StorefrontLayout) — same true-auto-height technique as
+   the FAQ accordion below: grid-template-rows animates between 0fr and 1fr,
+   with overflow:hidden on the inner wrapper, so it works without knowing
+   the content's height in advance (a plain max-height animation would need
+   a guessed ceiling value, or JS measuring the real height on every open). */
+#storefront-root .mobile-drawer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#storefront-root .mobile-drawer.is-open {
+  grid-template-rows: 1fr;
+}
+#storefront-root .mobile-drawer-inner {
+  overflow: hidden;
 }
 
 /* FAQ accordion (PoliciesPage) */

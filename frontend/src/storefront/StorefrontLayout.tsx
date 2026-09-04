@@ -68,33 +68,40 @@ export default function StorefrontLayout({ children }: { children: ReactNode }) 
           </button>
         </div>
 
-        {/* Mobile drawer */}
-        {menuOpen && (
-          <nav className="md:hidden flex flex-col border-t border-dashed border-[#dde1e8] px-4 py-2">
-            <form onSubmit={handleSearch} role="search" className="py-2.5 border-b border-[#e6e9ee]">
-              <input
-                type="search"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                placeholder="Search…"
-                aria-label="Search products"
-                className="w-full bg-[#eef0f3] border border-[#dde1e8] rounded-full px-3.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#223c80]"
-              />
-            </form>
-            <NavItem to="/men" onClick={() => setMenuOpen(false)} mobile>
-              Men
-            </NavItem>
-            <NavItem to="/women" onClick={() => setMenuOpen(false)} mobile>
-              Women
-            </NavItem>
-            <NavItem to="/sale" accent onClick={() => setMenuOpen(false)} mobile>
-              Sale
-            </NavItem>
-            <NavItem to="/wishlist" onClick={() => setMenuOpen(false)} mobile>
-              Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
-            </NavItem>
-          </nav>
-        )}
+        {/* Mobile drawer — always mounted (rather than the old `{menuOpen &&
+            (...)}`) so it can animate open/closed via a CSS grid-rows
+            transition instead of just popping in and out. `inert` when
+            closed removes its contents from the tab order and a11y tree
+            without needing display:none, which would prevent the height
+            transition from ever running. */}
+        <div className={`mobile-drawer md:hidden${menuOpen ? " is-open" : ""}`} inert={!menuOpen}>
+          <div className="mobile-drawer-inner">
+            <nav className="flex flex-col border-t border-dashed border-[#dde1e8] px-4 py-2">
+              <form onSubmit={handleSearch} role="search" className="py-2.5 border-b border-[#e6e9ee]">
+                <input
+                  type="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  placeholder="Search…"
+                  aria-label="Search products"
+                  className="w-full bg-[#eef0f3] border border-[#dde1e8] rounded-full px-3.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#223c80]"
+                />
+              </form>
+              <NavItem to="/men" onClick={() => setMenuOpen(false)} mobile>
+                Men
+              </NavItem>
+              <NavItem to="/women" onClick={() => setMenuOpen(false)} mobile>
+                Women
+              </NavItem>
+              <NavItem to="/sale" accent onClick={() => setMenuOpen(false)} mobile>
+                Sale
+              </NavItem>
+              <NavItem to="/wishlist" onClick={() => setMenuOpen(false)} mobile>
+                Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
+              </NavItem>
+            </nav>
+          </div>
+        </div>
       </header>
 
       <main>{children}</main>

@@ -70,12 +70,16 @@ export default function Lightbox({
         </button>
       )}
 
+      {/* key={index}: a cheap remount (just an <img>, no data fetch behind
+          it) so the crossfade-in animation replays on every prev/next click
+          instead of just once on the very first open. */}
       <img
+        key={index}
         src={images[index]}
         srcSet={cloudinarySrcSet(images[index], [600, 900, 1400])}
         sizes="90vw"
         alt={alt}
-        className="lightbox-image"
+        className="lightbox-image lightbox-image-enter"
         onClick={(e) => e.stopPropagation()}
       />
 
