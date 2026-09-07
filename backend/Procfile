@@ -1,0 +1,17 @@
+# Koyeb / any buildpack-style Python host reads this for the start command.
+# Migrations run first, in the same process start, so the schema is always
+# at head before the API accepts traffic — the app itself no longer calls
+# create_all (see app/main.py). Single instance by design, so there is no
+# concurrent-migration race to worry about.
+#
+# Deliberately NOT passing --proxy-headers / --forwarded-allow-ips='*'.
+# With those flags uvicorn rewrites request.client.host from the *leftmost*
+# X-Forwarded-For entry (uvicorn/middleware/proxy_headers.py takes
+# x_forwarded_for_hosts[0] when every host is trusted), and that entry is
+# whatever the client sent. app/rate_limit.py._client_ip resolves the client
+# itself from the right-hand side of the header via TRUSTED_PROXY_HOPS, and
+# uses request.client.host only as a fallback — so letting uvicorn poison
+# that fallback with attacker-controlled input would re-open the login
+# limiter bypass the moment TRUSTED_PROXY_HOPS is set to 0. One source of
+# truth for the client address, and it's the app's.
+web: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}

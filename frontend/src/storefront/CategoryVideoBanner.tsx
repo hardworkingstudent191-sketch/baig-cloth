@@ -1,14 +1,17 @@
 import { useState } from "react";
 import type { Gender } from "./types";
 import { usePrefersReducedMotion } from "../usePrefersReducedMotion";
+import { useDeferredMedia } from "../useDeferredMedia";
 
-const CONTENT: Record<Gender, { src: string; caption: string }> = {
+const CONTENT: Record<Gender, { src: string; poster: string; caption: string }> = {
   men: {
     src: "/hero/fabric-men.mp4",
+    poster: "/hero/fabric-men-poster.jpg",
     caption: "The weave and texture of real cotton and khaddar",
   },
   women: {
     src: "/hero/fabric-women.mp4",
+    poster: "/hero/fabric-women-poster.jpg",
     caption: "Every piece checked and trimmed by hand before it's ready",
   },
 };
@@ -49,22 +52,31 @@ const CONTENT: Record<Gender, { src: string; caption: string }> = {
  */
 export default function CategoryVideoBanner({ gender }: { gender: Gender }) {
   const reducedMotion = usePrefersReducedMotion();
+  const mediaReady = useDeferredMedia();
   const [ready, setReady] = useState(false);
-  const { src, caption } = CONTENT[gender];
+  const [failed, setFailed] = useState(false);
+  const { src, poster, caption } = CONTENT[gender];
 
   return (
     <div className="relative aspect-[21/9] md:aspect-[3/1] rounded-lg overflow-hidden hero-weave mb-6">
       {!reducedMotion && (
-        <video
-          key={src}
-          className={`hero-video${ready ? " is-ready" : ""}`}
-          src={src}
-          autoPlay
-          loop
-          muted
-          playsInline
-          onCanPlay={() => setReady(true)}
-        />
+        <>
+          <img className="hero-poster" src={poster} alt="" aria-hidden="true" width={960} height={540} decoding="async" />
+          {mediaReady && !failed && (
+            <video
+              key={src}
+              className={`hero-video${ready ? " is-ready" : ""}`}
+              src={src}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="none"
+              onCanPlay={() => setReady(true)}
+              onError={() => setFailed(true)}
+            />
+          )}
+        </>
       )}
       <div className="hero-scrim-bottom" />
       <p className="hero-caption absolute bottom-3 left-4 right-4 md:text-sm text-xs text-[#e2e5ec] font-mono tracking-wide uppercase">

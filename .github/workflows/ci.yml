@@ -36,7 +36,7 @@ jobs:
           VITE_SITE_URL: https://baigcloth.com
 
   backend:
-    name: Backend — migrations & import
+    name: Backend — migrations, tests & audit
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -74,7 +74,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"  # matches backend/.python-version
           cache: pip
           cache-dependency-path: backend/requirements.txt
 
@@ -101,3 +101,9 @@ jobs:
       # tests/conftest.py), so nothing here persists in the CI database.
       - name: Run test suite
         run: pytest tests/ -v
+
+      # Fails the build if any pinned production dependency has a published
+      # fix for a known vulnerability. --no-deps: audit exactly what's in
+      # requirements.txt, not the resolver's incidental extras.
+      - name: Dependency vulnerability audit
+        run: pip-audit -r requirements.txt --no-deps

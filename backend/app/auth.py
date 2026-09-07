@@ -1,34 +1,59 @@
 from datetime import datetime, timedelta, timezone
 
+import bcrypt
+import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db
 from app.models import AdminUser
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/admin/login")
 
-# A valid-looking bcrypt hash with no matching password, used purely so
-# verify_password always has real work to do — see authenticate_admin below.
-_DUMMY_HASH = pwd_context.hash("not-a-real-password-just-a-timing-decoy")
+# bcrypt only looks at the first 72 bytes of a password. passlib (the
+# previous hashing layer) silently truncated to 72 bytes before hashing, so
+# doing the same here keeps every existing hash verifying exactly as it did.
+# The schema layer additionally rejects new passwords longer than that, so
+# nobody sets a password whose tail is silently ignored (see schemas.py).
+_BCRYPT_MAX_BYTES = 72
+_BCRYPT_ROUNDS = 12  # passlib's default; same work factor as the existing hashes
 
 
-def verify_password(plain_password: str, password_hash: str) -> bool:
-    return pwd_context.verify(plain_password, password_hash)
+def _prep(password: str) -> bytes:
+    return password.encode("utf-8")[:_BCRYPT_MAX_BYTES]
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(_prep(password), bcrypt.gensalt(rounds=_BCRYPT_ROUNDS)).decode("ascii")
 
 
-def create_access_token(subject: str) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.jwt_expire_minutes)
-    payload = {"sub": subject, "exp": expire}
+def verify_password(plain_password: str, password_hash: str) -> bool:
+    try:
+        return bcrypt.checkpw(_prep(plain_password), password_hash.encode("ascii"))
+    except (ValueError, TypeError):
+        # Not a bcrypt hash (corrupt row, wrong encoding). Treat as a
+        # mismatch rather than a 500 — never let a bad hash log someone in.
+        return False
+
+
+# A valid-looking bcrypt hash with no matching password, used purely so
+# verify_password always has real work to do — see authenticate_admin below.
+_DUMMY_HASH = hash_password("not-a-real-password-just-a-timing-decoy")
+
+
+def create_access_token(admin: AdminUser) -> str:
+    now = datetime.now(timezone.utc)
+    payload = {
+        "sub": admin.username,
+        # Token version: bumped on every password change (see routers/admin.py)
+        # and compared in get_current_admin, so a token issued before the
+        # change stops working immediately instead of living out its 24h.
+        "ver": admin.token_version,
+        "iat": now,
+        "exp": now + timedelta(minutes=settings.jwt_expire_minutes),
+    }
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
 
@@ -59,14 +84,25 @@ def get_current_admin(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
-        username: str | None = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-    except JWTError:
+        # `algorithms` is an explicit allow-list: a token whose header names
+        # any other algorithm (including "none") is rejected before the
+        # signature is even looked at. `require` makes a token that omits
+        # exp/sub/ver invalid rather than merely un-checked.
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+            options={"require": ["exp", "sub", "ver"]},
+        )
+    except jwt.PyJWTError:
+        raise credentials_exception
+
+    username = payload.get("sub")
+    version = payload.get("ver")
+    if not isinstance(username, str) or not isinstance(version, int):
         raise credentials_exception
 
     admin = db.query(AdminUser).filter(AdminUser.username == username).first()
-    if admin is None:
+    if admin is None or admin.token_version != version:
         raise credentials_exception
     return admin

@@ -25,7 +25,7 @@ docs/        Planning docs: site-map.md (architecture/DB schema reasoning), todo
 python3 -m venv venv && source venv/bin/activate   # venv/ already exists in this repo on Windows
 pip install -r requirements.txt
 
-alembic upgrade head              # apply migrations (real schema mechanism, not create_all)
+alembic upgrade head              # apply migrations — the ONLY schema mechanism; run before first start and after every pull
 alembic revision --autogenerate -m "description"   # after changing app/models.py — review the generated file before applying
 python -m scripts.create_admin    # create admin login from .env INITIAL_ADMIN_USERNAME/PASSWORD, idempotent
 
@@ -33,6 +33,7 @@ uvicorn app.main:app --reload     # http://localhost:8000, docs at /docs
 
 pip install -r requirements-dev.txt   # adds pytest + httpx, on top of requirements.txt
 pytest tests/ -v                      # see "Testing" below before running this against your own DB
+pip-audit -r requirements.txt --no-deps   # CI fails on any pinned dep with a published fix
 ```
 
 No linter/formatter config exists in this repo — don't invent commands for it. There IS a test suite now (`backend/tests/`) — see "Testing" below for how to run it safely.
@@ -72,6 +73,12 @@ psql -U <user> -h localhost -c "CREATE DATABASE baigcloth_test"
 DATABASE_URL="postgresql://<user>:<pass>@localhost:5432/baigcloth_test" pytest tests/ -v
 ```
 
+`tests/conftest.py` calls `create_all` once per session as a convenience
+for a fresh local database — that is the *only* place `create_all` is
+allowed to live (see "Migrations"). It also pins `TRUSTED_PROXY_HOPS=0` by
+default since the TestClient has no proxy in front of it; the header-trust
+tests in `tests/test_rate_limiter.py` set it explicitly.
+
 The suite also clears `app.rate_limit._attempts` before/after every test —
 that dict is shared, in-process, mutable state (see the rate-limiting note
 below), so without resetting it, unrelated tests would start 429ing each
@@ -94,17 +101,32 @@ models directly. There's no repository/service abstraction to look for.
   split by a `# ---- Public ----` / `# ---- Admin (protected) ----` comment.
 - `admin.py` — login (rate-limited) and Cloudinary image upload only.
 
-**Auth**: JWT bearer tokens (`app/auth.py`), `python-jose` + `passlib[bcrypt]`.
-`get_current_admin` is the dependency gating every write endpoint. Login
-timing is deliberately constant — `authenticate_admin` always runs
-`verify_password` against a dummy hash when the username doesn't exist, to
-avoid leaking valid usernames via response timing. Login attempts are
-IP-rate-limited in-memory (`app/rate_limit.py`, `enforce_login_rate_limit`,
-5 per 15 min) — this is a single-process app, so no Redis/shared store is
-used; that's intentional, not a gap to "fix". Public GET endpoints
-(`/products`, `/categories`) get the same file's looser
-`enforce_general_rate_limit` (120/min per IP) — high enough no real visitor
-should ever notice, low enough to blunt sustained scraping.
+**Auth**: JWT bearer tokens (`app/auth.py`), `PyJWT` (HS256, explicit
+algorithm allow-list, `exp`/`sub`/`ver` claims required) + `bcrypt` called
+directly (passlib was dropped — unmaintained, and its `bcrypt.__about__`
+probe broke on every bcrypt release; hashes are unchanged `$2b$12$`, and the
+72-byte truncation passlib applied is preserved so existing passwords keep
+verifying). `get_current_admin` is the dependency gating every write
+endpoint. Login timing is deliberately constant — `authenticate_admin`
+always runs `verify_password` against a dummy hash when the username
+doesn't exist, to avoid leaking valid usernames via response timing.
+
+**Token revocation**: `AdminUser.token_version` is embedded in every JWT as
+`ver` and compared on every authenticated request. `PUT /admin/password`
+increments it, so every token issued before a password change is dead
+immediately (not after its remaining 24h) — and returns a fresh token, which
+`admin/api.ts` stores so the panel stays signed in. A token without `ver`
+is rejected.
+
+**Rate limiting** (`app/rate_limit.py`): login attempts are IP-limited
+in-memory (5 per 15 min); public GETs (`/products`, `/categories`) get a
+looser 120/min. Single-process app, so no Redis — intentional. Two things
+that are *not* optional there: (1) the client IP is the
+`TRUSTED_PROXY_HOPS`-th entry from the *end* of `X-Forwarded-For` (default
+1 = Koyeb's edge proxy; 0 = no proxy, header ignored). The first entry is
+client-written and trusting it let a rotating spoofed header bypass the
+login limiter entirely. (2) buckets are swept every `PRUNE_EVERY` hits and
+capped at `MAX_KEYS`; the old defaultdict grew forever.
 
 **Admin account recovery**: `scripts/create_admin.py` deliberately *skips*
 an already-existing username rather than resetting its password (so a
@@ -144,9 +166,16 @@ with zero frontend involvement. `frontend/src/cloudinary.ts` adds
 resolution on top of that: `cloudinarySrcSet()` generates a `srcSet` for
 Cloudinary-hosted images (product cards, the product gallery, the lightbox,
 category tiles) so a phone doesn't download the same pixels a desktop does.
-Both no-op for the 46 products already in the repo, which point at local
-static files under `frontend/public/products/` rather than Cloudinary —
-this only activates for images actually uploaded through the admin panel.
+The 46 products already in the repo point at local JPEGs under
+`frontend/public/products/` rather than Cloudinary, so they get the
+equivalent through `frontend/scripts/optimize-images.mjs`: `npm run build`
+(via `npm run images`) writes `-400/-700/-1000.webp` derivatives beside each
+original (gitignored — build output, regenerated every build; a run with
+nothing changed is instant). `imageSrcSet()` / `imageUrl()` in
+`cloudinary.ts` are what components call: Cloudinary URL → Cloudinary
+transforms, local `/products/*.jpg` → the WebP derivatives, anything else →
+unchanged. Never advertise a width the source lacks: the shop photos are
+1000px wide, which is why the largest derivative is 1000, not 1200.
 
 **Pagination**: `GET /products` takes `limit`/`offset` (default 100, capped
 at 200 server-side). The storefront (`storefront/usePaginatedProducts.ts`,
@@ -160,10 +189,14 @@ un-deletable, with nothing telling you they were there. `hasMore` is a
 heuristic (`results.length === limit`), not a real total count — there's no
 count endpoint.
 
-**Migrations**: Alembic is the source of truth for schema (`backend/alembic/versions/`).
-`Base.metadata.create_all` still runs on app startup in `main.py` as a
-harmless fallback (only creates missing tables, never alters existing
-ones) — don't rely on it for real schema changes, always generate a migration.
+**Migrations**: Alembic is the *only* schema mechanism
+(`backend/alembic/versions/`). Neither `main.py` nor `scripts/create_admin.py`
+calls `Base.metadata.create_all` any more — on a fresh database an app that
+booted before migrations would create every table without recording a
+revision, and `alembic upgrade head` would then fail with "relation already
+exists". `backend/Procfile` runs `alembic upgrade head` as the first half of
+the start command so production is always at head before uvicorn binds.
+Don't reintroduce `create_all` outside `tests/conftest.py`.
 
 **SEO / link previews** split across two mechanisms that must not be
 confused:
@@ -220,8 +253,12 @@ image origin), it needs a matching entry in `buildCsp()` or the built site
 will silently fail to load it — check the browser console for a
 "Refused to ..." message, that's this policy blocking it.
 
-**Admin bundle is code-split**: every component in `admin/routes.tsx` is
-`React.lazy()`-loaded into its own chunk, wrapped in a `Suspense`. The
+**Code-splitting**: every component in `admin/routes.tsx` is
+`React.lazy()`-loaded into its own chunk, wrapped in a `Suspense`; the
+storefront does the same in `storefront/routes.tsx` for everything off the
+home → category → product path (sale, search, wishlist, policies, about,
+404), whose `Suspense` fallback keeps `StorefrontLayout` mounted so header
+and footer never flash. The
 overwhelming majority of visitors are storefront customers who never hit
 `/admin` — don't move admin imports back to being static/eager at the top
 of `routes.tsx`, that undoes the split and ships admin CRUD code to every
@@ -244,9 +281,17 @@ free for commercial use, no attribution required — credit + source URL is
 commented at each usage site). `fabric-flow.mp4` is the homepage hero and is
 reused (not re-sourced) for the About page's `FabricVideoCard`; `fabric-men.mp4`
 / `fabric-women.mp4` back `CategoryVideoBanner.tsx` and are gender-specific.
-All three share the same `.hero-weave`/`.hero-video`/`.hero-scrim` CSS
-treatment and the same reduced-motion gating — don't add a video without
-that gating, it's not just a style choice.
+All three are re-encoded (H.264 CRF 28, ≤1280px, no audio, faststart —
+0.6/1.5/1.4 MB, down from 3.1/4.4/3.7) and each has a `*-poster.jpg` still.
+The poster is a separate `<img class="hero-poster">` layer *under* the
+video, not the `<video poster>` attribute — `.hero-video` starts at
+opacity 0 and fades in on `canplay`, which would hide a poster attribute
+too. The `<video>` itself mounts only after the window `load` event
+(`src/useDeferredMedia.ts`) with `preload="none"`, so it never competes
+with CSS/fonts/product images for first paint, and unmounts on `onError`
+leaving the poster. All three share the same `.hero-weave`/`.hero-video`/
+`.hero-scrim` CSS treatment and the same reduced-motion gating — don't add
+a video without the gating, the poster layer, and the deferred mount.
 
 **WhatsApp ordering**: `frontend/src/storefront/config.ts` holds the single
 `WHATSAPP_NUMBER` constant (previously duplicated across files — keep it
@@ -261,5 +306,10 @@ message deep link; there is no order/cart backend involved at all.
   `.htaccess` — some FTP clients hide it by default, and without it every
   deep link 404s.
 - Backend + Postgres: Python-capable host, currently targeting Koyeb's free
-  tier, git-push deploy from `backend/`.
+  tier, git-push deploy from `backend/`. `backend/Procfile` is the start
+  command (migrations, then uvicorn with `--proxy-headers`) and
+  `backend/.python-version` pins 3.12 (CI matches).
 - Set real `CORS_ORIGINS` (comma-separated) to the actual frontend domain(s) in production — the default is `localhost:5173` only.
+- Set `TRUSTED_PROXY_HOPS` to the number of proxies in front of the app
+  (1 on Koyeb). Getting this wrong in either direction breaks the rate
+  limiter — see the "Rate limiting" note above.

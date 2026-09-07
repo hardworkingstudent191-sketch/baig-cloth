@@ -129,15 +129,22 @@ export const api = {
   deleteCategory: (id: number) =>
     request<void>(`/categories/${id}`, { method: "DELETE" }),
 
-  changePassword: (currentPassword: string, newPassword: string) =>
-    request<void>(
+  // Changing the password revokes every token issued before it — including
+  // the one used to make this request (the backend bumps token_version).
+  // The response carries a fresh token for the new version; storing it here
+  // is what keeps the admin signed in instead of being bounced to /login on
+  // their very next click.
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    const { access_token } = await request<{ access_token: string }>(
       "/admin/password",
       {
         method: "PUT",
         body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
       },
       { treatAuthErrorAsSessionExpiry: false },
-    ),
+    );
+    setToken(access_token);
+  },
 
   uploadImage: (file: File) => {
     const form = new FormData();

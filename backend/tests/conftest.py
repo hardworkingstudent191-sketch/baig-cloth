@@ -33,6 +33,16 @@ def _schema():
 
 
 @pytest.fixture(autouse=True)
+def _no_proxy_by_default(monkeypatch):
+    # The TestClient talks to the app directly — there is no trusted proxy
+    # in the loop — so the header-trust tests below set the hop count
+    # explicitly, and every other test runs with the header ignored.
+    from app.config import settings
+    monkeypatch.setattr(settings, "trusted_proxy_hops", 0)
+    yield
+
+
+@pytest.fixture(autouse=True)
 def _reset_rate_limiter():
     # The login rate limiter is deliberately a plain in-process dict (see
     # app/rate_limit.py) — appropriate for the single-process app, but that

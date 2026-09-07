@@ -13,14 +13,15 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dotenv import load_dotenv
 load_dotenv()
 
+from sqlalchemy.exc import ProgrammingError
+
 from app.auth import hash_password
-from app.config import settings
-from app.database import SessionLocal, Base, engine
+from app.database import SessionLocal
 from app.models import AdminUser
 
 
 def main():
-    Base.metadata.create_all(bind=engine)
+    # Schema comes from Alembic, not create_all (see app/main.py for why).
     db = SessionLocal()
 
     username = os.getenv("INITIAL_ADMIN_USERNAME", "admin")
@@ -30,7 +31,11 @@ def main():
         print("Set INITIAL_ADMIN_PASSWORD in your .env before running this.")
         return
 
-    existing = db.query(AdminUser).filter(AdminUser.username == username).first()
+    try:
+        existing = db.query(AdminUser).filter(AdminUser.username == username).first()
+    except ProgrammingError:
+        print("The admin_users table doesn't exist yet. Run `alembic upgrade head` first.")
+        return
     if existing:
         print(f"Admin '{username}' already exists. Skipping.")
         return

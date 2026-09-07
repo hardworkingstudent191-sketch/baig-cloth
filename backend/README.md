@@ -23,16 +23,19 @@ then apply the schema with Alembic:
 alembic upgrade head
 ```
 
-This creates all tables and indexes. `Base.metadata.create_all` still runs
-as a fallback on app startup too (harmless — it only ever creates missing
-tables, never touches ones that already exist), but Alembic is now the real
-mechanism for schema changes: whenever a model changes, run
-`alembic revision --autogenerate -m "description"` to generate a migration,
-review the generated file, then `alembic upgrade head` to apply it.
+This creates all tables and indexes. Alembic is the *only* schema mechanism —
+the app no longer calls `Base.metadata.create_all` at startup (on a fresh
+database that would create tables without an Alembic revision and make the
+very next `alembic upgrade head` fail with "relation already exists"). So on
+a new machine or a new database: `alembic upgrade head` first, then start
+the app. Whenever a model changes, run
+`alembic revision --autogenerate -m "description"`, review the generated
+file, then `alembic upgrade head` to apply it. In production `Procfile`
+runs the upgrade as the first half of the start command.
 
 **Already had this app running before this migration system existed?**
-Your database already has the tables (`create_all` made them), just not the
-indexes added in the "Initial schema" migration. One-time fix:
+Your database already has the tables (the old `create_all` made them), just
+not the indexes added in the "Initial schema" migration. One-time fix:
 
 ```bash
 alembic stamp head

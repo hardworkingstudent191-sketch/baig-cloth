@@ -28,6 +28,15 @@ class Settings(BaseSettings):
 
     cors_origins: str = "http://localhost:5173"
 
+    # Number of reverse proxies between the internet and this process that
+    # append to X-Forwarded-For. 1 = the platform's edge proxy (Koyeb, the
+    # deployment target). 0 = the app is reachable directly, so the header is
+    # untrusted and ignored. Wrong in the "too high" direction means real
+    # clients share the proxy's bucket and get throttled together; wrong in
+    # the "too low" direction means attackers pick their own bucket. See
+    # app/rate_limit.py::_client_ip.
+    trusted_proxy_hops: int = 1
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @field_validator("jwt_secret_key")

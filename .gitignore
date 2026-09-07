@@ -14,3 +14,9 @@ frontend/.env
 .DS_Store
 .vscode/
 frontend/tsconfig.tsbuildinfo
+
+# Generated responsive image derivatives (frontend/scripts/optimize-images.mjs);
+# rebuilt by `npm run build`. Originals stay committed.
+frontend/public/products/**/*-400.webp
+frontend/public/products/**/*-700.webp
+frontend/public/products/**/*-1000.webp

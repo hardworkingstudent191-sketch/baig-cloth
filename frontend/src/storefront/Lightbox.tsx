@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { cloudinarySrcSet } from "../cloudinary";
+import { imageSrcSet } from "../cloudinary";
 
 /**
  * Full-screen zoomed view of the product gallery. Arrow keys and Escape
@@ -76,7 +76,7 @@ export default function Lightbox({
       <img
         key={index}
         src={images[index]}
-        srcSet={cloudinarySrcSet(images[index], [600, 900, 1400])}
+        srcSet={imageSrcSet(images[index], [600, 900, 1400])}
         sizes="90vw"
         alt={alt}
         className="lightbox-image lightbox-image-enter"

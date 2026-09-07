@@ -5,14 +5,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import settings
-from app.database import Base, engine
 from app.routers import products, categories, admin
 
 logger = logging.getLogger("baig_cloth")
 
-# Creates tables if they don't exist yet. For real schema changes going
-# forward, use Alembic migrations instead of relying on this.
-Base.metadata.create_all(bind=engine)
+# Schema is owned by Alembic (`alembic upgrade head`) — see the Procfile and
+# CLAUDE.md "Migrations". The app deliberately does NOT call
+# Base.metadata.create_all here any more: on a fresh database, an app process
+# that boots before migrations run would create every table itself without
+# recording an Alembic revision, and `alembic upgrade head` would then fail
+# with "relation already exists". Running migrations as the release step and
+# nowhere else removes that race.
 
 app = FastAPI(title="Baig Cloth API")
 

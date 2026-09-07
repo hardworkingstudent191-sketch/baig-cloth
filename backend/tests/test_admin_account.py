@@ -32,7 +32,8 @@ def test_change_password_success_and_old_password_stops_working(client, admin_us
         json={"current_password": "correct-horse-battery-staple", "new_password": "brand-new-password-1"},
         headers=auth_headers,
     )
-    assert res.status_code == 204
+    assert res.status_code == 200
+    assert res.json()["access_token"]
 
     old_login = client.post(
         "/admin/login",

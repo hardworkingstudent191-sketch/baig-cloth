@@ -44,6 +44,13 @@ and real devices.
       (automatic WebP/AVIF + quality) plus a frontend `srcSet` for
       resolution — applies to future admin uploads; the 46 products already
       in the repo use local static files, unaffected
+- [x] Hardening pass (branch `hardening/part-1`): X-Forwarded-For rate-limit
+      bypass closed (trusted-hop-aware, malformed headers ignored), limiter
+      memory bounded, JWT `token_version` revocation on password change,
+      python-jose → PyJWT, passlib → bcrypt, FastAPI/Starlette/multipart/
+      dotenv CVE bumps (`pip-audit` clean, now enforced in CI), upload
+      endpoint reads bounded chunks and rejects oversize early, `create_all`
+      removed in favour of Alembic-only, `created_at` indexed. 53 tests.
 - [ ] Test all endpoints against the *deployed* API once hosting is settled (local testing done)
 
 ## Phase 2 — Admin Panel (Frontend)
@@ -120,6 +127,9 @@ and real devices.
       comments at each usage site
 
 ## Phase 5 — Infrastructure / DevOps
+- [x] `backend/Procfile` + `.python-version` (3.12): `alembic upgrade head`
+      then uvicorn with `--proxy-headers`; `TRUSTED_PROXY_HOPS` documented in
+      `.env.example`
 - [ ] Finalize hosting (per Phase 0 decision)
 - [ ] Set up staging vs production environments (branch-based)
 - [x] GitHub Actions CI — frontend `tsc -b && vite build`, backend migrations +
@@ -145,8 +155,11 @@ and real devices.
 - [ ] Cross-browser check (Chrome, Safari at minimum) — pay particular
       attention to Safari's Web Share API and CSS `:has()` (used for the
       reduced-motion-gated smooth scroll) support on older iOS versions
-- [ ] Check image/video load performance — three self-hosted videos now
-      (~3.2MB, 3.9MB, 2.1MB); consider Cloudinary if the host's bandwidth is tight
+- [x] Hero videos re-encoded 11.2 → 3.5 MB total, poster frames, mounted
+      only after window `load`; product images get -400/-700/-1000 WebP
+      derivatives at build time (a full grid is ~0.9 MB instead of 7.8 MB);
+      non-critical storefront routes code-split. Consider Cloudinary for the
+      videos later if Hostinger bandwidth is tight.
 - [x] Empty states covered (no products in a category, no active sales, no search results, API unreachable)
 - [x] Route smoke test — every public route renders with the right title and
       indexing directive; verified against a production build

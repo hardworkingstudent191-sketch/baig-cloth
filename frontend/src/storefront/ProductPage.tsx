@@ -14,7 +14,7 @@ import { recordView } from "./recentlyViewed";
 import Lightbox from "./Lightbox";
 import ShareButton from "./ShareButton";
 import MobileOrderBar from "./MobileOrderBar";
-import { cloudinaryUrl, cloudinarySrcSet } from "../cloudinary";
+import { imageUrl, imageSrcSet } from "../cloudinary";
 
 function slugify(name: string) {
   return name.toLowerCase().replace(/\s+/g, "-");
@@ -182,7 +182,9 @@ export default function ProductPage() {
                   }`}
                 >
                   <img
-                    src={cloudinaryUrl(url, 160)}
+                    src={imageUrl(url, 160)}
+                    width={160}
+                    height={200}
                     alt=""
                     loading="lazy"
                     decoding="async"
@@ -212,8 +214,15 @@ export default function ProductPage() {
                     <img
                       key={url}
                       src={url}
-                      srcSet={cloudinarySrcSet(url, [500, 800, 1200])}
+                      srcSet={imageSrcSet(url, [500, 800, 1200])}
                       sizes="(min-width: 768px) 50vw, 100vw"
+                      width={1000}
+                      height={1250}
+                      // The first photo is this page's largest above-the-fold
+                      // element — fetch it ahead of everything else. The rest
+                      // are stacked behind it at opacity 0 and can wait.
+                      fetchPriority={i === 0 ? "high" : "low"}
+                      decoding="async"
                       alt={product.name}
                       className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
                         i === activeImage ? "opacity-100" : "opacity-0"

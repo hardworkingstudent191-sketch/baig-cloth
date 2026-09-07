@@ -51,7 +51,9 @@ class Product(Base):
     image_urls = Column(ARRAY(String), default=list)
     featured = Column(Boolean, default=False, nullable=False, index=True)
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    # Every product listing sorts on this column (GET /products orders
+    # newest-first), so it needs an index like the filter columns above.
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
 
     category = relationship("Category", back_populates="products")
 
@@ -62,3 +64,7 @@ class AdminUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False, index=True)
     password_hash = Column(String, nullable=False)
+    # Incremented on every password change; embedded in each JWT as "ver"
+    # and compared on every authenticated request (app/auth.py), so changing
+    # the password revokes every token issued before it.
+    token_version = Column(Integer, nullable=False, default=0, server_default="0")

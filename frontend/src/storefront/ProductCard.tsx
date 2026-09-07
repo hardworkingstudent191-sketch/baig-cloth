@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { Product } from "./types";
 import WishlistHeart from "./WishlistHeart";
-import { cloudinarySrcSet } from "../cloudinary";
+import { imageSrcSet } from "../cloudinary";
 import { whatsappLink } from "./api";
 import { WHATSAPP_NUMBER } from "./config";
 
@@ -19,8 +19,10 @@ export default function ProductCard({ product }: { product: Product }) {
         {product.image_urls[0] ? (
           <img
             src={product.image_urls[0]}
-            srcSet={cloudinarySrcSet(product.image_urls[0], [300, 500, 800])}
+            srcSet={imageSrcSet(product.image_urls[0], [300, 500, 800])}
             sizes="(min-width: 768px) 25vw, 50vw"
+            width={1000}
+            height={1250}
             alt={product.name}
             loading="lazy"
             decoding="async"
@@ -43,8 +45,10 @@ export default function ProductCard({ product }: { product: Product }) {
         {secondImage && (
           <img
             src={secondImage}
-            srcSet={cloudinarySrcSet(secondImage, [300, 500, 800])}
+            srcSet={imageSrcSet(secondImage, [300, 500, 800])}
             sizes="(min-width: 768px) 25vw, 50vw"
+            width={1000}
+            height={1250}
             alt=""
             aria-hidden="true"
             loading="lazy"

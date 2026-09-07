@@ -7,7 +7,8 @@ import ProductCard from "./ProductCard";
 import { usePageMeta } from "../usePageMeta";
 import { useJsonLd } from "../useJsonLd";
 import Reveal from "../Reveal";
-import { cloudinarySrcSet } from "../cloudinary";
+import { imageSrcSet } from "../cloudinary";
+import { useDeferredMedia } from "../useDeferredMedia";
 
 export default function HomePage() {
   const [saleProducts, setSaleProducts] = useState<Product[]>([]);
@@ -16,6 +17,8 @@ export default function HomePage() {
   const [menImage, setMenImage] = useState<string | null>(null);
   const [allowMotion, setAllowMotion] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const mediaReady = useDeferredMedia();
 
   usePageMeta({
     title: "Unstitched Fabric for Men & Women",
@@ -68,15 +71,35 @@ export default function HomePage() {
           required (pexels.com/video/close-up-video-of-a-fabric-6279031). */}
       <section className="relative hero-weave tape-edge border-b border-dashed border-[#0a0e1a]">
         {allowMotion && (
-          <video
-            className={`hero-video${videoReady ? " is-ready" : ""}`}
-            src="/hero/fabric-flow.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            onCanPlay={() => setVideoReady(true)}
-          />
+          <>
+            {/* Poster first: the LCP candidate for this page, so it loads
+                eagerly at high priority. The video below only mounts after
+                the page's `load` event (useDeferredMedia) and then fades in
+                over this frame. */}
+            <img
+              className="hero-poster"
+              src="/hero/fabric-flow-poster.jpg"
+              alt=""
+              aria-hidden="true"
+              width={1280}
+              height={674}
+              decoding="async"
+              fetchPriority="high"
+            />
+            {mediaReady && !videoFailed && (
+              <video
+                className={`hero-video${videoReady ? " is-ready" : ""}`}
+                src="/hero/fabric-flow.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="none"
+                onCanPlay={() => setVideoReady(true)}
+                onError={() => setVideoFailed(true)}
+              />
+            )}
+          </>
         )}
         <div className="hero-scrim" />
         <div className="hero-content max-w-6xl mx-auto px-4 pt-14 pb-16 md:pt-20 md:pb-24 text-center">
@@ -193,8 +216,12 @@ function CategoryTile({
       {image && (
         <img
           src={image}
-          srcSet={cloudinarySrcSet(image, [500, 800, 1200])}
+          srcSet={imageSrcSet(image, [500, 800, 1200])}
           sizes="(min-width: 768px) 50vw, 100vw"
+          width={1000}
+          height={1250}
+          loading="lazy"
+          decoding="async"
           alt=""
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

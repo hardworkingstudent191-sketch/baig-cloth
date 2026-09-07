@@ -96,3 +96,12 @@ class ImageUploadOut(BaseModel):
 class AdminPasswordChange(BaseModel):
     current_password: str
     new_password: str = Field(min_length=8, max_length=200)
+
+    @field_validator("new_password")
+    @classmethod
+    def fits_bcrypt(cls, v: str) -> str:
+        # bcrypt ignores everything past byte 72. Rather than silently
+        # accepting a password whose tail does nothing, say so.
+        if len(v.encode("utf-8")) > 72:
+            raise ValueError("Password must be 72 bytes or fewer (about 72 ASCII characters)")
+        return v
