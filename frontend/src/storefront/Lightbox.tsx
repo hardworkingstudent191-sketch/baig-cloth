@@ -1,10 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import type { TouchEvent } from "react";
 import { imageSrcSet } from "../cloudinary";
+
+const SWIPE_THRESHOLD_PX = 50;
 
 /**
  * Full-screen zoomed view of the product gallery. Arrow keys and Escape
  * work without needing a mouse; clicking the backdrop closes it same as the
  * explicit close button, matching how most native image viewers behave.
+ * Touch swipe left/right moves through the gallery the same as the arrow
+ * buttons — the primary way this is actually used on a phone.
  */
 export default function Lightbox({
   images,
@@ -19,6 +24,24 @@ export default function Lightbox({
   onClose: () => void;
   alt: string;
 }) {
+  const touchStartX = useRef<number | null>(null);
+
+  function handleTouchStart(e: TouchEvent<HTMLDivElement>) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e: TouchEvent<HTMLDivElement>) {
+    if (touchStartX.current === null || images.length < 2) {
+      touchStartX.current = null;
+      return;
+    }
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX) return;
+    if (deltaX < 0) onIndexChange((index + 1) % images.length);
+    else onIndexChange((index - 1 + images.length) % images.length);
+  }
+
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -42,6 +65,8 @@ export default function Lightbox({
       aria-modal="true"
       aria-label={`${alt} — enlarged image`}
       onClick={onClose}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <button
         type="button"

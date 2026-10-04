@@ -282,8 +282,11 @@
    Filled + red once saved; otherwise a plain outline so it doesn't compete
    with the sale badge for attention. */
 #storefront-root .wishlist-heart {
-  width: 32px;
-  height: 32px;
+  /* 44px hit area meets the standard touch-target minimum; the icon
+     below stays close to its old visual size, so this only changes how
+     easy the button is to tap, not how big it looks. */
+  width: 44px;
+  height: 44px;
   border-radius: 9999px;
   display: flex;
   align-items: center;

@@ -6,6 +6,7 @@ from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_admin
+from app.cloudinary_utils import destroy_image
 from app.database import get_db
 from app.models import Product, Category, Gender, AdminUser
 from app.rate_limit import enforce_general_rate_limit
@@ -121,11 +122,24 @@ def update_product(product_id: int, payload: ProductUpdate, db: Session = Depend
         if effective_sale_price >= effective_price:
             raise HTTPException(status_code=400, detail="sale_price must be less than price")
 
+    # Any image URL that was on the product before this update and isn't in
+    # the new list was either removed or replaced in the admin form — either
+    # way it's no longer referenced anywhere, so its Cloudinary asset (if it
+    # has one) should go with it. Compared before the fields are applied,
+    # since afterwards the "old" list is gone.
+    removed_images: list[str] = []
+    if "image_urls" in changes:
+        removed_images = [u for u in (product.image_urls or []) if u not in set(changes["image_urls"])]
+
     for field, value in changes.items():
         setattr(product, field, value)
 
     db.commit()
     db.refresh(product)
+
+    for url in removed_images:
+        destroy_image(url)
+
     return product
 
 
@@ -135,5 +149,10 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
 
+    image_urls = list(product.image_urls or [])
+
     db.delete(product)
     db.commit()
+
+    for url in image_urls:
+        destroy_image(url)

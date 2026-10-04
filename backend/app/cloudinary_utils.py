@@ -1,8 +1,13 @@
+import logging
+import re
+
 import cloudinary
 import cloudinary.uploader
 from fastapi import HTTPException
 
 from app.config import settings
+
+logger = logging.getLogger("baig_cloth")
 
 cloudinary.config(
     cloud_name=settings.cloudinary_cloud_name,
@@ -40,3 +45,31 @@ def upload_image(file_bytes: bytes, folder: str = "baig-cloth/products") -> str:
             detail="Image upload failed — check the Cloudinary credentials in .env, or try again.",
         ) from exc
     return _optimize_delivery_url(result["secure_url"])
+
+
+def _extract_public_id(url: str) -> str | None:
+    """Recovers the Cloudinary public_id (folder/name, no extension, version,
+    or transformation segments) from a delivery URL returned by upload_image,
+    so the stored URL alone is enough to delete the asset later — nothing
+    extra needs to be persisted per image. Returns None for a URL that isn't
+    a Cloudinary delivery URL at all (e.g. one of the local static product
+    images already in the repo), so callers can skip it."""
+    match = re.search(r"/upload/(?:[^/]+/)*?v\d+/(.+)\.[a-zA-Z0-9]+$", url)
+    if not match:
+        return None
+    return match.group(1)
+
+
+def destroy_image(url: str) -> None:
+    """Deletes the Cloudinary asset behind a delivery URL previously returned
+    by upload_image. Silently no-ops for a non-Cloudinary URL, and only logs
+    (never raises) on a Cloudinary-side failure — losing track of one stale
+    asset is never worth failing the product edit/delete a shop owner is in
+    the middle of."""
+    public_id = _extract_public_id(url)
+    if not public_id:
+        return
+    try:
+        cloudinary.uploader.destroy(public_id)
+    except Exception:
+        logger.exception("Failed to delete Cloudinary asset %s", public_id)
