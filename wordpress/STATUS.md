@@ -39,10 +39,11 @@ this point. Read this before continuing.
      plain-permalink installs is a `?rest_route=` URL that breaks api.ts's
      `?`-joining. Cheapest fix: warn on that page when pretty permalinks
      are off (the README already requires them).
-2. **Boot Playground and import** (first `npx` run needed two retries:
-   one npm ECONNRESET, one Git Bash mangling the mount colon — run it from
-   PowerShell):
-   `npx @wp-playground/cli@latest server --port 9400 --blueprint ./wordpress/dev/blueprint.json --mount ./wordpress/plugins/baig-cloth-headless:/wordpress/wp-content/plugins/baig-cloth-headless --mount ./wordpress/migration:/wordpress/wp-content/migration`
+2. **Boot Playground and import** — run from **PowerShell, not Git Bash**
+   (MSYS rewrites the mount colon into a Windows path list). CLI 3.1.56 and
+   the WordPress core zip are already cached on this machine (2026-10-05),
+   so this is offline-safe:
+   `npx @wp-playground/cli@3.1.56 server --port 9400 --blueprint ./wordpress/dev/blueprint.json --mount ./wordpress/plugins/baig-cloth-headless:/wordpress/wp-content/plugins/baig-cloth-headless --mount ./wordpress/migration:/wordpress/wp-content/migration`
    (from the repo root; wp-admin auto-login at http://127.0.0.1:9400/wp-admin/)
 3. **Run the parity check** with FastAPI also up on :8000
    (`backend/.venv/Scripts/python.exe wordpress/migration/parity_check.py`)

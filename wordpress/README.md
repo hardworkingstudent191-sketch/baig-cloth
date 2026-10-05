@@ -59,11 +59,13 @@ what the API returns:
 
 ## Local development
 
-Requires only Node (uses WordPress Playground — PHP runs in WASM):
+Requires only Node (uses WordPress Playground — PHP runs in WASM). On
+Windows, run this from PowerShell — Git Bash rewrites the `:` in the mount
+arguments into a Windows path list and the mount fails:
 
 ```bash
 cd baig-cloth
-npx @wp-playground/cli@latest server --port 9400 \
+npx @wp-playground/cli@3.1.56 server --port 9400 \
   --blueprint ./wordpress/dev/blueprint.json \
   --mount ./wordpress/plugins/baig-cloth-headless:/wordpress/wp-content/plugins/baig-cloth-headless \
   --mount ./wordpress/migration:/wordpress/wp-content/migration
