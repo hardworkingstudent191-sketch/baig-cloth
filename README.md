@@ -8,9 +8,17 @@ categories, and sales.
 
 ```
 backend/     FastAPI + Postgres API (products, categories, admin auth, image upload)
+wordpress/   Alternative backend: headless WordPress plugin serving the same API
+             contract — runs on PHP shared hosting, admin is wp-admin (see wordpress/README.md)
 frontend/    React 19 + Vite + TS + Tailwind v4 — storefront and admin panel in one app
 docs/        Planning docs: full architecture/site map, project to-do list, placeholder images
 ```
+
+The two backends are interchangeable from the storefront's point of view —
+`frontend/.env`'s `VITE_API_URL` picks which one a build talks to
+(`http://localhost:8000` for FastAPI, `https://<wp-site>/wp-json/baig/v1`
+for WordPress). `wordpress/migration/parity_check.py` verifies they serve
+identical responses.
 
 ## Run it locally
 
@@ -56,9 +64,13 @@ Admin panel: http://localhost:5173/admin/login
 
 ## Deploying
 
-- **Frontend**: static build (`npm run build` → `frontend/dist/`), hosted on
-  Hostinger Business Web Hosting (sub-hosting under arcoliv.com).
-- **Backend + Postgres**: needs a Python-capable host — currently targeting
-  Koyeb's free tier (git-push deploy from this repo's `backend/` folder).
+Two supported paths — pick one:
 
-See `docs/site-map.md` for the full reasoning behind this split.
+- **WordPress path (current direction, decided 2026-10-04)**: WordPress on
+  Hostinger (e.g. `cms.` subdomain) running the `wordpress/plugins/baig-cloth-headless`
+  plugin as the backend + the static frontend build on the main domain.
+  One PHP host, no Python host needed. Full steps in `wordpress/README.md`.
+- **FastAPI path**: static frontend on Hostinger + `backend/` on a
+  Python-capable host (Railway ~$5/mo or Koyeb) + Postgres.
+
+See `docs/site-map.md` for the original architecture notes.

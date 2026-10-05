@@ -1,0 +1,778 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Lawn",
+      "gender": "women",
+      "sort_order": 0
+    },
+    {
+      "id": 2,
+      "name": "Cotton",
+      "gender": "women",
+      "sort_order": 1
+    },
+    {
+      "id": 3,
+      "name": "Embroidered",
+      "gender": "women",
+      "sort_order": 2
+    },
+    {
+      "id": 4,
+      "name": "Cotton",
+      "gender": "men",
+      "sort_order": 0
+    },
+    {
+      "id": 5,
+      "name": "Wash & Wear",
+      "gender": "men",
+      "sort_order": 1
+    },
+    {
+      "id": 6,
+      "name": "Karandi",
+      "gender": "men",
+      "sort_order": 2
+    }
+  ],
+  "products": [
+    {
+      "id": 21,
+      "name": "Wash & Wear — Ash Grey",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/ash-grey.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 22,
+      "name": "Wash & Wear — Aubergine",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/aubergine.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 23,
+      "name": "Wash & Wear — Beige Taupe",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/beige-taupe.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 24,
+      "name": "Wash & Wear — Camel",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/camel.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 25,
+      "name": "Wash & Wear — Charcoal",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/charcoal.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 26,
+      "name": "Wash & Wear — Denim Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/denim-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 27,
+      "name": "Wash & Wear — Dusty Mauve",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/dusty-mauve.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 28,
+      "name": "Wash & Wear — Forest Green",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/forest-green.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 29,
+      "name": "Wash & Wear — Ivory",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/ivory.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 30,
+      "name": "Wash & Wear — Khaki",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/khaki.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 31,
+      "name": "Wash & Wear — Light Grey",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/light-grey.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 32,
+      "name": "Wash & Wear — Mauve Rose",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/mauve-rose.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 33,
+      "name": "Wash & Wear — Navy",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/navy.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 34,
+      "name": "Wash & Wear — Olive Green",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/olive-green.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 35,
+      "name": "Wash & Wear — Olive Khaki",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/olive-khaki.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 36,
+      "name": "Wash & Wear — Periwinkle",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/periwinkle.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 37,
+      "name": "Wash & Wear — Petrol Teal",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/petrol-teal.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 38,
+      "name": "Wash & Wear — Plum Grey",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/plum-grey.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 39,
+      "name": "Wash & Wear — Powder Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/powder-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 40,
+      "name": "Wash & Wear — Rust Brown",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/rust-brown.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 41,
+      "name": "Wash & Wear — Sage Green",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/sage-green.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 42,
+      "name": "Wash & Wear — Sky Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/sky-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 43,
+      "name": "Wash & Wear — Slate Grey-Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/slate-grey-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 44,
+      "name": "Wash & Wear — Slate Lavender",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/slate-lavender.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 45,
+      "name": "Wash & Wear — Steel Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/steel-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 46,
+      "name": "Wash & Wear — Terracotta",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/terracotta.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 47,
+      "name": "Wash & Wear — Wine Plum",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/wine-plum.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00"
+    },
+    {
+      "id": 48,
+      "name": "Steel Blue Eyelet Embroidered",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/steel-blue-eyelet.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 49,
+      "name": "Mint Net Floral Pearl",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/mint-net-floral-pearl.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 50,
+      "name": "Forest Gold Motif Print",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/forest-gold-motif-print.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 51,
+      "name": "Champagne Sequin Net",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/champagne-sequin-net.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 52,
+      "name": "Indigo Block Print",
+      "category_id": 1,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/indigo-block-print.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 53,
+      "name": "Black Sequin Lace",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/black-sequin-lace.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 54,
+      "name": "Citrine Floral Print",
+      "category_id": 1,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/citrine-floral-print-lawn.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 55,
+      "name": "Ivory Beaded Net",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/ivory-beaded-net.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 56,
+      "name": "Mustard Sequin Fan",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/mustard-sequin-fan.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 57,
+      "name": "Midnight Sequin Floral",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/midnight-sequin-floral.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 58,
+      "name": "Sage Floral Print",
+      "category_id": 1,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/sage-floral-print-lawn.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 59,
+      "name": "Olive Eyelet Embroidered",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/olive-eyelet-embroidered.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 60,
+      "name": "Charcoal Silver Embroidered",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/charcoal-silver-embroidered.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 61,
+      "name": "Teal Lace Printed",
+      "category_id": 1,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/teal-lace-printed-lawn.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 62,
+      "name": "Silver Leaf Sequin",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/silver-leaf-sequin.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 63,
+      "name": "Maroon Sequin Stripe",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/maroon-sequin-stripe.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 64,
+      "name": "Blush Floral Embroidered",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/blush-floral-embroidered.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 65,
+      "name": "Lavender Black Floral Sequin",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/lavender-black-floral-sequin.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    },
+    {
+      "id": 66,
+      "name": "Black Olive 3D Floral",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/black-olive-3d-floral.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00"
+    }
+  ]
+}

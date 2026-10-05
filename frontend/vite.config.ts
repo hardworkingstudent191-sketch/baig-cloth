@@ -158,7 +158,17 @@ function siteMeta(siteUrl: string, apiOrigin: string, isProd: boolean): Plugin {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
   const siteUrl = (env.VITE_SITE_URL ?? "").replace(/\/$/, "");
-  const apiOrigin = (env.VITE_API_URL ?? "http://localhost:8000").replace(/\/$/, "");
+  // CSP source expressions do path matching, and a path without a trailing
+  // slash must match EXACTLY — so putting a full API URL with a path (the
+  // WordPress backend lives at /wp-json/baig/v1) into connect-src would block
+  // every API call the built site makes. connect-src wants the ORIGIN only.
+  const rawApiUrl = env.VITE_API_URL ?? "http://localhost:8000";
+  let apiOrigin: string;
+  try {
+    apiOrigin = new URL(rawApiUrl).origin;
+  } catch {
+    apiOrigin = rawApiUrl.replace(/\/$/, "");
+  }
 
   if (!siteUrl && mode === "production") {
     // Not fatal — a preview build with placeholder URLs is still useful — but

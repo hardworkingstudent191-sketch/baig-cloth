@@ -13,9 +13,16 @@ and real devices.
 - [ ] Check arcoliv.com's Hostinger plan type (shared/cloud vs VPS) — Python only runs on VPS
 - [ ] If VPS: confirm tier is enough for frontend + FastAPI + Postgres (KVM 2 minimum recommended)
 - [ ] Confirm whether that server is yours to use or Arco Liv's client infrastructure — ask before deploying an unrelated app on it
-- [ ] Decide final hosting path: Hostinger VPS vs Railway Hobby ($5/mo) vs other
+- [~] Decide final hosting path — **superseded 2026-10-04: owner chose a
+      WordPress backend** (`wordpress/` — headless plugin serving the same
+      API contract; runs on PHP shared hosting, admin = wp-admin). The
+      FastAPI backend stays in the repo as the alternative; `VITE_API_URL`
+      picks the backend per build. See `wordpress/README.md`.
 - [ ] Delete stale duplicate Railway service `baig-cloth-web` (id `d756923e-7ddd-4802-8982-9a6151752959`)
-- [x] Lock in: custom FastAPI admin panel (not headless CMS) — confirmed direction
+- [~] Lock in: custom FastAPI admin panel (not headless CMS) — was the
+      confirmed direction until 2026-10-04; owner has since chosen the
+      WordPress/headless path above. The React admin panel remains usable
+      only with the FastAPI backend.
 
 ## Phase 1 — Backend Foundation
 - [x] Set up Postgres database (categories, products, admin_users tables) — `backend/app/models.py`

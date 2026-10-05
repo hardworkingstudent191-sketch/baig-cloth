@@ -1,0 +1,27 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/wp-admin/edit.php?post_type=bc_product",
+	"login": true,
+	"steps": [
+		{
+			"step": "setSiteOptions",
+			"options": {
+				"blogname": "Baig Cloth CMS",
+				"permalink_structure": "/%postname%/",
+				"timezone_string": "Asia/Karachi"
+			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginPath": "baig-cloth-headless/baig-cloth-headless.php"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp rewrite flush --hard"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp baig import /wordpress/wp-content/migration/catalog-export.json"
+		}
+	]
+}
