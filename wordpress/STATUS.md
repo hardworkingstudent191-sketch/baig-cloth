@@ -1,61 +1,79 @@
-# WordPress backend — work-in-progress status (saved 2026-10-04)
+# WordPress backend — status (updated 2026-10-07)
 
-The plugin, migration tooling, and docs in this folder are **written but not
-yet verified against a running WordPress**. Session was stopped and saved at
-this point. Read this before continuing.
+The backend works and is verified against a live WordPress. What remains is
+deployment-side and device QA — see "Not done" below.
 
-## Done
+## Done and verified
 
-- Plugin complete (`plugins/baig-cloth-headless/`): CPT + taxonomy with
-  gender/sort term meta, details + gallery metaboxes, REST API at
-  `/wp-json/baig/v1` matching the FastAPI contract, CORS, idempotent
-  importer (admin page + `wp baig import`), settings page.
-- Catalog exported from Postgres: `migration/catalog-export.json`
-  (6 categories, 46 products — all image URLs are repo-relative `/products/...`).
-- Parity checker written: `migration/parity_check.py` (fires the same request
-  matrix at both backends and diffs normalized JSON). **Never run yet.**
-- Frontend fix shipped: `vite.config.ts` was putting the full API URL (path
-  included) into CSP connect-src — with the WP URL every production API call
-  would have been blocked. Now uses `new URL(...).origin`. `tsc -b` clean.
-- `frontend/.env.local` (untracked) points dev at the Playground URL;
+- **Plugin complete** (`plugins/baig-cloth-headless/`): product CPT + category
+  taxonomy (gender / sort order term meta), details + gallery metaboxes,
+  public REST API at `/wp-json/baig/v1`, CORS, idempotent importer (admin
+  page + `wp baig import`), settings page.
+- **Full API parity with FastAPI** — `migration/parity_check.py` reports
+  FULL PARITY across 6 categories + 46 products: every filter (gender,
+  category_id, on_sale, featured, search), pagination windows, single
+  reads, input-validation status codes (422s), and the 404 shape.
+  Two deliberate, documented allowances: timestamps compare at whole-second
+  precision (WordPress dates have no microseconds) and tie order inside a
+  group of identical `created_at` is ignored (single-statement inserts have
+  no defined order, even in FastAPI).
+- **Browser-verified** (storefront at desktop + phone width against the
+  WordPress API, and wp-admin): catalog renders with correct sale pricing;
+  product list/category table/settings page/gallery widget work; a product
+  published in wp-admin appears in the API with the exact contract shape,
+  first in newest-first order.
+- **Review findings fixed and tested live:** category-delete guard (blocks
+  a category with products, still deletes an empty one); `search[]=x` and
+  other array params now 422 instead of a fatal; price gate (a priceless
+  publish becomes a draft with a warning and stays out of the public API);
+  sale price >= price switches "On sale" off with a warning; plain-permalink
+  warning on the settings page; Quick Edit/Bulk Edit category checkboxes
+  disabled (a product must have exactly one category).
+- **Frontend fixes this work needed (both in `frontend/vite.config.ts`,
+  verified in real build output):** CSP `connect-src` uses the API URL's
+  *origin* (a path like `/wp-json/baig/v1` would block every API call);
+  CSP `img-src` includes the API origin (Media Library photos are served
+  from the WordPress host and were silently blocked).
+
+## Dev setup (offline-safe)
+
+Run from **PowerShell, not Git Bash** (MSYS mangles the mount colon). CLI
+3.1.56 and WordPress core are cached locally.
+
+```
+npx @wp-playground/cli@3.1.56 server --port 9400 --blueprint ./wordpress/dev/blueprint.json --mount ./wordpress/plugins/baig-cloth-headless:/wordpress/wp-content/plugins/baig-cloth-headless --mount ./wordpress/migration:/wordpress/wp-content/migration
+```
+
+- API: `http://127.0.0.1:9400/wp-json/baig/v1`. wp-admin login: user `admin`,
+  password = the `wp user update` step in `dev/blueprint.json` (throwaway;
+  the site is rebuilt on every boot).
+- Auto-login is **off on purpose**: Playground answers cookie-less requests
+  with a 302 lacking CORS headers, which blocks the storefront's cross-origin
+  fetches (see `wordpress/README.md`).
+- Parity check needs FastAPI on :8000 too (`backend/.venv/Scripts/python.exe
+  -m uvicorn app.main:app --port 8000`), then
+  `py -3.12 wordpress/migration/parity_check.py`.
+- `frontend/.env.local` (untracked) points the dev storefront at :9400;
   delete it to go back to FastAPI.
 
-## Not done — in order
+## Not done
 
-1. **Fix the three confirmed review findings** (adversarially verified):
-   - `includes/post-types.php` — deleting a category that still has products
-     is allowed; its products then silently vanish from all listings
-     (FastAPI returned 400 for this). Add a `pre_delete_term` guard that
-     blocks deletion while products are assigned.
-   - `includes/rest-api.php:~230` — `GET /products?search[]=x` (array param)
-     reaches `mb_stripos()` and fatals → anonymous 500 on PHP 8. Reject
-     non-string `search`/params with a 422, like the original API.
-   - `includes/metabox.php` — no server-side price>0 gate: a product can
-     reach publish with no `_bc_price` (e.g. Quick Edit after an autosaved
-     draft — the nonce path skips the save handler entirely) and serves
-     `"0.00"`. Block publish without a valid price.
-   - Split verdict (judge disagreement, decide yourself): the settings page
-     advertises `rest_url('baig/v1')` as VITE_API_URL, which on
-     plain-permalink installs is a `?rest_route=` URL that breaks api.ts's
-     `?`-joining. Cheapest fix: warn on that page when pretty permalinks
-     are off (the README already requires them).
-2. **Boot Playground and import** — run from **PowerShell, not Git Bash**
-   (MSYS rewrites the mount colon into a Windows path list). CLI 3.1.56 and
-   the WordPress core zip are already cached on this machine (2026-10-05),
-   so this is offline-safe:
-   `npx @wp-playground/cli@3.1.56 server --port 9400 --blueprint ./wordpress/dev/blueprint.json --mount ./wordpress/plugins/baig-cloth-headless:/wordpress/wp-content/plugins/baig-cloth-headless --mount ./wordpress/migration:/wordpress/wp-content/migration`
-   (from the repo root; wp-admin auto-login at http://127.0.0.1:9400/wp-admin/)
-3. **Run the parity check** with FastAPI also up on :8000
-   (`backend/.venv/Scripts/python.exe wordpress/migration/parity_check.py`)
-   and fix every reported difference.
-4. **Browser QA** of the storefront against the WP backend
-   (frontend dev server picks up `.env.local`), including wp-admin
-   product add/edit with media-library images.
-5. Review-dimension caveat: the automated review's verify stage was cut
-   short by a usage limit — `php-correctness`, `wp-gotchas` and
-   `frontend-integration` finder output was never adversarially verified.
-   Raw findings live in the session's workflow journal; cheapest recovery
-   is re-reviewing those three lenses once, or just relying on steps 2–4
-   (live boot + parity + QA), which would catch the same classes of bug.
-6. Then the normal launch track: real-device QA, content pass, Hostinger
-   deploy per `README.md`, launch checklist (`docs/todo.md` phases 5–7).
+1. **Real Hostinger deploy** per `wordpress/README.md`: install WordPress on
+   a subdomain, upload the plugin zip, Post-name permalinks, import
+   `migration/catalog-export.json`, set storefront origin, build the
+   frontend with `VITE_API_URL=https://<cms>/wp-json/baig/v1` and
+   `VITE_SITE_URL`, upload `dist/`. Needs the owner's Hostinger access and
+   final domain. Test the API against the *deployed* site afterwards
+   (re-run `parity_check.py` with `--wp https://<cms>/wp-json/baig/v1`).
+2. **Real-device QA** (iPhone + Android): the biggest untested risk.
+3. **Content pass:** confirm all 46 products' photos/prices; have the
+   policies copy reviewed (legal-adjacent, written in-house).
+4. **Production hardening checklist:** strong WordPress admin password,
+   auto-updates on, consider restricting CORS to the storefront origin,
+   backups (Hostinger daily backups / a plugin).
+5. Still-unverified review lenses from the interrupted automated review
+   (usage limit): generic PHP-correctness and WP-gotcha sweeps. The live
+   run, parity check and browser QA above cover the realistic failure
+   modes; a final targeted re-review is optional.
+6. Launch track: `docs/todo.md` phases 5-7 (Search Console sitemap,
+   WhatsApp link-preview check, soft launch).

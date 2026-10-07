@@ -53,6 +53,10 @@ function bc_register_post_types() {
 			'public'            => false,
 			'show_ui'           => true,
 			'show_admin_column' => false, // we render our own column with gender.
+			// Quick Edit / Bulk Edit render a checkbox list for hierarchical
+			// taxonomies, which would let a product end up with two categories
+			// or none. The edit-screen dropdown is the single-category path.
+			'show_in_quick_edit' => false,
 			'show_in_rest'      => false,
 			'meta_box_cb'       => 'bc_category_meta_box',
 		)
