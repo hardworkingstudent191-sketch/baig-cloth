@@ -41,7 +41,9 @@ function bc_register_rest_routes() {
 	);
 	register_rest_route(
 		'baig/v1',
-		'/products/(?P<id>\d+)',
+		// Any segment, validated in the callback: a non-integer id is a 422 (as
+		// the original API answered), not WordPress's generic "no route" 404.
+		'/products/(?P<id>[^/]+)',
 		array(
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => 'bc_rest_get_product',
@@ -93,7 +95,9 @@ function bc_get_categories_map() {
 		$sort   = get_term_meta( $term->term_id, 'bc_sort_order', true );
 		$map[ $term->term_id ] = array(
 			'id'         => (int) $term->term_id,
-			'name'       => $term->name,
+			// WordPress stores term names kses-encoded ("Wash &amp; Wear");
+			// the API serves plain text, JSON-escaped by the transport.
+			'name'       => wp_specialchars_decode( $term->name, ENT_QUOTES ),
 			'gender'     => in_array( $gender, array( 'men', 'women' ), true ) ? $gender : 'women',
 			'sort_order' => ( '' === $sort ) ? 0 : (int) $sort,
 		);
@@ -137,7 +141,7 @@ function bc_serialize_product( $post, $categories_map ) {
 
 	return array(
 		'id'           => (int) $id,
-		'name'         => $post->post_title,
+		'name'         => wp_specialchars_decode( $post->post_title, ENT_QUOTES ),
 		'category_id'  => $category_id,
 		'description'  => (string) $post->post_content,
 		'price'        => bc_format_price( $price ),
@@ -173,7 +177,38 @@ function bc_parse_bool_param( $request, $name ) {
 // Route callbacks
 // ---------------------------------------------------------------------------
 
+/** Strict integer parse: "12", "-3", "+4" -> int; "abc", "1.5", "", "1e3" -> null. */
+function bc_parse_int( $value ) {
+	if ( is_int( $value ) ) {
+		return $value;
+	}
+	if ( is_string( $value ) && preg_match( '/^[+-]?\d+$/', trim( $value ) ) ) {
+		return (int) $value;
+	}
+	return null;
+}
+
+/**
+ * True when every named query param is absent or a plain scalar. PHP parses
+ * `?search[]=x` into an array, and handing that to string functions is a
+ * TypeError on PHP 8 — an anonymous request must never be able to fatal the
+ * endpoint. The original API answered malformed params with a 422.
+ */
+function bc_params_are_scalar( $request, $names ) {
+	foreach ( $names as $name ) {
+		$value = $request->get_param( $name );
+		if ( null !== $value && ! is_scalar( $value ) ) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function bc_rest_list_products( $request ) {
+	if ( ! bc_params_are_scalar( $request, array( 'gender', 'category_id', 'on_sale', 'featured', 'search', 'limit', 'offset' ) ) ) {
+		return bc_error( 422, 'query parameters must be single values' );
+	}
+
 	$gender = $request->get_param( 'gender' );
 	if ( null !== $gender && ! in_array( $gender, array( 'men', 'women' ), true ) ) {
 		return bc_error( 422, 'gender must be "men" or "women"' );
@@ -185,16 +220,38 @@ function bc_rest_list_products( $request ) {
 		return bc_error( 422, 'on_sale and featured must be booleans' );
 	}
 
+	// Integers are validated strictly, as the original API did (422 on a
+	// non-integer, limit outside 1..200, negative offset) rather than being
+	// silently clamped — a typo should be loud, not quietly return something.
 	$category_id = $request->get_param( 'category_id' );
-	$category_id = ( null !== $category_id ) ? absint( $category_id ) : null;
+	if ( null !== $category_id ) {
+		$category_id = bc_parse_int( $category_id );
+		if ( null === $category_id ) {
+			return bc_error( 422, 'category_id must be an integer' );
+		}
+	}
 
 	$search = $request->get_param( 'search' );
 
 	$limit = $request->get_param( 'limit' );
-	$limit = ( null === $limit ) ? 100 : max( 1, min( 200, absint( $limit ) ) );
+	if ( null === $limit ) {
+		$limit = 100;
+	} else {
+		$limit = bc_parse_int( $limit );
+		if ( null === $limit || $limit < 1 || $limit > 200 ) {
+			return bc_error( 422, 'limit must be an integer between 1 and 200' );
+		}
+	}
 
 	$offset = $request->get_param( 'offset' );
-	$offset = ( null === $offset ) ? 0 : absint( $offset );
+	if ( null === $offset ) {
+		$offset = 0;
+	} else {
+		$offset = bc_parse_int( $offset );
+		if ( null === $offset || $offset < 0 ) {
+			return bc_error( 422, 'offset must be a non-negative integer' );
+		}
+	}
 
 	$categories_map = bc_get_categories_map();
 
@@ -227,6 +284,7 @@ function bc_rest_list_products( $request ) {
 			continue;
 		}
 		if ( null !== $search && '' !== $search ) {
+			$search   = (string) $search;
 			$haystack = function_exists( 'mb_stripos' ) ? mb_stripos( $p['name'], $search ) : stripos( $p['name'], $search );
 			if ( false === $haystack ) {
 				continue;
@@ -247,7 +305,11 @@ function bc_rest_list_products( $request ) {
 }
 
 function bc_rest_get_product( $request ) {
-	$post = get_post( absint( $request['id'] ) );
+	$id = bc_parse_int( $request['id'] );
+	if ( null === $id ) {
+		return bc_error( 422, 'product id must be an integer' );
+	}
+	$post = ( $id > 0 ) ? get_post( $id ) : null;
 	if ( ! $post || 'bc_product' !== $post->post_type || 'publish' !== $post->post_status ) {
 		return bc_error( 404, 'Product not found' );
 	}
@@ -257,6 +319,10 @@ function bc_rest_get_product( $request ) {
 }
 
 function bc_rest_list_categories( $request ) {
+	if ( ! bc_params_are_scalar( $request, array( 'gender' ) ) ) {
+		return bc_error( 422, 'query parameters must be single values' );
+	}
+
 	$gender = $request->get_param( 'gender' );
 	if ( null !== $gender && ! in_array( $gender, array( 'men', 'women' ), true ) ) {
 		return bc_error( 422, 'gender must be "men" or "women"' );

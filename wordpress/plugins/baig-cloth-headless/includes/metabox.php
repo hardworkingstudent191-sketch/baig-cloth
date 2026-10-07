@@ -130,6 +130,55 @@ function bc_sanitize_image_url( $url ) {
 	return $clean ? $clean : '';
 }
 
+/**
+ * Server-side price gate. The browser's required/min attributes are the only
+ * other defence, and Quick Edit, autosaved drafts and REST writes bypass
+ * them (those paths never post the metabox nonce, so the save handler below
+ * does not even run). A product with no valid price must not go live — it
+ * would serve "0.00" and quote "Rs 0.00" in the WhatsApp message.
+ *
+ * Runs on wp_insert_post_data (before the row is written), so the status can
+ * still be downgraded to draft. The effective price is the one being posted
+ * with the metabox, or — when the metabox did not post one — the price
+ * already saved on the product (which the save handler keeps on bad input).
+ */
+function bc_gate_publish_without_price( $data, $postarr ) {
+	if ( 'bc_product' !== $data['post_type'] || 'publish' !== $data['post_status'] ) {
+		return $data;
+	}
+
+	$post_id = isset( $postarr['ID'] ) ? (int) $postarr['ID'] : 0;
+
+	$posted = null;
+	if ( isset( $_POST['bc_details_nonce'], $_POST['bc_price'] ) && wp_verify_nonce( sanitize_key( $_POST['bc_details_nonce'] ), 'bc_save_details' ) ) {
+		$posted = (float) wp_unslash( $_POST['bc_price'] );
+	}
+
+	$effective = ( null !== $posted && $posted > 0 )
+		? $posted
+		: ( $post_id ? (float) get_post_meta( $post_id, '_bc_price', true ) : 0.0 );
+
+	if ( $effective > 0 ) {
+		return $data;
+	}
+
+	$data['post_status'] = 'draft';
+	bc_add_admin_notice( __( 'Saved as a draft: a product needs a price above zero before it can be published.', 'baig-cloth-headless' ) );
+	return $data;
+}
+
+/** Queue a one-shot wp-admin warning, merging with any already queued this request. */
+function bc_add_admin_notice( $message ) {
+	$key      = 'bc_notice_' . get_current_user_id();
+	$existing = get_transient( $key );
+	$existing = is_array( $existing ) ? $existing : array();
+	if ( ! in_array( $message, $existing, true ) ) {
+		$existing[] = $message;
+	}
+	set_transient( $key, $existing, 60 );
+}
+add_filter( 'wp_insert_post_data', 'bc_gate_publish_without_price', 10, 2 );
+
 function bc_save_details_metabox( $post_id, $post ) {
 	if ( 'bc_product' !== $post->post_type ) {
 		return;
@@ -211,8 +260,8 @@ function bc_save_details_metabox( $post_id, $post ) {
 		update_post_meta( $post_id, '_bc_image_urls', wp_json_encode( array_values( $urls ) ) );
 	}
 
-	if ( $problems ) {
-		set_transient( 'bc_notice_' . get_current_user_id(), $problems, 60 );
+	foreach ( $problems as $problem ) {
+		bc_add_admin_notice( $problem );
 	}
 }
 add_action( 'save_post', 'bc_save_details_metabox', 10, 2 );

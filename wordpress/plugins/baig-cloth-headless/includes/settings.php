@@ -77,6 +77,27 @@ function bc_render_settings_page() {
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Storefront settings', 'baig-cloth-headless' ); ?></h1>
 
+		<?php if ( ! get_option( 'permalink_structure' ) ) : ?>
+			<div class="notice notice-error">
+				<p>
+					<?php
+					printf(
+						/* translators: %s: link to the permalink settings screen */
+						wp_kses(
+							__( '<strong>Pretty permalinks are off.</strong> The storefront builds request URLs by appending "?filter=…" to the API base, which breaks on the plain-permalink form (<code>?rest_route=…</code>). Switch to "Post name" under <a href="%s">Settings → Permalinks</a> before pointing the storefront here.', 'baig-cloth-headless' ),
+							array(
+								'strong' => array(),
+								'code'   => array(),
+								'a'      => array( 'href' => array() ),
+							)
+						),
+						esc_url( admin_url( 'options-permalink.php' ) )
+					);
+					?>
+				</p>
+			</div>
+		<?php endif; ?>
+
 		<p>
 			<?php esc_html_e( 'The React storefront reads the catalog from this API base URL — set it as VITE_API_URL in the frontend build:', 'baig-cloth-headless' ); ?><br />
 			<code><?php echo esc_html( untrailingslashit( $api_base ) ); ?></code>

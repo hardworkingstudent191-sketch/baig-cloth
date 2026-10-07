@@ -121,6 +121,50 @@ function bc_save_category_metabox( $post_id, $post ) {
 }
 add_action( 'save_post', 'bc_save_category_metabox', 10, 2 );
 
+/**
+ * Refuse to delete a category that still has products — the original API
+ * answered DELETE /categories/{id} with a 400 in exactly this case. Without
+ * the guard, WordPress drops the term relationships and the products silently
+ * disappear from every storefront listing.
+ *
+ * pre_delete_term has no "cancel" return value, so wp_die() is the only way
+ * to stop the delete (wp-admin shows it as an error page with a back link;
+ * the inline AJAX delete surfaces the same message).
+ */
+function bc_block_deleting_used_category( $term_id, $taxonomy ) {
+	if ( 'bc_category' !== $taxonomy ) {
+		return;
+	}
+	$used = get_posts(
+		array(
+			'post_type'      => 'bc_product',
+			'post_status'    => array( 'publish', 'draft', 'pending', 'private', 'future' ),
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+			'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery
+				array(
+					'taxonomy'         => 'bc_category',
+					'field'            => 'term_id',
+					'terms'            => array( (int) $term_id ),
+					'include_children' => false,
+				),
+			),
+		)
+	);
+	if ( $used ) {
+		wp_die(
+			esc_html__( 'Cannot delete a category that still has products. Reassign or delete them first.', 'baig-cloth-headless' ),
+			esc_html__( 'Category in use', 'baig-cloth-headless' ),
+			array(
+				'response'  => 400,
+				'back_link' => true,
+			)
+		);
+	}
+}
+add_action( 'pre_delete_term', 'bc_block_deleting_used_category', 10, 2 );
+
 // ---------------------------------------------------------------------------
 // Term fields: gender + sort order
 // ---------------------------------------------------------------------------

@@ -119,6 +119,19 @@ function bc_find_product_by_legacy_id( $legacy_id ) {
 }
 
 function bc_run_catalog_import( $data ) {
+	// The import inserts each product as "publish" BEFORE writing its price
+	// meta, which the publish-without-price gate would (rightly, for manual
+	// edits) downgrade to draft. Imported rows come from a catalog where every
+	// product already has a valid price, so step the gate aside for the run.
+	remove_filter( 'wp_insert_post_data', 'bc_gate_publish_without_price', 10 );
+	try {
+		return bc_do_catalog_import( $data );
+	} finally {
+		add_filter( 'wp_insert_post_data', 'bc_gate_publish_without_price', 10, 2 );
+	}
+}
+
+function bc_do_catalog_import( $data ) {
 	$report = array(
 		'categories_created' => 0,
 		'categories_skipped' => 0,
