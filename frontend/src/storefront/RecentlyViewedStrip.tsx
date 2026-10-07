@@ -1,11 +1,11 @@
 import ProductCard from "./ProductCard";
 import { useProductsByIds } from "./useProductsByIds";
-import { getRecentlyViewed } from "./recentlyViewed";
+import { getRecentlyViewed, pruneRecentlyViewed } from "./recentlyViewed";
 import Reveal from "../Reveal";
 
 export default function RecentlyViewedStrip({ excludeId }: { excludeId: number }) {
   const ids = getRecentlyViewed(excludeId);
-  const { products } = useProductsByIds(ids);
+  const { products } = useProductsByIds(ids, pruneRecentlyViewed);
 
   if (products.length === 0) return null;
 

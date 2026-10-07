@@ -181,6 +181,13 @@ function bc_do_catalog_import( $data ) {
 		}
 		$legacy_id = (int) $prod['id'];
 
+		// The publish gate is stepped aside for the import, so enforce the
+		// contract's price > 0 here: a bad row must not go live as "0.00".
+		if ( ! is_numeric( $prod['price'] ) || (float) $prod['price'] <= 0 ) {
+			$report['warnings'][] = sprintf( 'Product "%s": price "%s" is not a number above zero — skipped.', $prod['name'], (string) $prod['price'] );
+			continue;
+		}
+
 		if ( bc_find_product_by_legacy_id( $legacy_id ) ) {
 			$report['products_skipped']++;
 			continue;
@@ -216,7 +223,9 @@ function bc_do_catalog_import( $data ) {
 			$postarr['post_date']     = get_date_from_gmt( $gmt_date );
 		}
 
-		$post_id = wp_insert_post( $postarr, true );
+		// wp_insert_post() expects slashed data and unslashes it; without
+		// wp_slash() any backslash in a name or description is silently lost.
+		$post_id = wp_insert_post( wp_slash( $postarr ), true );
 		if ( is_wp_error( $post_id ) ) {
 			$report['warnings'][] = sprintf( 'Product "%s": %s', $prod['name'], $post_id->get_error_message() );
 			continue;
@@ -246,7 +255,7 @@ function bc_do_catalog_import( $data ) {
 				$urls[] = $clean;
 			}
 		}
-		update_post_meta( $post_id, '_bc_image_urls', wp_json_encode( $urls ) );
+		update_post_meta( $post_id, '_bc_image_urls', wp_slash( wp_json_encode( $urls ) ) ); // see metabox.php: update_post_meta unslashes.
 
 		wp_set_object_terms( $post_id, array( $term_id ), 'bc_category', false );
 		$report['products_created']++;

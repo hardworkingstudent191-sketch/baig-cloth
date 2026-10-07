@@ -122,6 +122,22 @@ backend/.venv/Scripts/python.exe wordpress/migration/parity_check.py
    storefront never authenticates against WordPress — wp-admin is the only
    login surface.
 
+## Build-time behaviour worth knowing
+
+- **Production builds refuse a local API URL.** `npm run build` fails if
+  `VITE_API_URL` is `localhost`, `127.0.0.1` or plain `http` — shipping that
+  works on your machine and fails for every visitor. Vite reads
+  `frontend/.env.local` in production mode too, so delete the dev override
+  (or pass `VITE_API_URL` explicitly) before building for real.
+  `VITE_ALLOW_LOCAL_API=1` bypasses it for local `vite preview` tests.
+- **The React `/admin` routes switch off automatically** when `VITE_API_URL`
+  contains `/wp-json/`, so visitors get the normal 404 page instead of a
+  login form that cannot work. Override with `VITE_ADMIN_ENABLED`.
+- **Returning visitors:** product ids differ from the old Postgres ids. The
+  storefront now prunes saved/recently-viewed ids the API answers 404 for.
+  (Not an issue pre-launch; after launch, deleting a product in WordPress
+  cleans itself out of visitors' lists the same way.)
+
 ## Which backend is "the" backend?
 
 Both are kept in the repo and both pass the same contract (see

@@ -55,6 +55,19 @@ export function toggleWishlist(productId: number): boolean {
   return false;
 }
 
+/**
+ * Remove ids the catalog no longer has (the API answered a definite 404). The
+ * header badge counts raw stored ids while the /wishlist page silently drops
+ * missing products, so without pruning a deleted product leaves a ghost count
+ * ("3" in the header, "Nothing saved yet" on the page) that never clears.
+ */
+export function pruneWishlist(missingIds: number[]) {
+  if (missingIds.length === 0) return;
+  const ids = read();
+  const kept = ids.filter((id) => !missingIds.includes(id));
+  if (kept.length !== ids.length) write(kept);
+}
+
 /** Reactive wishlist state for one product — re-renders when it changes anywhere. */
 export function useWishlisted(productId: number): [boolean, () => void] {
   const [saved, setSaved] = useState(() => isWishlisted(productId));

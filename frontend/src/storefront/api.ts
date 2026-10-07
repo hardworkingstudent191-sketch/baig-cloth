@@ -1,6 +1,9 @@
 import type { Category, Gender, Product } from "./types";
 
-const API_URL = import.meta.env.VITE_API_URL as string;
+// Trailing slashes stripped: paths below start with "/", so a base of
+// ".../wp-json/baig/v1/" would request ".../v1//products", which WordPress's
+// route matching rejects (404 for the entire catalog).
+const API_URL = String(import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
 
 // Carries the HTTP status so callers can tell "not found" apart from a
 // genuine network/server failure, instead of both looking like the same

@@ -27,6 +27,17 @@ export function recordView(productId: number) {
   }
 }
 
+/** Drop ids the catalog no longer has (a definite 404), so history can't fill with dead entries. */
+export function pruneRecentlyViewed(missingIds: number[]) {
+  if (missingIds.length === 0) return;
+  try {
+    const kept = read().filter((id) => !missingIds.includes(id));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(kept));
+  } catch {
+    // Best-effort — see wishlist.ts.
+  }
+}
+
 /** Recently viewed ids, excluding one (typically the product currently being viewed). */
 export function getRecentlyViewed(excludeId?: number): number[] {
   return read().filter((id) => id !== excludeId);

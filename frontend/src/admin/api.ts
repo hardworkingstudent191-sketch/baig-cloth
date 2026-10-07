@@ -1,6 +1,7 @@
 import type { Category, Product, ProductInput } from "./types";
 
-const API_URL = import.meta.env.VITE_API_URL as string;
+// See storefront/api.ts: strip trailing slashes so path joining can't double up.
+const API_URL = String(import.meta.env.VITE_API_URL ?? "").replace(/\/+$/, "");
 const TOKEN_KEY = "baig_admin_token";
 
 export function getToken(): string | null {

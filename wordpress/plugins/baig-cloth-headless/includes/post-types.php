@@ -86,6 +86,13 @@ function bc_category_meta_box( $post ) {
 	}
 
 	echo '<select name="bc_category_term" id="bc_category_term" style="width:100%">';
+	// An explicit blank choice: without it the browser preselects the first
+	// category and a forgotten category silently becomes a wrong one.
+	printf(
+		'<option value="0" %s>%s</option>',
+		selected( $selected, 0, false ),
+		esc_html__( '— Select a category —', 'baig-cloth-headless' )
+	);
 	foreach ( $terms as $term ) {
 		$gender = get_term_meta( $term->term_id, 'bc_gender', true );
 		printf(
@@ -97,7 +104,7 @@ function bc_category_meta_box( $post ) {
 		);
 	}
 	echo '</select>';
-	echo '<p class="description">' . esc_html__( 'Each product belongs to exactly one category.', 'baig-cloth-headless' ) . '</p>';
+	echo '<p class="description">' . esc_html__( 'Required to publish. Each product belongs to exactly one category.', 'baig-cloth-headless' ) . '</p>';
 }
 
 function bc_save_category_metabox( $post_id, $post ) {
@@ -168,6 +175,32 @@ function bc_block_deleting_used_category( $term_id, $taxonomy ) {
 	}
 }
 add_action( 'pre_delete_term', 'bc_block_deleting_used_category', 10, 2 );
+
+/**
+ * Category names repeat across genders ("Cotton" for men and for women), but
+ * WordPress refuses a second hierarchical term with the same name under the
+ * same parent unless it is given a distinct slug — and the Add Category form
+ * leaves the slug blank. Fill it in from gender + name so the owner can just
+ * add "Cotton" for the other side. Runs on admin_init so it covers both the
+ * AJAX add-tag request and the plain form post; core verifies the nonce later.
+ */
+function bc_default_category_slug() {
+	if ( empty( $_POST['action'] ) || 'add-tag' !== $_POST['action'] ) {
+		return;
+	}
+	if ( empty( $_POST['taxonomy'] ) || 'bc_category' !== $_POST['taxonomy'] ) {
+		return;
+	}
+	if ( ! empty( $_POST['slug'] ) || empty( $_POST['tag-name'] ) || empty( $_POST['bc_gender'] ) ) {
+		return;
+	}
+	$gender = sanitize_key( wp_unslash( $_POST['bc_gender'] ) );
+	if ( ! in_array( $gender, array( 'men', 'women' ), true ) ) {
+		return;
+	}
+	$_POST['slug'] = sanitize_title( $gender . '-' . wp_unslash( $_POST['tag-name'] ) );
+}
+add_action( 'admin_init', 'bc_default_category_slug' );
 
 // ---------------------------------------------------------------------------
 // Term fields: gender + sort order

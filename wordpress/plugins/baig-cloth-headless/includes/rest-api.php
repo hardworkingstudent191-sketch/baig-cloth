@@ -375,11 +375,19 @@ function bc_cors_headers( $served, $result, $request ) {
 
 	if ( in_array( '*', $allowed, true ) ) {
 		header( 'Access-Control-Allow-Origin: *' );
-	} elseif ( $origin && in_array( $origin, $allowed, true ) ) {
-		header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
-		header( 'Vary: Origin', false );
 	} else {
-		header_remove( 'Access-Control-Allow-Origin' );
+		// In list mode the response differs by Origin, so caches must be told
+		// on EVERY response — including origin-less crawler/server fetches and
+		// non-matches — or a CDN could cache a header-less copy and serve it to
+		// the real storefront, which would then fail CORS.
+		header( 'Vary: Origin', false );
+		// Browsers send a lowercase scheme://host[:port]; compare that way.
+		$allowed_lc = array_map( 'strtolower', $allowed );
+		if ( $origin && in_array( strtolower( $origin ), $allowed_lc, true ) ) {
+			header( 'Access-Control-Allow-Origin: ' . esc_url_raw( $origin ) );
+		} else {
+			header_remove( 'Access-Control-Allow-Origin' );
+		}
 	}
 	header( 'Access-Control-Allow-Methods: GET, OPTIONS' );
 

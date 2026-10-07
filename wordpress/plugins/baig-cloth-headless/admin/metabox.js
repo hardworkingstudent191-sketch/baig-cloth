@@ -131,6 +131,16 @@
 		frame.open();
 	});
 
+	// Enter in the URL box must add the URL, not submit the whole product
+	// form (the box lives inside #post, so implicit submission would save or
+	// publish the product and lose the typed text).
+	document.getElementById("bc-url-input").addEventListener("keydown", function (e) {
+		if (e.key === "Enter") {
+			e.preventDefault();
+			document.getElementById("bc-add-url").click();
+		}
+	});
+
 	// Add by URL (absolute, or /relative to the storefront host).
 	document.getElementById("bc-add-url").addEventListener("click", function () {
 		var field = document.getElementById("bc-url-input");

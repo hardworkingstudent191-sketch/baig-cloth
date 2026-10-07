@@ -34,6 +34,10 @@ jobs:
       - run: npm run build
         env:
           VITE_SITE_URL: https://baigcloth.com
+          # Placeholder: the production build refuses localhost/http API URLs.
+          # CI never deploys this artifact; the path also exercises CSP generation
+          # with a WordPress-style API URL.
+          VITE_API_URL: https://cms.baigcloth.com/wp-json/baig/v1
 
   backend:
     name: Backend — migrations, tests & audit

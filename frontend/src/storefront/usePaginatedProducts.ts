@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { storefrontApi } from "./api";
 import type { Product } from "./types";
 
@@ -28,8 +28,14 @@ export function usePaginatedProducts(filters: ListFilters, { enabled = true }: {
   const [error, setError] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const key = JSON.stringify(filters);
+  // Bumped every time the filters change. A response that arrives after the
+  // filters moved on (a slow request for the PREVIOUS filter finishing last)
+  // must be dropped, or it overwrites the list for the current one — e.g.
+  // /men/lawn briefly showing the whole men's catalog. Also guards loadMore.
+  const generation = useRef(0);
 
   useEffect(() => {
+    const gen = ++generation.current;
     if (!enabled) {
       setProducts([]);
       setHasMore(false);
@@ -41,11 +47,16 @@ export function usePaginatedProducts(filters: ListFilters, { enabled = true }: {
     storefrontApi
       .listProducts({ ...filters, limit: PAGE_SIZE, offset: 0 })
       .then((data) => {
+        if (gen !== generation.current) return;
         setProducts(data);
         setHasMore(data.length === PAGE_SIZE);
       })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        if (gen === generation.current) setError(true);
+      })
+      .finally(() => {
+        if (gen === generation.current) setLoading(false);
+      });
     // `filters` is intentionally represented by `key` (its JSON form) —
     // callers pass a fresh object literal every render, and diffing by
     // reference would refetch on every render instead of only when the
@@ -54,14 +65,18 @@ export function usePaginatedProducts(filters: ListFilters, { enabled = true }: {
   }, [key, enabled]);
 
   function loadMore() {
+    const gen = generation.current;
     setLoadingMore(true);
     storefrontApi
       .listProducts({ ...filters, limit: PAGE_SIZE, offset: products.length })
       .then((data) => {
+        if (gen !== generation.current) return;
         setProducts((prev) => [...prev, ...data]);
         setHasMore(data.length === PAGE_SIZE);
       })
-      .catch(() => setError(true))
+      .catch(() => {
+        if (gen === generation.current) setError(true);
+      })
       .finally(() => setLoadingMore(false));
   }
 

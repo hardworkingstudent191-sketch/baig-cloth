@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { storefrontApi } from "./api";
+import { storefrontApi, ApiError } from "./api";
 import type { Product } from "./types";
 
 /**
@@ -12,8 +12,15 @@ import type { Product } from "./types";
  * A product that's since been deleted from the catalog is simply dropped
  * rather than surfaced as an error — a stale id sitting in someone's
  * localStorage from weeks ago shouldn't show a broken card.
+ *
+ * `onMissing` receives the ids the API answered with a definite 404 (and ONLY
+ * those — a network error or 5xx says nothing about whether the product still
+ * exists), so callers can prune them from storage.
  */
-export function useProductsByIds(ids: number[]): { products: Product[]; loading: boolean } {
+export function useProductsByIds(
+  ids: number[],
+  onMissing?: (missingIds: number[]) => void,
+): { products: Product[]; loading: boolean } {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const key = ids.join(",");
@@ -26,10 +33,19 @@ export function useProductsByIds(ids: number[]): { products: Product[]; loading:
     }
     let cancelled = false;
     setLoading(true);
-    Promise.all(ids.map((id) => storefrontApi.getProduct(id).catch(() => null))).then((results) => {
+    const missing: number[] = [];
+    Promise.all(
+      ids.map((id) =>
+        storefrontApi.getProduct(id).catch((err) => {
+          if (err instanceof ApiError && err.status === 404) missing.push(id);
+          return null;
+        }),
+      ),
+    ).then((results) => {
       if (cancelled) return;
       setProducts(results.filter((p): p is Product => p !== null));
       setLoading(false);
+      if (missing.length > 0) onMissing?.(missing);
     });
     return () => {
       cancelled = true;

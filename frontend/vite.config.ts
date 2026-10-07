@@ -173,6 +173,30 @@ export default defineConfig(({ mode }) => {
     apiOrigin = rawApiUrl.replace(/\/$/, "");
   }
 
+  // A production bundle that points at localhost (or plain http) ships fine
+  // and then fails for every visitor: their browser calls ITS OWN 127.0.0.1,
+  // and an https page can't fetch http anyway. Vite also reads .env.local in
+  // production mode, so a leftover dev override (e.g. the WordPress dev URL)
+  // would be baked in silently. Fail the build instead; VITE_ALLOW_LOCAL_API=1
+  // is the explicit escape hatch for local `vite preview` smoke tests.
+  if (mode === "production" && env.VITE_ALLOW_LOCAL_API !== "1") {
+    let local = false;
+    try {
+      const u = new URL(rawApiUrl);
+      local = u.protocol !== "https:" || /^(localhost|127\.|\[::1\])/i.test(u.hostname);
+    } catch {
+      local = true; // unparseable (or relative) API URL
+    }
+    if (local) {
+      throw new Error(
+        `\n[baig-cloth] Refusing to build for production with VITE_API_URL="${rawApiUrl}".\n` +
+          `It must be the real https API URL (e.g. https://cms.yourdomain.com/wp-json/baig/v1).\n` +
+          `Check frontend/.env AND frontend/.env.local (Vite reads both in production mode).\n` +
+          `For a local \`vite preview\` smoke test, set VITE_ALLOW_LOCAL_API=1.\n`,
+      );
+    }
+  }
+
   if (!siteUrl && mode === "production") {
     // Not fatal — a preview build with placeholder URLs is still useful — but
     // shipping this to the real domain would give every shared link a broken

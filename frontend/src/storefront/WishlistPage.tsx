@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import StorefrontLayout from "./StorefrontLayout";
 import ProductCard from "./ProductCard";
 import ProductGridSkeleton from "./ProductGridSkeleton";
-import { useWishlistIds } from "./wishlist";
+import { useWishlistIds, pruneWishlist } from "./wishlist";
 import { useProductsByIds } from "./useProductsByIds";
 import { usePageMeta } from "../usePageMeta";
 import Reveal from "../Reveal";
 
 export default function WishlistPage() {
   const ids = useWishlistIds();
-  const { products, loading } = useProductsByIds(ids);
+  const { products, loading } = useProductsByIds(ids, pruneWishlist);
 
   usePageMeta({
     title: "Wishlist",

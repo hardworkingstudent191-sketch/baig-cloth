@@ -43,13 +43,30 @@ function bc_register_settings() {
 }
 add_action( 'admin_init', 'bc_register_settings' );
 
+/**
+ * Normalize to what a browser sends in the Origin header: lowercase
+ * scheme://host[:port], nothing else. A path, a trailing slash or mixed case
+ * would otherwise be stored verbatim and then never match; a scheme-less
+ * "baigcloth.com" is taken as https (esc_url_raw alone would make it http).
+ */
 function bc_sanitize_single_origin( $value ) {
 	$value = trim( (string) $value );
 	if ( '' === $value ) {
 		return '';
 	}
+	if ( false === strpos( $value, '://' ) ) {
+		$value = 'https://' . ltrim( $value, '/' );
+	}
 	$clean = esc_url_raw( $value, array( 'http', 'https' ) );
-	return $clean ? untrailingslashit( $clean ) : '';
+	$parts = $clean ? wp_parse_url( $clean ) : false;
+	if ( ! $parts || empty( $parts['scheme'] ) || empty( $parts['host'] ) ) {
+		return '';
+	}
+	$origin = strtolower( $parts['scheme'] ) . '://' . strtolower( $parts['host'] );
+	if ( ! empty( $parts['port'] ) ) {
+		$origin .= ':' . (int) $parts['port'];
+	}
+	return $origin;
 }
 
 function bc_sanitize_origins( $value ) {

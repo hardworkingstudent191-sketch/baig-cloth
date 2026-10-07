@@ -69,19 +69,28 @@ export default function ProductPage() {
     setNotFound(false);
     setLoadError(false);
     setActiveImage(0);
+    // Dropped if the user has moved to another product by the time this
+    // resolves (clicking through "You Might Also Like"): a slow response for
+    // product A must not overwrite product B on screen.
+    let cancelled = false;
     storefrontApi
       .getProduct(Number(id))
       .then((p) => {
+        if (cancelled) return;
         setProduct(p);
         recordView(p.id);
       })
       .catch((err) => {
+        if (cancelled) return;
         if (err instanceof ApiError && err.status === 404) {
           setNotFound(true);
         } else {
           setLoadError(true);
         }
       });
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   useEffect(() => {

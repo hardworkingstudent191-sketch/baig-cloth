@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration, useLocation } from "react-router-dom";
 import { storefrontRoutes } from "./storefront/routes";
 import { adminRoutes } from "./admin/routes";
+import { ADMIN_ENABLED } from "./config";
 import ErrorPage from "./ErrorPage";
 
 /**
@@ -50,7 +51,10 @@ const router = createBrowserRouter([
   {
     element: <RootLayout />,
     errorElement: <ErrorPage />,
-    children: [...storefrontRoutes, ...adminRoutes],
+    // Admin routes are only mounted when the backend is one the React admin
+    // can talk to (see config.ts); otherwise /admin/* falls through to the
+    // storefront's 404 page instead of a login form that can never work.
+    children: [...storefrontRoutes, ...(ADMIN_ENABLED ? adminRoutes : [])],
   },
 ]);
 

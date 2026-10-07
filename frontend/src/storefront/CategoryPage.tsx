@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { storefrontApi } from "./api";
 import type { Category, Gender } from "./types";
@@ -23,29 +23,44 @@ export default function CategoryPage({ gender }: { gender: Gender }) {
   const { category: categorySlug } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [activeCategoryId, setActiveCategoryId] = useState<number | undefined>();
+  // True once the categories request has finished, successfully or not.
+  const [categoriesSettled, setCategoriesSettled] = useState(false);
   const [sort, setSort] = useState<SortOption>("newest");
 
   useEffect(() => {
+    setCategoriesSettled(false);
     // Silent catch: a failed categories fetch just means no filter chips
     // render (handled below by `categories.length > 0`) — the product grid
     // itself comes from a separate, independently-erroring fetch.
-    storefrontApi.listCategories(gender).then(setCategories).catch(() => {});
+    storefrontApi
+      .listCategories(gender)
+      .then(setCategories)
+      .catch(() => {})
+      .finally(() => setCategoriesSettled(true));
   }, [gender]);
 
-  useEffect(() => {
-    if (categorySlug && categories.length > 0) {
-      const match = categories.find((c) => slugify(c.name) === categorySlug);
-      setActiveCategoryId(match?.id);
-    } else {
-      setActiveCategoryId(undefined);
-    }
+  // Derived, not stored: the slug -> id lookup used to run in an effect, so
+  // the first render on /men/lawn had no id yet and fired an UNFILTERED
+  // request for the whole gender catalog alongside the filtered one.
+  const activeCategoryId = useMemo(() => {
+    if (!categorySlug || categories.length === 0) return undefined;
+    return categories.find((c) => slugify(c.name) === categorySlug)?.id;
   }, [categorySlug, categories]);
 
-  const { products, loading, loadingMore, error, hasMore, loadMore } = usePaginatedProducts({
-    gender,
-    category_id: activeCategoryId,
-  });
+  // On a category URL, hold the product request until the categories request
+  // has settled so the slug can be resolved first (if that request failed, an
+  // unmatched slug just falls back to the unfiltered gender listing, as before).
+  const {
+    products,
+    loading: productsLoading,
+    loadingMore,
+    error,
+    hasMore,
+    loadMore,
+  } = usePaginatedProducts({ gender, category_id: activeCategoryId }, { enabled: !categorySlug || categoriesSettled });
+  // While the request is held back the hook reports "not loading, no products",
+  // which would flash the empty state — show the skeleton until it really runs.
+  const loading = productsLoading || (!!categorySlug && !categoriesSettled);
 
   const genderLabel = gender === "men" ? "Men's" : "Women's";
   const activeCategory = categories.find((c) => c.id === activeCategoryId);

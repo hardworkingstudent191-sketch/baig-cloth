@@ -62,7 +62,7 @@ function bc_render_details_metabox( $post ) {
 	<table class="form-table bc-details">
 		<tr>
 			<th scope="row"><label for="bc_price"><?php esc_html_e( 'Price (Rs)', 'baig-cloth-headless' ); ?> <span class="required">*</span></label></th>
-			<td><input type="number" name="bc_price" id="bc_price" value="<?php echo esc_attr( $price ); ?>" step="0.01" min="0.01" required /></td>
+			<td><input type="number" name="bc_price" id="bc_price" value="<?php echo esc_attr( $price ); ?>" step="0.01" min="0.01" /></td>
 		</tr>
 		<tr>
 			<th scope="row"><label for="bc_on_sale"><?php esc_html_e( 'On sale', 'baig-cloth-headless' ); ?></label></th>
@@ -104,7 +104,8 @@ function bc_render_gallery_metabox( $post ) {
 			<button type="button" class="button" id="bc-add-media"><?php esc_html_e( 'Add from Media Library', 'baig-cloth-headless' ); ?></button>
 		</p>
 		<p class="bc-add-url">
-			<input type="url" id="bc-url-input" placeholder="https://… or /products/…" class="regular-text" />
+			<?php // type="text", not "url": a root-relative path (/products/a.jpg) is not a valid url value, and an invalid value in a form field blocks Update/Publish. ?>
+			<input type="text" id="bc-url-input" placeholder="https://… or /products/…" class="regular-text" autocomplete="off" />
 			<button type="button" class="button" id="bc-add-url"><?php esc_html_e( 'Add URL', 'baig-cloth-headless' ); ?></button>
 		</p>
 		<p class="description"><?php esc_html_e( 'The first image is the main one shown on product cards. Use the arrows to reorder.', 'baig-cloth-headless' ); ?></p>
@@ -118,16 +119,23 @@ function bc_render_gallery_metabox( $post ) {
  * Returns '' for anything else.
  */
 function bc_sanitize_image_url( $url ) {
-	$url = trim( (string) $url );
-	if ( '' === $url ) {
+	// Control characters first: esc_url strips tabs/newlines, so "/\t/evil.com"
+	// would otherwise pass the single-slash check below and come out as
+	// "//evil.com".
+	$url = trim( preg_replace( '/[\x00-\x1F\x7F]/', '', (string) $url ) );
+	if ( '' === $url || false !== strpos( $url, '\\' ) ) {
 		return '';
 	}
 	if ( 0 === strpos( $url, '/' ) && 0 !== strpos( $url, '//' ) ) {
 		// Root-relative path: no scheme/host games possible, just clean it.
-		return esc_url_raw( $url, array( 'http', 'https' ) ) ? esc_url_raw( $url ) : sanitize_text_field( $url );
+		$clean = esc_url_raw( $url, array( 'http', 'https' ) );
+		$clean = $clean ? $clean : sanitize_text_field( $url );
+	} else {
+		// esc_url skips its protocol check for anything starting with "/", so
+		// a protocol-relative "//host/x.jpg" must be rejected explicitly.
+		$clean = esc_url_raw( $url, array( 'http', 'https' ) );
 	}
-	$clean = esc_url_raw( $url, array( 'http', 'https' ) );
-	return $clean ? $clean : '';
+	return ( $clean && 0 !== strpos( $clean, '//' ) ) ? $clean : '';
 }
 
 /**
@@ -143,27 +151,54 @@ function bc_sanitize_image_url( $url ) {
  * already saved on the product (which the save handler keeps on bad input).
  */
 function bc_gate_publish_without_price( $data, $postarr ) {
-	if ( 'bc_product' !== $data['post_type'] || 'publish' !== $data['post_status'] ) {
+	// 'future' too: WordPress turns publish + a future date into 'future'
+	// BEFORE this filter runs, and wp_publish_post() later takes it live with
+	// no filter at all — so a scheduled product must pass the same gate.
+	if ( 'bc_product' !== $data['post_type'] || ! in_array( $data['post_status'], array( 'publish', 'future' ), true ) ) {
 		return $data;
 	}
 
-	$post_id = isset( $postarr['ID'] ) ? (int) $postarr['ID'] : 0;
+	$post_id  = isset( $postarr['ID'] ) ? (int) $postarr['ID'] : 0;
+	$problems = array();
 
+	// --- Price: the one being posted, else the one already saved. ---
 	$posted = null;
 	if ( isset( $_POST['bc_details_nonce'], $_POST['bc_price'] ) && wp_verify_nonce( sanitize_key( $_POST['bc_details_nonce'] ), 'bc_save_details' ) ) {
 		$posted = (float) wp_unslash( $_POST['bc_price'] );
 	}
-
-	$effective = ( null !== $posted && $posted > 0 )
+	$price = ( null !== $posted && $posted > 0 )
 		? $posted
 		: ( $post_id ? (float) get_post_meta( $post_id, '_bc_price', true ) : 0.0 );
+	if ( $price <= 0 ) {
+		$problems[] = __( 'a price above zero', 'baig-cloth-headless' );
+	}
 
-	if ( $effective > 0 ) {
+	// --- Category: a product without one is excluded from every storefront
+	// --- listing, so it must not go live uncategorised. ---
+	$term_id = 0;
+	if ( isset( $_POST['bc_category_nonce'], $_POST['bc_category_term'] ) && wp_verify_nonce( sanitize_key( $_POST['bc_category_nonce'] ), 'bc_save_category' ) ) {
+		$term_id = absint( $_POST['bc_category_term'] );
+	}
+	if ( $term_id <= 0 && $post_id ) {
+		$existing = wp_get_object_terms( $post_id, 'bc_category', array( 'fields' => 'ids' ) );
+		$term_id  = ( ! is_wp_error( $existing ) && $existing ) ? (int) $existing[0] : 0;
+	}
+	if ( $term_id <= 0 ) {
+		$problems[] = __( 'a category', 'baig-cloth-headless' );
+	}
+
+	if ( ! $problems ) {
 		return $data;
 	}
 
 	$data['post_status'] = 'draft';
-	bc_add_admin_notice( __( 'Saved as a draft: a product needs a price above zero before it can be published.', 'baig-cloth-headless' ) );
+	bc_add_admin_notice(
+		sprintf(
+			/* translators: %s: what is missing, e.g. "a price above zero and a category" */
+			__( 'Saved as a draft: a product needs %s before it can be published.', 'baig-cloth-headless' ),
+			implode( ' ' . __( 'and', 'baig-cloth-headless' ) . ' ', $problems )
+		)
+	);
 	return $data;
 }
 
@@ -257,7 +292,11 @@ function bc_save_details_metabox( $post_id, $post ) {
 				}
 			}
 		}
-		update_post_meta( $post_id, '_bc_image_urls', wp_json_encode( array_values( $urls ) ) );
+		// update_post_meta() wp_unslash()es its value. wp_json_encode escapes
+		// "/" and non-ASCII as backslash sequences, so without wp_slash() a URL
+		// like /products/کرتا.jpg is stored as "u06a9..." and a backslash would
+		// corrupt the JSON outright. ASCII paths survived, which hid it.
+		update_post_meta( $post_id, '_bc_image_urls', wp_slash( wp_json_encode( array_values( $urls ) ) ) );
 	}
 
 	foreach ( $problems as $problem ) {
