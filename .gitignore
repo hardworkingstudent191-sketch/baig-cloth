@@ -23,3 +23,6 @@ frontend/tsconfig.tsbuildinfo
 frontend/public/products/**/*-400.webp
 frontend/public/products/**/*-700.webp
 frontend/public/products/**/*-1000.webp
+
+# Packaged WordPress release output (wordpress/scripts/package_release.py)
+wordpress/dist/

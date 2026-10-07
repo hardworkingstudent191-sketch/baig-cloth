@@ -35,6 +35,30 @@ deployment-side and device QA — see "Not done" below.
   CSP `img-src` includes the API origin (Media Library photos are served
   from the WordPress host and were silently blocked).
 
+## Release packaging (done 2026-10-07)
+
+`py -3.12 wordpress/scripts/package_release.py --api-url https://<cms>/wp-json/baig/v1 --site-url https://<domain>`
+writes `wordpress/dist/` (gitignored): `baig-cloth-headless.zip` (upload in
+WordPress → Plugins → Upload), `storefront/` (upload its contents to the
+storefront's public_html), `catalog-export.json`, `RELEASE.txt`. Verified: a
+fresh WordPress that installs ONLY the zip (no source folder), activates it,
+imports the catalog and passes all 43 parity checks; the built storefront has
+no dev URLs, a correct CSP/canonical/sitemap, and ships `.htaccess`.
+
+## Second review pass (done 2026-10-07)
+
+Three independent reviewers re-checked the plugin (PHP correctness, WP
+gotchas + security) and the frontend integration; every claim was verified
+against the code before acting. Fixed and live-tested: non-ASCII image URLs
+(wp_slash), scheduled-publish gate bypass, category required to publish +
+explicit blank dropdown default, protocol-relative image URLs, same-name
+category slugs, Enter-in-URL-box submit, CORS origin normalization + Vary,
+importer price validation; storefront request races, stale-id pruning, admin
+routes off for WordPress, trailing-slash API URLs, and a production-build
+guard against localhost/http API URLs. Known, accepted: returning visitors'
+saved ids from the old Postgres database can map to different WordPress
+products (the site was never launched, so there are no such visitors).
+
 ## Dev setup (offline-safe)
 
 Run from **PowerShell, not Git Bash** (MSYS mangles the mount colon). CLI
