@@ -38,7 +38,10 @@ function buildCsp(apiOrigin: string): string {
     `script-src 'self'`,
     `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
     `font-src 'self' https://fonts.gstatic.com`,
-    `img-src 'self' data: https://res.cloudinary.com`,
+    // apiOrigin: with the WordPress backend, photos uploaded through its Media
+    // Library are served from the WordPress host (/wp-content/uploads/...),
+    // the same origin as the API — without it the browser silently blocks them.
+    `img-src 'self' data: https://res.cloudinary.com ${apiOrigin}`,
     `media-src 'self'`,
     `connect-src 'self' ${apiOrigin}`,
     `object-src 'none'`,

@@ -72,8 +72,19 @@ npx @wp-playground/cli@3.1.56 server --port 9400 \
 ```
 
 That boots WordPress, activates the plugin, sets Asia/Karachi, and imports
-the catalog. wp-admin: `http://127.0.0.1:9400/wp-admin/` (auto-logged-in).
-API: `http://127.0.0.1:9400/wp-json/baig/v1/products`.
+the catalog. API: `http://127.0.0.1:9400/wp-json/baig/v1/products`.
+
+wp-admin: `http://127.0.0.1:9400/wp-admin/` — user `admin`, password is the
+`wp user update admin --user_pass=…` step in `dev/blueprint.json` (a
+throwaway: the Playground site is rebuilt from scratch on every boot).
+
+Auto-login (`"login": true`) is deliberately **off** in the blueprint.
+Playground answers any request lacking its cookie with a 302 that carries
+no CORS headers, and a cross-origin `fetch` from the storefront dev server
+(`localhost:5173`) can never carry that cookie — so with auto-login on, every
+storefront API call is blocked by CORS even though the plugin's own CORS
+headers are correct. (Blueprints also reject unknown keys, so this can't be
+a comment in the JSON.)
 
 Run the storefront against it:
 

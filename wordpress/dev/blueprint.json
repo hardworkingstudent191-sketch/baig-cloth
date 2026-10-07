@@ -1,15 +1,19 @@
 {
 	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
 	"landingPage": "/wp-admin/edit.php?post_type=bc_product",
-	"login": true,
 	"steps": [
 		{
 			"step": "setSiteOptions",
 			"options": {
 				"blogname": "Baig Cloth CMS",
 				"permalink_structure": "/%postname%/",
-				"timezone_string": "Asia/Karachi"
+				"timezone_string": "Asia/Karachi",
+				"bc_storefront_origin": "http://localhost:5173"
 			}
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp user update admin --user_pass=orvP3_bB8PRu60L6TkbTfHz9"
 		},
 		{
 			"step": "activatePlugin",
