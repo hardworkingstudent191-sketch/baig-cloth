@@ -21,6 +21,8 @@ interface ShopState {
   recentlyViewed: number[];
   bagOpen: boolean;
   menuOpen: boolean;
+  searchOpen: boolean;
+  setSearchOpen: (open: boolean) => void;
   // bag
   addToBag: (id: number, qty?: number) => void;
   removeFromBag: (id: number) => void;
@@ -48,6 +50,8 @@ export const useShop = create<ShopState>()(
       recentlyViewed: [],
       bagOpen: false,
       menuOpen: false,
+      searchOpen: false,
+      setSearchOpen: (open) => set({ searchOpen: open, menuOpen: false }),
 
       addToBag: (id, qty = 1) =>
         set((s) => {
