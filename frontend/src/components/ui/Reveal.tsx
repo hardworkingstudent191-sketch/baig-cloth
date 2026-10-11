@@ -65,8 +65,10 @@ export function RevealLines({ lines, className = "", delay = 0, lineClassName = 
         <span key={i} className="block clip">
           <motion.span
             className={`block ${lineClassName}`}
+            // Same unit on both ends ("110%" -> "0%"): mixing % and px makes
+            // the interpolation unreliable and the line can stay hidden.
             initial={reduced ? false : { y: "110%" }}
-            animate={{ y: 0 }}
+            animate={{ y: "0%" }}
             transition={{ duration: 1.1, ease: EASE.outExpo, delay: delay + i * 0.09 }}
           >
             {line}

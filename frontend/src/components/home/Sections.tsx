@@ -126,7 +126,8 @@ export function ColourWall({ products }: { products: Product[] }) {
               </li>
             ))}
           </ul>
-          <div className="mt-6 flex items-center justify-between gap-4">
+          {/* Stacked on phones so the WhatsApp button (bottom-right) never covers the CTA. */}
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <AnimatePresence mode="wait">
               <motion.div key={current?.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3 }}>
                 <p className="font-display text-xl">{current?.color || current?.name}</p>
@@ -134,8 +135,8 @@ export function ColourWall({ products }: { products: Product[] }) {
               </motion.div>
             </AnimatePresence>
             {current && (
-              <Link to={`/product/${current.id}`} className="group inline-flex h-11 items-center gap-2 rounded-pill bg-ivory text-charcoal px-5 text-sm font-medium">
-                View <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+              <Link to={`/product/${current.id}`} className="group inline-flex h-12 sm:h-11 items-center justify-center gap-2 rounded-pill bg-ivory text-charcoal px-5 text-sm font-medium w-full sm:w-auto mr-0 sm:mr-20">
+                View this colour <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </Link>
             )}
           </div>

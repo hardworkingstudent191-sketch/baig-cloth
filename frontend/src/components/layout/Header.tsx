@@ -59,7 +59,7 @@ export default function Header({ transparent }: { transparent: boolean }) {
                 key={n.to}
                 to={n.to}
                 className={({ isActive }) =>
-                  `eyebrow relative py-2 transition-opacity hover:opacity-70 after:absolute after:left-0 after:-bottom-0.5 after:h-px after:bg-current after:transition-[width] after:duration-500 after:[transition-timing-function:var(--ease-out-expo)] ${
+                  `eyebrow whitespace-nowrap relative py-2 transition-opacity hover:opacity-70 after:absolute after:left-0 after:-bottom-0.5 after:h-px after:bg-current after:transition-[width] after:duration-500 after:[transition-timing-function:var(--ease-out-expo)] ${
                     isActive ? "after:w-full" : "after:w-0 hover:after:w-full"
                   }`
                 }

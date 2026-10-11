@@ -1,0 +1,352 @@
+[
+  {
+    "name": "hero-fabric",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/4862910/pexels-photo-4862910.jpeg?auto=compress&cs=tinysrgb&w=2400",
+    "subject": "Beige cloth close-up",
+    "alt": "Folds of ivory fabric",
+    "source": "Pexels / Kaboompics",
+    "credit": "Kaboompics via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "hero-fabric-mobile",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/7598534/pexels-photo-7598534.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Beige fabric texture",
+    "alt": "Soft beige fabric texture",
+    "source": "Pexels / Eva Bronzini",
+    "credit": "Eva Bronzini via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "hero-lawn",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/20690508/pexels-photo-20690508.jpeg?auto=compress&cs=tinysrgb&w=2400",
+    "subject": "Model in floral salwar kameez among flowers",
+    "alt": "Woman in a floral lawn suit among flowers",
+    "source": "Pexels / Muneeb Malhotra",
+    "credit": "Muneeb Malhotra via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "hero-lawn-mobile",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/20791992/pexels-photo-20791992.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Woman in embroidered kurta and dupatta",
+    "alt": "Woman in an embroidered kurta and dupatta",
+    "source": "Pexels / Muneeb Malhotra",
+    "credit": "Muneeb Malhotra via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "hero-men",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/8802644/pexels-photo-8802644.jpeg?auto=compress&cs=tinysrgb&w=2400",
+    "subject": "Men in shalwar kameez walking",
+    "alt": "Two men in shalwar kameez walking in a park",
+    "source": "Pexels / Adnan Mughal",
+    "credit": "Adnan Mughal via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "hero-men-mobile",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/8621669/pexels-photo-8621669.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Man in brown kurta shalwar",
+    "alt": "Man in a brown kurta shalwar",
+    "source": "Pexels / Adnan Mughal",
+    "credit": "Adnan Mughal via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "tile-women",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/31874446/pexels-photo-31874446.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Pakistani woman in farshi shalwar",
+    "alt": "Woman in a flowing farshi shalwar",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "tile-men",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/8770930/pexels-photo-8770930.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Man in black kurta",
+    "alt": "Man in a black kurta with a brown scarf",
+    "source": "Pexels / Gustavo Fring",
+    "credit": "Gustavo Fring via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "collection-lawn",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/20690508/pexels-photo-20690508.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Model in floral salwar kameez",
+    "alt": "Woman in a floral lawn suit",
+    "source": "Pexels / Muneeb Malhotra",
+    "credit": "Muneeb Malhotra via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "collection-festive",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/20791992/pexels-photo-20791992.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Embroidered kurta and dupatta set",
+    "alt": "Embroidered kurta and dupatta",
+    "source": "Pexels / Muneeb Malhotra",
+    "credit": "Muneeb Malhotra via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "collection-wash-wear",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/8621669/pexels-photo-8621669.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Man in brown kurta shalwar",
+    "alt": "Man in a brown wash & wear kurta shalwar",
+    "source": "Pexels / Adnan Mughal",
+    "credit": "Adnan Mughal via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "lookbook-1",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/31874446/pexels-photo-31874446.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Farshi shalwar",
+    "alt": "Woman in a flowing farshi shalwar",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "lookbook-2",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/20791992/pexels-photo-20791992.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Embroidered kurta",
+    "alt": "Embroidered kurta and dupatta",
+    "source": "Pexels / Muneeb Malhotra",
+    "credit": "Muneeb Malhotra via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "lookbook-3",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/8770930/pexels-photo-8770930.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Black kurta",
+    "alt": "Man in a black kurta",
+    "source": "Pexels / Gustavo Fring",
+    "credit": "Gustavo Fring via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "lookbook-4",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/20690508/pexels-photo-20690508.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Floral salwar kameez",
+    "alt": "Woman in a floral suit among flowers",
+    "source": "Pexels / Muneeb Malhotra",
+    "credit": "Muneeb Malhotra via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "lookbook-5",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/34423748/pexels-photo-34423748.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Yellow kurta portrait",
+    "alt": "Man in a yellow kurta",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "lookbook-6",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/16777497/pexels-photo-16777497.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Men in white kurtas",
+    "alt": "Two men in white kurtas",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "lookbook-7",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/8596886/pexels-photo-8596886.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Man in kurta on chair",
+    "alt": "Man seated outdoors in a kurta",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "lookbook-8",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/8565796/pexels-photo-8565796.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Two men in shalwar kameez",
+    "alt": "Two men in traditional shalwar kameez",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "story-shop",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/236748/pexels-photo-236748.jpeg?auto=compress&cs=tinysrgb&w=2400",
+    "subject": "Rows of textile rolls",
+    "alt": "Rows of fabric rolls",
+    "source": "Pexels / Pixabay",
+    "credit": "Pixabay via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "story-tailor",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/6766353/pexels-photo-6766353.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Tailor with measuring tape",
+    "alt": "A tailor with a measuring tape",
+    "source": "Pexels / Tima Miroshnichenko",
+    "credit": "Tima Miroshnichenko via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "store-front",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/7147578/pexels-photo-7147578.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subject": "Tailor cutting fabric in workroom",
+    "alt": "Tailor cutting fabric in a workroom",
+    "source": "Pexels / Michael Burrows",
+    "credit": "Michael Burrows via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "texture-ivory",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/7598534/pexels-photo-7598534.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "subject": "Beige fabric texture",
+    "alt": "",
+    "source": "Pexels / Eva Bronzini",
+    "credit": "Eva Bronzini via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "texture-charcoal",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/4863011/pexels-photo-4863011.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    "subject": "Black textured fabric",
+    "alt": "",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "insta-1",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/6851135/pexels-photo-6851135.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "subject": "Indigo printed fabric",
+    "alt": "Indigo printed fabric",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "insta-2",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/6276062/pexels-photo-6276062.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "subject": "Green textile close-up",
+    "alt": "Green textile close-up",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "insta-3",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/6634454/pexels-photo-6634454.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "subject": "Handmade fabric texture",
+    "alt": "Handmade fabric texture",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "insta-4",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/8774406/pexels-photo-8774406.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "subject": "Linen close-up",
+    "alt": "Linen fabric close-up",
+    "source": "Pexels / Anna Maxelante",
+    "credit": "Anna Maxelante via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "insta-5",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/5591318/pexels-photo-5591318.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "subject": "Threads and measuring tape",
+    "alt": "Reels of thread and a measuring tape",
+    "source": "Pexels / Kafeel Ahmed",
+    "credit": "Kafeel Ahmed via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "insta-6",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/7998238/pexels-photo-7998238.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "subject": "Cutting fabric",
+    "alt": "Hands cutting fabric with scissors",
+    "source": "Pexels / Los Muertos Crew",
+    "credit": "Los Muertos Crew via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "insta-7",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/4863010/pexels-photo-4863010.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "subject": "Blue textile",
+    "alt": "Blue textile close-up",
+    "source": "Pexels",
+    "credit": "Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "insta-8",
+    "kind": "image",
+    "url": "https://images.pexels.com/photos/1460890/pexels-photo-1460890.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "subject": "Brown textile",
+    "alt": "Brown textile close-up",
+    "source": "Pexels / Engin Akyurt",
+    "credit": "Engin Akyurt via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "hero-fabric",
+    "kind": "video",
+    "url": "https://videos.pexels.com/video-files/7677259/7677259-hd_1920_1080_25fps.mp4",
+    "subject": "Cream fabric moving",
+    "alt": "Cream fabric rippling in slow motion",
+    "source": "Pexels / Mikhail Nilov",
+    "credit": "Mikhail Nilov via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "story-fabric",
+    "kind": "video",
+    "url": "https://videos.pexels.com/video-files/7677321/7677321-hd_1920_1080_25fps.mp4",
+    "subject": "Black silk close-up",
+    "alt": "Black silk fabric flowing",
+    "source": "Pexels / Mikhail Nilov",
+    "credit": "Mikhail Nilov via Pexels",
+    "license": "Pexels"
+  },
+  {
+    "name": "collection-lawn",
+    "kind": "video",
+    "url": "https://videos.pexels.com/video-files/7677154/7677154-hd_1920_1080_25fps.mp4",
+    "subject": "Green silk flowing",
+    "alt": "Green fabric flowing",
+    "source": "Pexels / Mikhail Nilov",
+    "credit": "Mikhail Nilov via Pexels",
+    "license": "Pexels"
+  }
+]

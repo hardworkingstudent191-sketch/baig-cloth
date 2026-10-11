@@ -370,9 +370,9 @@ function bc_seed_demo_content( $force = false ) {
 	}
 
 	$collections = array(
-		array( 'lawn-2026', 'Lawn 2026', 'Breathable prints for the long summer.', '/media/collection-lawn-1280.webp', 'women', 0, array( 'Lawn' ) ),
-		array( 'festive-edit', 'Festive Edit', 'Embroidered three-piece suits for weddings and Eid.', '/media/collection-festive-1280.webp', 'women', 1, array( 'Embroidered' ) ),
-		array( 'wash-wear-essentials', 'Wash & Wear Essentials', 'One design, twenty-seven colours.', '/media/collection-wash-wear-1280.webp', 'men', 2, array( 'Wash & Wear' ) ),
+		array( 'lawn-2026', 'Lawn 2026', 'Breathable prints for the long summer.', '/media/collection-lawn-1280.webp', 'women', 0, array( 'Lawn' ), '/media/collection-lawn-1080.mp4' ),
+		array( 'festive-edit', 'Festive Edit', 'Embroidered three-piece suits for weddings and Eid.', '/media/collection-festive-1280.webp', 'women', 1, array( 'Embroidered' ), '' ),
+		array( 'wash-wear-essentials', 'Wash & Wear Essentials', 'One design, twenty-seven colours.', '/media/collection-wash-wear-1280.webp', 'men', 2, array( 'Wash & Wear' ), '' ),
 	);
 	$cat_map = bc_get_categories_map();
 	foreach ( $collections as $c ) {
@@ -382,6 +382,7 @@ function bc_seed_demo_content( $force = false ) {
 		}
 		update_term_meta( $tid, 'bc_tagline', $c[2] );
 		update_term_meta( $tid, 'bc_cover_url', $c[3] );
+		update_term_meta( $tid, 'bc_video_url', $c[7] );
 		update_term_meta( $tid, 'bc_gender', $c[4] );
 		update_term_meta( $tid, 'bc_sort_order', $c[5] );
 		update_term_meta( $tid, 'bc_featured', '1' );
