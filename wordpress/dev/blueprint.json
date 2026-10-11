@@ -25,7 +25,11 @@
 		},
 		{
 			"step": "wp-cli",
-			"command": "wp baig import /wordpress/wp-content/migration/catalog-export.json"
+			"command": "wp baig import /wordpress/wp-content/migration/catalog-export.v2.json"
+		},
+		{
+			"step": "wp-cli",
+			"command": "wp baig seed-demo"
 		}
 	]
 }

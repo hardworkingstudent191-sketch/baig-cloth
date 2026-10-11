@@ -1,18 +1,139 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&display=swap");
 @import "tailwindcss";
-@import "./admin/admin.css";
-@import "./storefront/storefront.css";
 
-/* Page-enter fade, replayed on every route change by App.tsx's RootLayout.
-   Lives outside both #storefront-root and #admin-root scoping since it
-   wraps both route trees — the one place a single rule covers navigation
-   across the whole site, storefront and admin alike. */
-@media (prefers-reduced-motion: no-preference) {
-  .page-enter {
-    animation: page-enter-fade 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+/*
+ * Design tokens — editorial luxury.
+ * Ivory paper, charcoal ink, the brand navy as the single accent. Fraunces
+ * (optical-size serif) for display, Inter for everything that has to be read.
+ */
+@theme {
+  --color-ivory: #f4f1ea;
+  --color-bone: #ebe5d9;
+  --color-sand: #d8cdb8;
+  --color-line: #e2dccf;
+  --color-charcoal: #1c1c1f;
+  --color-ink: #0b0b0c;
+  --color-muted: #6b6b70;
+  --color-navy: #223c80;
+  --color-navy-deep: #16295c;
+  --color-whatsapp: #25d366;
+  --color-sale: #9a2f2f;
+
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --radius-card: 2px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 10px 30px -12px rgb(11 11 12 / 0.18);
+  --shadow-lift: 0 24px 60px -20px rgb(11 11 12 / 0.28);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --header-h: 64px;
+    --bottom-bar-h: 64px;
+    --page-gutter: 20px;
+    @media (min-width: 768px) {
+      --header-h: 76px;
+      --page-gutter: 40px;
+    }
+    @media (min-width: 1280px) {
+      --page-gutter: 64px;
+    }
+  }
+
+  html {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: auto;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-navy);
+    color: var(--color-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-navy);
+    outline-offset: 3px;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Fraunces renders its optical size automatically; nudge the big sizes to the display cut. */
+  .font-display {
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+    letter-spacing: -0.015em;
   }
 }
-@keyframes page-enter-fade {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+
+@layer utilities {
+  .gutter {
+    padding-inline: var(--page-gutter);
+  }
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .hairline {
+    border-color: var(--color-line);
+  }
+  /* Clips the overflow of reveal animations without creating a scroll container. */
+  .clip {
+    overflow: clip;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Keep content clear of the mobile bottom bar + iOS home indicator. */
+  .pb-safe {
+    padding-bottom: calc(var(--bottom-bar-h) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

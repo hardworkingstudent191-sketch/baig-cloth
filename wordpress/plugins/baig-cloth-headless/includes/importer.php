@@ -1,14 +1,17 @@
 <?php
 /**
- * Catalog importer — brings the FastAPI/Postgres export (catalog-export.json,
- * produced by wordpress/migration/export_from_postgres.py) into WordPress.
+ * Catalog importer — brings the FastAPI/Postgres export (catalog-export.json
+ * or the enriched catalog-export.v2.json produced by
+ * wordpress/migration/enrich_catalog.py) into WordPress.
  *
  * Idempotent: every imported category/product records its original database
- * id (bc_legacy_id / _bc_legacy_id), and anything whose legacy id already
- * exists is skipped on re-import, so running it twice never duplicates.
+ * id (bc_legacy_id / _bc_legacy_id). Re-running UPDATES products that already
+ * exist (so an enriched export refreshes fabric/colour/variant data) and
+ * never duplicates them; categories are matched the same way.
  *
- * Two entry points: Products → Import catalog (file upload, for shared
- * hosting), and `wp baig import <file>` where WP-CLI is available.
+ * Entry points: Products → Import catalog (file upload, for shared hosting),
+ * `wp baig import <file>`, and `wp baig seed-demo` (placeholder slides,
+ * collections, testimonials and Instagram posts for a fresh site).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -51,7 +54,7 @@ function bc_render_import_page() {
 	?>
 	<div class="wrap">
 		<h1><?php esc_html_e( 'Import catalog', 'baig-cloth-headless' ); ?></h1>
-		<p><?php esc_html_e( 'Upload the catalog-export.json produced by the migration script. Safe to run more than once — already-imported items are skipped.', 'baig-cloth-headless' ); ?></p>
+		<p><?php esc_html_e( 'Upload the catalog export produced by the migration scripts. Safe to run more than once — existing products are updated, never duplicated.', 'baig-cloth-headless' ); ?></p>
 
 		<?php if ( $error ) : ?>
 			<div class="notice notice-error"><p><?php echo esc_html( $error ); ?></p></div>
@@ -63,11 +66,11 @@ function bc_render_import_page() {
 					<?php
 					printf(
 						/* translators: counts */
-						esc_html__( 'Done. Categories: %1$d created, %2$d skipped. Products: %3$d created, %4$d skipped.', 'baig-cloth-headless' ),
+						esc_html__( 'Done. Categories: %1$d created, %2$d existing. Products: %3$d created, %4$d updated.', 'baig-cloth-headless' ),
 						(int) $report['categories_created'],
 						(int) $report['categories_skipped'],
 						(int) $report['products_created'],
-						(int) $report['products_skipped']
+						(int) $report['products_updated']
 					);
 					?>
 				</p>
@@ -118,11 +121,93 @@ function bc_find_product_by_legacy_id( $legacy_id ) {
 	return $found ? (int) $found[0] : 0;
 }
 
+/** Get-or-create a collection term by slug (name defaults to a title-cased slug). */
+function bc_collection_term_id( $slug, $name = '' ) {
+	$slug = sanitize_title( $slug );
+	if ( '' === $slug ) {
+		return 0;
+	}
+	$term = get_term_by( 'slug', $slug, 'bc_collection' );
+	if ( $term ) {
+		return (int) $term->term_id;
+	}
+	$result = wp_insert_term( $name ?: ucwords( str_replace( '-', ' ', $slug ) ), 'bc_collection', array( 'slug' => $slug ) );
+	return is_wp_error( $result ) ? 0 : (int) $result['term_id'];
+}
+
+/**
+ * Write every product field from an import row onto a post (v1 fields plus
+ * the optional v2 ones). Used for both create and update.
+ */
+function bc_apply_product_fields( $post_id, $prod, &$warnings ) {
+	update_post_meta( $post_id, '_bc_price', bc_format_price( $prod['price'] ) );
+	if ( isset( $prod['sale_price'] ) && null !== $prod['sale_price'] && '' !== $prod['sale_price'] ) {
+		update_post_meta( $post_id, '_bc_sale_price', bc_format_price( $prod['sale_price'] ) );
+	} else {
+		delete_post_meta( $post_id, '_bc_sale_price' );
+	}
+	update_post_meta( $post_id, '_bc_on_sale', ! empty( $prod['on_sale'] ) ? '1' : '0' );
+	if ( ! empty( $prod['sale_ends_at'] ) ) {
+		try {
+			$dt = new DateTimeImmutable( $prod['sale_ends_at'] );
+			update_post_meta( $post_id, '_bc_sale_ends_at', $dt->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' ) );
+		} catch ( Exception $e ) {
+			$warnings[] = sprintf( 'Product "%s": unparseable sale_ends_at, left empty.', $prod['name'] );
+		}
+	} else {
+		delete_post_meta( $post_id, '_bc_sale_ends_at' );
+	}
+	update_post_meta( $post_id, '_bc_in_stock', ( ! isset( $prod['in_stock'] ) || $prod['in_stock'] ) ? '1' : '0' );
+	update_post_meta( $post_id, '_bc_featured', ! empty( $prod['featured'] ) ? '1' : '0' );
+
+	$urls = array();
+	foreach ( (array) ( isset( $prod['image_urls'] ) ? $prod['image_urls'] : array() ) as $u ) {
+		$clean = bc_sanitize_image_url( $u );
+		if ( '' !== $clean ) {
+			$urls[] = $clean;
+		}
+	}
+	update_post_meta( $post_id, '_bc_image_urls', wp_slash( wp_json_encode( $urls ) ) ); // update_post_meta unslashes.
+
+	// ---- v2 fields: only touched when present in the row ----
+	foreach ( array( 'sku' => '_bc_sku', 'fabric' => '_bc_fabric', 'color' => '_bc_color', 'care' => '_bc_care', 'new_until' => '_bc_new_until' ) as $field => $key ) {
+		if ( array_key_exists( $field, $prod ) ) {
+			update_post_meta( $post_id, $key, 'care' === $field ? sanitize_textarea_field( (string) $prod[ $field ] ) : sanitize_text_field( (string) $prod[ $field ] ) );
+		}
+	}
+	if ( array_key_exists( 'design_group', $prod ) ) {
+		update_post_meta( $post_id, '_bc_design_group', sanitize_title( (string) $prod['design_group'] ) );
+	}
+	if ( array_key_exists( 'color_hex', $prod ) ) {
+		$hex = strtolower( (string) $prod['color_hex'] );
+		update_post_meta( $post_id, '_bc_color_hex', preg_match( '/^#[0-9a-f]{6}$/', $hex ) ? $hex : '' );
+	}
+	if ( array_key_exists( 'pieces', $prod ) ) {
+		$n = (int) $prod['pieces'];
+		update_post_meta( $post_id, '_bc_pieces', $n >= 1 && $n <= 3 ? (string) $n : '' );
+	}
+	if ( array_key_exists( 'piece_details', $prod ) ) {
+		update_post_meta( $post_id, '_bc_piece_details', wp_slash( wp_json_encode( bc_sanitize_rows( wp_json_encode( $prod['piece_details'] ), array( 'name', 'meters' ) ) ) ) );
+	}
+	if ( array_key_exists( 'details', $prod ) ) {
+		update_post_meta( $post_id, '_bc_details', wp_slash( wp_json_encode( bc_sanitize_rows( wp_json_encode( $prod['details'] ), array( 'label', 'value' ) ) ) ) );
+	}
+	if ( array_key_exists( 'collections', $prod ) && is_array( $prod['collections'] ) ) {
+		$ids = array();
+		foreach ( $prod['collections'] as $slug ) {
+			$tid = bc_collection_term_id( (string) $slug );
+			if ( $tid ) {
+				$ids[] = $tid;
+			}
+		}
+		wp_set_object_terms( $post_id, $ids, 'bc_collection', false );
+	}
+}
+
 function bc_run_catalog_import( $data ) {
 	// The import inserts each product as "publish" BEFORE writing its price
-	// meta, which the publish-without-price gate would (rightly, for manual
-	// edits) downgrade to draft. Imported rows come from a catalog where every
-	// product already has a valid price, so step the gate aside for the run.
+	// meta, which the publish gate would (rightly, for manual edits) downgrade
+	// to draft. Rows are validated below instead, so step the gate aside.
 	remove_filter( 'wp_insert_post_data', 'bc_gate_publish_without_price', 10 );
 	try {
 		return bc_do_catalog_import( $data );
@@ -136,7 +221,7 @@ function bc_do_catalog_import( $data ) {
 		'categories_created' => 0,
 		'categories_skipped' => 0,
 		'products_created'   => 0,
-		'products_skipped'   => 0,
+		'products_updated'   => 0,
 		'warnings'           => array(),
 	);
 
@@ -188,16 +273,28 @@ function bc_do_catalog_import( $data ) {
 			continue;
 		}
 
-		if ( bc_find_product_by_legacy_id( $legacy_id ) ) {
-			$report['products_skipped']++;
-			continue;
-		}
-
 		$term_id = isset( $term_by_legacy[ (int) $prod['category_id'] ] )
 			? $term_by_legacy[ (int) $prod['category_id'] ]
 			: bc_find_term_by_legacy_id( (int) $prod['category_id'] );
 		if ( ! $term_id ) {
 			$report['warnings'][] = sprintf( 'Product "%s": its category (legacy id %d) was not found — skipped.', $prod['name'], (int) $prod['category_id'] );
+			continue;
+		}
+
+		$existing_id = bc_find_product_by_legacy_id( $legacy_id );
+		if ( $existing_id ) {
+			wp_update_post(
+				wp_slash(
+					array(
+						'ID'           => $existing_id,
+						'post_title'   => wp_strip_all_tags( (string) $prod['name'] ),
+						'post_content' => (string) ( isset( $prod['description'] ) ? $prod['description'] : '' ),
+					)
+				)
+			);
+			bc_apply_product_fields( $existing_id, $prod, $report['warnings'] );
+			wp_set_object_terms( $existing_id, array( $term_id ), 'bc_category', false );
+			$report['products_updated']++;
 			continue;
 		}
 
@@ -232,31 +329,7 @@ function bc_do_catalog_import( $data ) {
 		}
 
 		update_post_meta( $post_id, '_bc_legacy_id', (string) $legacy_id );
-		update_post_meta( $post_id, '_bc_price', bc_format_price( $prod['price'] ) );
-		if ( isset( $prod['sale_price'] ) && null !== $prod['sale_price'] && '' !== $prod['sale_price'] ) {
-			update_post_meta( $post_id, '_bc_sale_price', bc_format_price( $prod['sale_price'] ) );
-		}
-		update_post_meta( $post_id, '_bc_on_sale', ! empty( $prod['on_sale'] ) ? '1' : '0' );
-		if ( ! empty( $prod['sale_ends_at'] ) ) {
-			try {
-				$dt = new DateTimeImmutable( $prod['sale_ends_at'] );
-				update_post_meta( $post_id, '_bc_sale_ends_at', $dt->setTimezone( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' ) );
-			} catch ( Exception $e ) {
-				$report['warnings'][] = sprintf( 'Product "%s": unparseable sale_ends_at, left empty.', $prod['name'] );
-			}
-		}
-		update_post_meta( $post_id, '_bc_in_stock', ( ! isset( $prod['in_stock'] ) || $prod['in_stock'] ) ? '1' : '0' );
-		update_post_meta( $post_id, '_bc_featured', ! empty( $prod['featured'] ) ? '1' : '0' );
-
-		$urls = array();
-		foreach ( (array) ( isset( $prod['image_urls'] ) ? $prod['image_urls'] : array() ) as $u ) {
-			$clean = bc_sanitize_image_url( $u );
-			if ( '' !== $clean ) {
-				$urls[] = $clean;
-			}
-		}
-		update_post_meta( $post_id, '_bc_image_urls', wp_slash( wp_json_encode( $urls ) ) ); // see metabox.php: update_post_meta unslashes.
-
+		bc_apply_product_fields( $post_id, $prod, $report['warnings'] );
 		wp_set_object_terms( $post_id, array( $term_id ), 'bc_category', false );
 		$report['products_created']++;
 	}
@@ -265,7 +338,92 @@ function bc_do_catalog_import( $data ) {
 }
 
 // ---------------------------------------------------------------------------
-// WP-CLI: wp baig import <file>
+// Demo content for a fresh site: placeholder slides, collections, testimonials
+// and Instagram posts, all pointing at the storefront's /media placeholders.
+// The owner replaces them in wp-admin; nothing here is final copy.
+// ---------------------------------------------------------------------------
+
+function bc_seed_demo_content( $force = false ) {
+	$existing = get_posts( array( 'post_type' => 'bc_slide', 'post_status' => 'any', 'posts_per_page' => 1, 'fields' => 'ids' ) );
+	if ( $existing && ! $force ) {
+		return 'Demo content already present (slides exist) — pass --force to add anyway.';
+	}
+
+	$make = function ( $type, $title, $content, $meta, $order ) {
+		$id = wp_insert_post( wp_slash( array( 'post_type' => $type, 'post_status' => 'publish', 'post_title' => $title, 'post_content' => $content, 'menu_order' => $order ) ), true );
+		if ( is_wp_error( $id ) ) {
+			return 0;
+		}
+		foreach ( $meta as $k => $v ) {
+			update_post_meta( $id, $k, $v );
+		}
+		return $id;
+	};
+
+	$slides = array(
+		array( 'Cloth worth cutting into something of your own', 'Hand-picked lawn, cotton and embroidered unstitched fabric — ordered over WhatsApp.', 'New in · Summer', 'video', '/media/hero-fabric-1920.webp', '/media/hero-fabric-mobile-1280.webp', '/media/hero-fabric-1080.mp4', 'Shop Women', '/women', 'light' ),
+		array( 'Lawn that breathes', 'Prints for the long Faisalabad summer.', 'Lawn 2026', 'image', '/media/hero-lawn-1920.webp', '/media/hero-lawn-mobile-1280.webp', '', 'Explore Lawn', '/women/lawn', 'light' ),
+		array( 'Wash & Wear in 27 colours', 'The everyday suit, crease-resistant and ready for the tailor.', 'Men', 'image', '/media/hero-men-1920.webp', '/media/hero-men-mobile-1280.webp', '', 'Shop Men', '/men/wash-wear', 'light' ),
+	);
+	foreach ( $slides as $i => $s ) {
+		$make( 'bc_slide', $s[0], '', array( '_bc_subheadline' => $s[1], '_bc_eyebrow' => $s[2], '_bc_media_type' => $s[3], '_bc_image_url' => $s[4], '_bc_image_mobile_url' => $s[5], '_bc_video_url' => $s[6], '_bc_cta_label' => $s[7], '_bc_cta_url' => $s[8], '_bc_tone' => $s[9] ), $i );
+	}
+
+	$collections = array(
+		array( 'lawn-2026', 'Lawn 2026', 'Breathable prints for the long summer.', '/media/collection-lawn-1280.webp', 'women', 0, array( 'Lawn' ) ),
+		array( 'festive-edit', 'Festive Edit', 'Embroidered three-piece suits for weddings and Eid.', '/media/collection-festive-1280.webp', 'women', 1, array( 'Embroidered' ) ),
+		array( 'wash-wear-essentials', 'Wash & Wear Essentials', 'One design, twenty-seven colours.', '/media/collection-wash-wear-1280.webp', 'men', 2, array( 'Wash & Wear' ) ),
+	);
+	$cat_map = bc_get_categories_map();
+	foreach ( $collections as $c ) {
+		$tid = bc_collection_term_id( $c[0], $c[1] );
+		if ( ! $tid ) {
+			continue;
+		}
+		update_term_meta( $tid, 'bc_tagline', $c[2] );
+		update_term_meta( $tid, 'bc_cover_url', $c[3] );
+		update_term_meta( $tid, 'bc_gender', $c[4] );
+		update_term_meta( $tid, 'bc_sort_order', $c[5] );
+		update_term_meta( $tid, 'bc_featured', '1' );
+		// Assign every product whose category name matches.
+		$cat_ids = array();
+		foreach ( $cat_map as $id => $cat ) {
+			if ( in_array( $cat['name'], $c[6], true ) && $cat['gender'] === $c[4] ) {
+				$cat_ids[] = $id;
+			}
+		}
+		if ( $cat_ids ) {
+			$ids = get_posts( array( 'post_type' => 'bc_product', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids', 'tax_query' => array( array( 'taxonomy' => 'bc_category', 'field' => 'term_id', 'terms' => $cat_ids ) ) ) ); // phpcs:ignore WordPress.DB.SlowDBQuery
+			foreach ( $ids as $pid ) {
+				wp_set_object_terms( $pid, array( $tid ), 'bc_collection', true );
+			}
+		}
+	}
+
+	$testimonials = array(
+		array( 'Ayesha', 'Faisalabad', 'Ordered two lawn suits over WhatsApp on a Tuesday, had them by Thursday. The print was exactly like the photo.', 5, 'WhatsApp', '/media/lookbook-1-768.webp', '1' ),
+		array( 'Hamza', 'Lahore', 'The wash & wear fabric is genuinely crease-free. I bought navy and charcoal, then went back for olive.', 5, 'WhatsApp', '', '1' ),
+		array( 'Sana', 'Karachi', 'Got the embroidered three-piece for my sister\'s walima. The embroidery is heavier than it looks online — in a good way.', 5, 'Instagram', '/media/lookbook-2-768.webp', '1' ),
+		array( 'Usman', 'Faisalabad', 'Visited the shop, they cut and measured everything in front of me. Honest people.', 5, 'In store', '', '1' ),
+		array( 'Mariam', 'Islamabad', 'Asked for colour advice on WhatsApp and they sent close-up videos of three options before I chose. Lovely service.', 5, 'WhatsApp', '/media/lookbook-3-768.webp', '0' ),
+	);
+	foreach ( $testimonials as $i => $t ) {
+		$make( 'bc_testimonial', $t[0], $t[2], array( '_bc_city' => $t[1], '_bc_rating' => (string) $t[3], '_bc_source' => $t[4], '_bc_photo_url' => $t[5], '_bc_featured' => $t[6] ), $i );
+	}
+
+	for ( $i = 1; $i <= 8; $i++ ) {
+		$make( 'bc_instagram', "Placeholder post {$i}", '', array( '_bc_image_url' => "/media/insta-{$i}-768.webp", '_bc_link_url' => 'https://www.instagram.com/' ), $i );
+	}
+
+	$site = bc_get_site_settings();
+	$site['announcement_active'] = '1';
+	update_option( 'bc_site', bc_sanitize_site_settings( $site ) );
+
+	return 'Seeded 3 slides, 3 collections (products assigned), 5 testimonials, 8 Instagram posts; announcement bar on.';
+}
+
+// ---------------------------------------------------------------------------
+// WP-CLI: wp baig import <file>  ·  wp baig seed-demo [--force]
 // ---------------------------------------------------------------------------
 
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
@@ -286,13 +444,19 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			}
 			WP_CLI::success(
 				sprintf(
-					'Categories: %d created, %d skipped. Products: %d created, %d skipped.',
+					'Categories: %d created, %d existing. Products: %d created, %d updated.',
 					$report['categories_created'],
 					$report['categories_skipped'],
 					$report['products_created'],
-					$report['products_skipped']
+					$report['products_updated']
 				)
 			);
+		}
+	);
+	WP_CLI::add_command(
+		'baig seed-demo',
+		function ( $args, $assoc ) {
+			WP_CLI::success( bc_seed_demo_content( ! empty( $assoc['force'] ) ) );
 		}
 	);
 }

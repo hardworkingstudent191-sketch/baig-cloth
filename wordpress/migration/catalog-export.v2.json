@@ -1,0 +1,2094 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Lawn",
+      "gender": "women",
+      "sort_order": 0
+    },
+    {
+      "id": 2,
+      "name": "Cotton",
+      "gender": "women",
+      "sort_order": 1
+    },
+    {
+      "id": 3,
+      "name": "Embroidered",
+      "gender": "women",
+      "sort_order": 2
+    },
+    {
+      "id": 4,
+      "name": "Cotton",
+      "gender": "men",
+      "sort_order": 0
+    },
+    {
+      "id": 5,
+      "name": "Wash & Wear",
+      "gender": "men",
+      "sort_order": 1
+    },
+    {
+      "id": 6,
+      "name": "Karandi",
+      "gender": "men",
+      "sort_order": 2
+    }
+  ],
+  "products": [
+    {
+      "id": 21,
+      "name": "Wash & Wear — Ash Grey",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/ash-grey.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0021",
+      "color": "Ash Grey",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#7b7c82",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 22,
+      "name": "Wash & Wear — Aubergine",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/aubergine.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0022",
+      "color": "Aubergine",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#413b41",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 23,
+      "name": "Wash & Wear — Beige Taupe",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/beige-taupe.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0023",
+      "color": "Beige Taupe",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#aa9d8c",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 24,
+      "name": "Wash & Wear — Camel",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/camel.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0024",
+      "color": "Camel",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#b99e89",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 25,
+      "name": "Wash & Wear — Charcoal",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/charcoal.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0025",
+      "color": "Charcoal",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#333c3f",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 26,
+      "name": "Wash & Wear — Denim Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/denim-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0026",
+      "color": "Denim Blue",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#444f6f",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 27,
+      "name": "Wash & Wear — Dusty Mauve",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/dusty-mauve.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0027",
+      "color": "Dusty Mauve",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#a48f8c",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 28,
+      "name": "Wash & Wear — Forest Green",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/forest-green.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0028",
+      "color": "Forest Green",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#608178",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 29,
+      "name": "Wash & Wear — Ivory",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/ivory.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0029",
+      "color": "Ivory",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#c7bbaa",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 30,
+      "name": "Wash & Wear — Khaki",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/khaki.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0030",
+      "color": "Khaki",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#a4987e",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 31,
+      "name": "Wash & Wear — Light Grey",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/light-grey.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0031",
+      "color": "Light Grey",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#a8a9ae",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 32,
+      "name": "Wash & Wear — Mauve Rose",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/mauve-rose.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0032",
+      "color": "Mauve Rose",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#936e78",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 33,
+      "name": "Wash & Wear — Navy",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/navy.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0033",
+      "color": "Navy",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#38404b",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 34,
+      "name": "Wash & Wear — Olive Green",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/olive-green.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0034",
+      "color": "Olive Green",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#717c3c",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 35,
+      "name": "Wash & Wear — Olive Khaki",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/olive-khaki.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0035",
+      "color": "Olive Khaki",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#91866b",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 36,
+      "name": "Wash & Wear — Periwinkle",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/periwinkle.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0036",
+      "color": "Periwinkle",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#6472a2",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 37,
+      "name": "Wash & Wear — Petrol Teal",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/petrol-teal.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0037",
+      "color": "Petrol Teal",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#355d63",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 38,
+      "name": "Wash & Wear — Plum Grey",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/plum-grey.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0038",
+      "color": "Plum Grey",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#665e68",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 39,
+      "name": "Wash & Wear — Powder Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/powder-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0039",
+      "color": "Powder Blue",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#9bb2d9",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 40,
+      "name": "Wash & Wear — Rust Brown",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/rust-brown.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0040",
+      "color": "Rust Brown",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#442416",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 41,
+      "name": "Wash & Wear — Sage Green",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/sage-green.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0041",
+      "color": "Sage Green",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#8c978a",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 42,
+      "name": "Wash & Wear — Sky Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/sky-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0042",
+      "color": "Sky Blue",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#8fb4c7",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 43,
+      "name": "Wash & Wear — Slate Grey-Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/slate-grey-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0043",
+      "color": "Slate Grey-Blue",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#5a6167",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 44,
+      "name": "Wash & Wear — Slate Lavender",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/slate-lavender.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0044",
+      "color": "Slate Lavender",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#6a6780",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 45,
+      "name": "Wash & Wear — Steel Blue",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/steel-blue.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0045",
+      "color": "Steel Blue",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#6081a0",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 46,
+      "name": "Wash & Wear — Terracotta",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/terracotta.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0046",
+      "color": "Terracotta",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#ab7f5b",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 47,
+      "name": "Wash & Wear — Wine Plum",
+      "category_id": 5,
+      "description": "Unstitched 2-piece wash & wear — 4.25m fabric.",
+      "price": "3000.00",
+      "sale_price": "2200.00",
+      "on_sale": true,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/wash-n-wear/wine-plum.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:17.106536+05:00",
+      "fabric": "Wash & Wear",
+      "sku": "BC-0047",
+      "color": "Wine Plum",
+      "design_group": "wash-wear-2-piece",
+      "pieces": 2,
+      "piece_details": [
+        {
+          "name": "Full suit length",
+          "meters": "4.25"
+        }
+      ],
+      "color_hex": "#887581",
+      "care": "Machine wash cold on a gentle cycle. Do not bleach. Tumble dry low or line dry in shade. Warm iron if needed — the finish resists creasing.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Wash & Wear"
+        },
+        {
+          "label": "Pieces",
+          "value": "2-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 48,
+      "name": "Steel Blue Eyelet Embroidered",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/steel-blue-eyelet.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0048",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#607a9a",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 49,
+      "name": "Mint Net Floral Pearl",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/mint-net-floral-pearl.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0049",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#a59f7e",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 50,
+      "name": "Forest Gold Motif Print",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/forest-gold-motif-print.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0050",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#535252",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 51,
+      "name": "Champagne Sequin Net",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/champagne-sequin-net.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0051",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#8e7b64",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 52,
+      "name": "Indigo Block Print",
+      "category_id": 1,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/indigo-block-print.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Lawn",
+      "sku": "BC-0052",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#363542",
+      "care": "Hand wash or gentle machine wash in cold water, inside out. Do not bleach. Dry in shade to keep the print vivid. Iron on medium while slightly damp.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Lawn"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 53,
+      "name": "Black Sequin Lace",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/black-sequin-lace.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0053",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#333438",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 54,
+      "name": "Citrine Floral Print",
+      "category_id": 1,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/citrine-floral-print-lawn.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Lawn",
+      "sku": "BC-0054",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#8f4741",
+      "care": "Hand wash or gentle machine wash in cold water, inside out. Do not bleach. Dry in shade to keep the print vivid. Iron on medium while slightly damp.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Lawn"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 55,
+      "name": "Ivory Beaded Net",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/ivory-beaded-net.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0055",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#c0b9b2",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 56,
+      "name": "Mustard Sequin Fan",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/mustard-sequin-fan.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0056",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#9b7c55",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 57,
+      "name": "Midnight Sequin Floral",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/midnight-sequin-floral.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0057",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#1c1b29",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 58,
+      "name": "Sage Floral Print",
+      "category_id": 1,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/sage-floral-print-lawn.jpg"
+      ],
+      "featured": true,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Lawn",
+      "sku": "BC-0058",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#7e8f55",
+      "care": "Hand wash or gentle machine wash in cold water, inside out. Do not bleach. Dry in shade to keep the print vivid. Iron on medium while slightly damp.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Lawn"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 59,
+      "name": "Olive Eyelet Embroidered",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/olive-eyelet-embroidered.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0059",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#877339",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 60,
+      "name": "Charcoal Silver Embroidered",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/charcoal-silver-embroidered.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0060",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#a2a09e",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 61,
+      "name": "Teal Lace Printed",
+      "category_id": 1,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/teal-lace-printed-lawn.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Lawn",
+      "sku": "BC-0061",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#435456",
+      "care": "Hand wash or gentle machine wash in cold water, inside out. Do not bleach. Dry in shade to keep the print vivid. Iron on medium while slightly damp.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Lawn"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 62,
+      "name": "Silver Leaf Sequin",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/silver-leaf-sequin.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0062",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#656f76",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 63,
+      "name": "Maroon Sequin Stripe",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/maroon-sequin-stripe.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0063",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#732837",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 64,
+      "name": "Blush Floral Embroidered",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/blush-floral-embroidered.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0064",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#afa7a6",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 65,
+      "name": "Lavender Black Floral Sequin",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/lavender-black-floral-sequin.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0065",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#74747e",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    },
+    {
+      "id": 66,
+      "name": "Black Olive 3D Floral",
+      "category_id": 3,
+      "description": "Unstitched 3-piece suit — shirt, trouser, dupatta.",
+      "price": "4500.00",
+      "sale_price": null,
+      "on_sale": false,
+      "sale_ends_at": null,
+      "in_stock": true,
+      "image_urls": [
+        "/products/womens-suits/black-olive-3d-floral.jpg"
+      ],
+      "featured": false,
+      "created_at": "2026-08-27T11:50:25.034201+05:00",
+      "fabric": "Embroidered",
+      "sku": "BC-0066",
+      "color": "",
+      "design_group": "",
+      "pieces": 3,
+      "piece_details": [
+        {
+          "name": "Shirt",
+          "meters": "3"
+        },
+        {
+          "name": "Trouser",
+          "meters": "2.5"
+        },
+        {
+          "name": "Dupatta",
+          "meters": "2.5"
+        }
+      ],
+      "color_hex": "#252a35",
+      "care": "Dry clean recommended. If washing by hand, use cold water and mild detergent, turn inside out, never wring. Dry flat in shade. Iron inside out on low, avoiding the embroidery.",
+      "details": [
+        {
+          "label": "Fabric",
+          "value": "Embroidered"
+        },
+        {
+          "label": "Pieces",
+          "value": "3-piece unstitched"
+        },
+        {
+          "label": "Work",
+          "value": "Embroidered"
+        }
+      ],
+      "collections": []
+    }
+  ]
+}

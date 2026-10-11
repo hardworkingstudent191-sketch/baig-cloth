@@ -139,7 +139,12 @@ function bc_serialize_product( $post, $categories_map ) {
 		$ends_out = str_replace( ' ', 'T', $ends_utc ) . '+00:00';
 	}
 
-	return array(
+	$image_urls = bc_get_product_image_urls( $id );
+
+	// v1 contract fields first (the parity check compares exactly these),
+	// then the additive v2 fields from product-fields.php.
+	return array_merge(
+		array(
 		'id'           => (int) $id,
 		'name'         => wp_specialchars_decode( $post->post_title, ENT_QUOTES ),
 		'category_id'  => $category_id,
@@ -149,10 +154,12 @@ function bc_serialize_product( $post, $categories_map ) {
 		'on_sale'      => $on_sale,
 		'sale_ends_at' => $ends_out,
 		'in_stock'     => ( '' === $in_stock ) ? true : ( '1' === $in_stock ),
-		'image_urls'   => bc_get_product_image_urls( $id ),
+		'image_urls'   => $image_urls,
 		'featured'     => '1' === get_post_meta( $id, '_bc_featured', true ),
 		'created_at'   => str_replace( ' ', 'T', $post->post_date_gmt ) . '+00:00',
 		'_gender'      => isset( $categories_map[ $category_id ] ) ? $categories_map[ $category_id ]['gender'] : null,
+		),
+		bc_product_extra_fields( $post, $image_urls )
 	);
 }
 
@@ -205,8 +212,37 @@ function bc_params_are_scalar( $request, $names ) {
 }
 
 function bc_rest_list_products( $request ) {
-	if ( ! bc_params_are_scalar( $request, array( 'gender', 'category_id', 'on_sale', 'featured', 'search', 'limit', 'offset' ) ) ) {
+	if ( ! bc_params_are_scalar( $request, array( 'gender', 'category_id', 'on_sale', 'featured', 'search', 'limit', 'offset', 'fabric', 'color', 'collection', 'min_price', 'max_price', 'sort', 'ids', 'is_new' ) ) ) {
 		return bc_error( 422, 'query parameters must be single values' );
+	}
+
+	// ---- v2 filters (additive; absent = no effect) ----
+	$fabric     = $request->get_param( 'fabric' );
+	$color      = $request->get_param( 'color' );
+	$collection = $request->get_param( 'collection' );
+	$is_new     = bc_parse_bool_param( $request, 'is_new' );
+	if ( 'error' === $is_new ) {
+		return bc_error( 422, 'is_new must be a boolean' );
+	}
+	$min_price = $request->get_param( 'min_price' );
+	$max_price = $request->get_param( 'max_price' );
+	if ( ( null !== $min_price && ! is_numeric( $min_price ) ) || ( null !== $max_price && ! is_numeric( $max_price ) ) ) {
+		return bc_error( 422, 'min_price and max_price must be numbers' );
+	}
+	$sort = $request->get_param( 'sort' );
+	if ( null !== $sort && ! in_array( $sort, array( 'newest', 'price_asc', 'price_desc', 'name' ), true ) ) {
+		return bc_error( 422, 'sort must be one of newest, price_asc, price_desc, name' );
+	}
+	$ids = null;
+	if ( null !== $request->get_param( 'ids' ) ) {
+		$ids = array();
+		foreach ( explode( ',', (string) $request->get_param( 'ids' ) ) as $raw_id ) {
+			$n = bc_parse_int( trim( $raw_id ) );
+			if ( null === $n ) {
+				return bc_error( 422, 'ids must be a comma-separated list of integers' );
+			}
+			$ids[] = $n;
+		}
 	}
 
 	$gender = $request->get_param( 'gender' );
@@ -296,12 +332,52 @@ function bc_rest_list_products( $request ) {
 		if ( null !== $on_sale && $p['on_sale'] !== $on_sale ) {
 			continue;
 		}
+		// ---- v2 filters ----
+		if ( null !== $ids && ! in_array( $p['id'], $ids, true ) ) {
+			continue;
+		}
+		if ( null !== $fabric && '' !== $fabric && 0 !== strcasecmp( $p['fabric'], (string) $fabric ) ) {
+			continue;
+		}
+		if ( null !== $color && '' !== $color && 0 !== strcasecmp( $p['color'], (string) $color ) ) {
+			continue;
+		}
+		if ( null !== $collection && '' !== $collection && ! in_array( sanitize_title( $collection ), $p['collections'], true ) ) {
+			continue;
+		}
+		if ( null !== $is_new && $p['is_new'] !== $is_new ) {
+			continue;
+		}
+		$effective = (float) ( $p['on_sale'] && null !== $p['sale_price'] ? $p['sale_price'] : $p['price'] );
+		if ( null !== $min_price && $effective < (float) $min_price ) {
+			continue;
+		}
+		if ( null !== $max_price && $effective > (float) $max_price ) {
+			continue;
+		}
 
 		unset( $p['_gender'] );
 		$products[] = $p;
 	}
 
-	return rest_ensure_response( array_slice( $products, $offset, $limit ) );
+	if ( null !== $ids ) {
+		// Preserve the caller's order (wishlist / recently viewed lists).
+		$order = array_flip( $ids );
+		usort( $products, function ( $a, $b ) use ( $order ) { return $order[ $a['id'] ] <=> $order[ $b['id'] ]; } );
+	} elseif ( 'price_asc' === $sort || 'price_desc' === $sort ) {
+		$dir = 'price_asc' === $sort ? 1 : -1;
+		usort( $products, function ( $a, $b ) use ( $dir ) {
+			$pa = (float) ( $a['on_sale'] && null !== $a['sale_price'] ? $a['sale_price'] : $a['price'] );
+			$pb = (float) ( $b['on_sale'] && null !== $b['sale_price'] ? $b['sale_price'] : $b['price'] );
+			return $pa === $pb ? $b['id'] <=> $a['id'] : $dir * ( $pa <=> $pb );
+		} );
+	} elseif ( 'name' === $sort ) {
+		usort( $products, function ( $a, $b ) { return strcasecmp( $a['name'], $b['name'] ) ?: $b['id'] <=> $a['id']; } );
+	}
+
+	$response = rest_ensure_response( array_slice( $products, $offset, $limit ) );
+	$response->header( 'X-Total-Count', (string) count( $products ) );
+	return $response;
 }
 
 function bc_rest_get_product( $request ) {
@@ -390,6 +466,7 @@ function bc_cors_headers( $served, $result, $request ) {
 		}
 	}
 	header( 'Access-Control-Allow-Methods: GET, OPTIONS' );
+	header( 'Access-Control-Expose-Headers: X-Total-Count' );
 
 	return $served;
 }

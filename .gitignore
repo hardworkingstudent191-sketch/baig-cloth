@@ -26,3 +26,6 @@ frontend/public/products/**/*-1000.webp
 
 # Packaged WordPress release output (wordpress/scripts/package_release.py)
 wordpress/dist/
+
+# Placeholder media download cache (scripts/fetch-media.mjs); derivatives in public/media are committed
+frontend/media/raw/
