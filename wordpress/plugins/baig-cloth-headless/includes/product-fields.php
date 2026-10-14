@@ -251,6 +251,10 @@ function bc_product_variants( $post_id, $design_group ) {
 			)
 		);
 		$list = array();
+		if ( $ids ) {
+			// One query for every variant's meta instead of one per colour.
+			update_meta_cache( 'post', $ids );
+		}
 		foreach ( $ids as $vid ) {
 			$urls   = bc_get_product_image_urls( $vid );
 			$stock  = get_post_meta( $vid, '_bc_in_stock', true );

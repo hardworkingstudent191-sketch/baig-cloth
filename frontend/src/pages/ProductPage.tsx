@@ -237,20 +237,20 @@ function ProductView({ product }: { product: Product }) {
       {/* Sticky phone action bar */}
       <div className="md:hidden fixed inset-x-0 bottom-0 z-40 bg-ivory/95 backdrop-blur-md border-t border-line px-4 pt-3" style={{ paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
         <div className="flex items-center gap-2.5">
-          {hero && <img src={hero.src} alt="" className="h-11 w-9 object-cover rounded-sm shrink-0" />}
+          {hero && <img src={hero.src} alt="" className="hidden min-[420px]:block h-11 w-9 object-cover rounded-sm shrink-0" />}
           <div className="min-w-0 flex-1 leading-tight">
             <p className="text-[15px] font-medium whitespace-nowrap">{formatPrice(effectivePrice(product))}</p>
             {discount && <p className="text-[11px] text-sale whitespace-nowrap">{discount} · was {formatPrice(product.price)}</p>}
           </div>
-          <button type="button" onClick={() => toggleWishlist(product.id)} aria-pressed={saved} aria-label="Save" className="grid h-11 w-11 place-items-center rounded-pill border border-line"><Heart size={18} strokeWidth={1.7} className={saved ? "fill-sale text-sale" : ""} /></button>
-          <Button variant="secondary" onClick={add} disabled={!product.in_stock} className="px-4" aria-label="Add to bag">
+          <button type="button" onClick={() => toggleWishlist(product.id)} aria-pressed={saved} aria-label="Save" className="hidden min-[420px]:grid h-11 w-11 place-items-center rounded-pill border border-line shrink-0"><Heart size={18} strokeWidth={1.7} className={saved ? "fill-sale text-sale" : ""} /></button>
+          <Button variant="secondary" onClick={add} disabled={!product.in_stock} className="px-4 shrink-0" aria-label="Add to bag">
             <AnimatePresence mode="wait" initial={false}>
               <motion.span key={added ? "y" : "n"} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }} className="inline-flex items-center gap-1.5">
                 {added ? <Check size={18} /> : <Plus size={18} />} Bag
               </motion.span>
             </AnimatePresence>
           </Button>
-          <ButtonAnchor href={whatsappUrl(site.whatsapp, waMessage)} target="_blank" rel="noopener noreferrer" variant="whatsapp" className="px-4"><MessageCircle size={18} /> {product.in_stock ? "Order" : "Ask"}</ButtonAnchor>
+          <ButtonAnchor href={whatsappUrl(site.whatsapp, waMessage)} target="_blank" rel="noopener noreferrer" variant="whatsapp" className="px-5 shrink-0"><MessageCircle size={18} /> {product.in_stock ? "Order" : "Ask"}</ButtonAnchor>
         </div>
       </div>
     </article>

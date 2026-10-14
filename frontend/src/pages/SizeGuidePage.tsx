@@ -90,9 +90,9 @@ export default function SizeGuidePage() {
           </ol>
         </section>
 
-        <section className="grid gap-12 lg:grid-cols-2">
-          <Reveal><Table rows={WOMEN} caption="Women — typical stitched sizes" /></Reveal>
-          <Reveal delay={0.08}><Table rows={MEN} caption="Men — typical stitched sizes" /></Reveal>
+        <section className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-2">
+          <Reveal className="min-w-0"><Table rows={WOMEN} caption="Women — typical stitched sizes" /></Reveal>
+          <Reveal delay={0.08} className="min-w-0"><Table rows={MEN} caption="Men — typical stitched sizes" /></Reveal>
         </section>
 
         <Reveal className="rounded-card bg-charcoal text-ivory p-7 md:p-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
