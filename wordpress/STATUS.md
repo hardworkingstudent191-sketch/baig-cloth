@@ -1,4 +1,28 @@
-# WordPress backend — status (updated 2026-10-07)
+# WordPress backend — status (updated 2026-10-14)
+
+## Storefront v2 (branch `storefront-v2`, 2026-10-14)
+
+The owner asked for a brand-new, mobile-first "editorial luxury" storefront
+(`frontend/`, React 19 + Vite 7 + Tailwind v4, motion/GSAP/Lenis/Embla) and
+the plugin grew to **v2.0.0** to feed it. WhatsApp-only ordering (multi-item
+bag composes one message). Verified 2026-10-14 against a fresh Playground
+boot: `parity_check.py` = FULL PARITY on the v1 contract, all v2 endpoints
+(`/site /slides /collections /testimonials /instagram /facets /home`) live
+with seed content, 20 routes show no horizontal overflow at 375px and 1280px,
+videos play (phones get the 720p file), `tsc` clean, production build OK
+(~216 KB gzip JS on the home route; `dist/` is ~50 MB, mostly media).
+
+- Placeholder photos/videos come from Pexels/Unsplash via
+  `frontend/media/placeholders.json` -> `node scripts/fetch-media.mjs`.
+  Replace with real photography before launch (drop files in `media/raw/`).
+- Local dev: boot Playground (see below), put
+  `VITE_API_URL=http://127.0.0.1:9400/wp-json/baig/v1` in untracked
+  `frontend/.env.local`, `npm run dev`. Playground serves ONE request at a
+  time (2-4 s each), so pages look slow locally; real PHP hosting won't.
+- Not done: quick view / "complete the look" / Urdu toggle (ideas from
+  `docs/v2/research-raw.json`), real-device QA, replacing placeholder media,
+  owner content (store address/hours/socials are placeholder defaults), deploy.
+
 
 The backend works and is verified against a live WordPress. What remains is
 deployment-side and device QA — see "Not done" below.

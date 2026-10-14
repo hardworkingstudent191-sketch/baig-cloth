@@ -12,6 +12,7 @@ import ErrorState, { EmptyState } from "../components/ui/ErrorState";
 import { RevealLines } from "../components/ui/Reveal";
 import NotFoundPage from "./NotFoundPage";
 import Img from "../components/ui/Img";
+import { responsiveVideo } from "../lib/images";
 
 /** A collection: full-bleed cover (video if it has one) with the name set in, then its pieces. */
 export default function CollectionPage() {
@@ -29,7 +30,7 @@ export default function CollectionPage() {
         {loading ? (
           <Skeleton className="absolute inset-0 rounded-none bg-charcoal/60" />
         ) : data?.video && mediaReady && !reduced ? (
-          <video className="absolute inset-0 h-full w-full object-cover" src={data.video} poster={data.cover || undefined} autoPlay muted loop playsInline />
+          <video className="absolute inset-0 h-full w-full object-cover" src={responsiveVideo(data.video)} poster={data.cover || undefined} autoPlay muted loop playsInline />
         ) : data?.cover ? (
           <motion.img onError={(e) => { e.currentTarget.style.display = "none"; }} src={data.cover} alt="" className="absolute inset-0 h-full w-full object-cover" initial={{ scale: 1.08 }} animate={{ scale: 1 }} transition={{ duration: 1.6, ease: EASE.outExpo }} />
         ) : null}

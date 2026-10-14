@@ -66,3 +66,14 @@ export function primaryImage(images: ProductImage[], fallbackUrls: string[], wid
   const first = images[0] ?? (fallbackUrls[0] ? { url: fallbackUrls[0] } : null);
   return first ? imageSource(first, width, alt) : null;
 }
+
+/**
+ * Phones get the lighter 720p sibling of a "-1080.mp4" placeholder/clip
+ * (scripts/fetch-media.mjs always writes both). Any other URL — a video
+ * uploaded to the WordPress media library, say — is returned untouched.
+ */
+export function responsiveVideo(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  const phone = typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
+  return phone ? url.replace(/-1080\.mp4(\?.*)?$/, "-720.mp4$1") : url;
+}

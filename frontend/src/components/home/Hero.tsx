@@ -10,6 +10,7 @@ import { usePrefersReducedMotion } from "../../lib/usePrefersReducedMotion";
 import { EASE } from "../../lib/motion";
 import { RevealLines } from "../ui/Reveal";
 import Img from "../ui/Img";
+import { responsiveVideo } from "../../lib/images";
 
 const AUTOPLAY_MS = 6500;
 
@@ -118,7 +119,7 @@ function SlideMedia({ slide, active, canVideo, reduced, priority }: { slide: Sli
   return (
     <div className="absolute inset-0 overflow-hidden">
       {slide.media_type === "video" && slide.video && canVideo ? (
-        <video ref={videoRef} className="absolute inset-0 h-full w-full object-cover" poster={image || undefined} muted loop playsInline preload={priority ? "auto" : "metadata"} src={slide.video} />
+        <video ref={videoRef} className="absolute inset-0 h-full w-full object-cover" poster={image || undefined} muted loop playsInline preload={priority ? "auto" : "metadata"} src={responsiveVideo(slide.video)} />
       ) : image ? (
         <motion.picture key={`${slide.id}-${active}`} className="absolute inset-0" initial={reduced ? false : { scale: 1.08 }} animate={{ scale: active && !reduced ? 1 : 1.08 }} transition={{ duration: 7, ease: "linear" }}>
           <source media="(max-width: 767px)" srcSet={mobile} />
